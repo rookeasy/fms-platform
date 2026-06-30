@@ -65,15 +65,100 @@ export type BuildingContact = {
 
 export type BuildingContactPayload = Omit<BuildingContact, "id" | "organization_id" | "building_id">;
 
+export type AssetType = {
+  id: string;
+  name: string;
+  code: string;
+  category?: string | null;
+  description?: string | null;
+  default_inspection_frequency_months?: number | null;
+};
+
+export type Asset = {
+  id: string;
+  organization_id: string;
+  building_id: string;
+  asset_type_id: string;
+  asset_type?: AssetType | null;
+  name: string;
+  asset_tag?: string | null;
+  location_description?: string | null;
+  manufacturer?: string | null;
+  model?: string | null;
+  serial_number?: string | null;
+  status: string;
+  installation_date?: string | null;
+  warranty_expiry_date?: string | null;
+  condition_rating?: string | null;
+  inspection_frequency_months?: number | null;
+  last_inspected_at?: string | null;
+  next_inspection_due_at?: string | null;
+  replacement_cost_estimate?: number | null;
+  remaining_useful_life_years?: number | null;
+  notes?: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type AssetPayload = Omit<Asset, "id" | "organization_id" | "building_id" | "asset_type" | "created_at" | "updated_at">;
+
+export type DocumentRecord = {
+  id: string;
+  organization_id: string;
+  building_id: string;
+  asset_id?: string | null;
+  document_type: string;
+  title: string;
+  description?: string | null;
+  original_filename?: string | null;
+  storage_bucket?: string | null;
+  storage_key?: string | null;
+  file_mime_type?: string | null;
+  file_size_bytes?: number | null;
+  version_number: number;
+  parent_document_id?: string | null;
+  generated_by_system: boolean;
+  effective_date?: string | null;
+  expiry_date?: string | null;
+  is_public_to_client: boolean;
+  is_passport_record: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type PassportSummary = {
+  building: Building;
+  contacts: BuildingContact[];
+  assets: Asset[];
+  documents: DocumentRecord[];
+  timeline: Array<{
+    event_type: string;
+    label: string;
+    occurred_at: string;
+    record_id: string;
+  }>;
+  health_score: {
+    status: string;
+    score: number | null;
+  };
+  membership: {
+    status: string;
+    plan: string | null;
+  };
+};
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const headers = new Headers(init?.headers);
+  const isFormData = init?.body instanceof FormData;
+  if (!isFormData && !headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
+  }
+
   const response = await fetch(`${API_BASE_URL}/api/v1${path}`, {
     ...init,
-    headers: {
-      "Content-Type": "application/json",
-      ...(init?.headers ?? {})
-    },
+    headers,
     cache: "no-store"
   });
 
@@ -158,4 +243,74 @@ export async function deleteBuildingContact(contactId: string): Promise<void> {
   await request<void>(`/building-contacts/${contactId}`, {
     method: "DELETE"
   });
+}
+
+export async function listAssetTypes(): Promise<AssetType[]> {
+  const response = await request<ApiEnvelope<AssetType[]>>("/asset-types");
+  return response.data;
+}
+
+export async function listBuildingAssets(buildingId: string): Promise<Asset[]> {
+  const response = await request<ApiEnvelope<Asset[]>>(`/buildings/${buildingId}/assets`);
+  return response.data;
+}
+
+export async function createAsset(buildingId: string, payload: AssetPayload): Promise<Asset> {
+  const response = await request<ApiEnvelope<Asset>>(`/buildings/${buildingId}/assets`, {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+  return response.data;
+}
+
+export async function updateAsset(assetId: string, payload: Partial<AssetPayload>): Promise<Asset> {
+  const response = await request<ApiEnvelope<Asset>>(`/assets/${assetId}`, {
+    method: "PATCH",
+    body: JSON.stringify(payload)
+  });
+  return response.data;
+}
+
+export async function deleteAsset(assetId: string): Promise<void> {
+  await request<void>(`/assets/${assetId}`, {
+    method: "DELETE"
+  });
+}
+
+export async function listBuildingDocuments(buildingId: string): Promise<DocumentRecord[]> {
+  const response = await request<ApiEnvelope<DocumentRecord[]>>(`/buildings/${buildingId}/documents`);
+  return response.data;
+}
+
+export async function uploadDocument(formData: FormData): Promise<DocumentRecord> {
+  const response = await request<ApiEnvelope<DocumentRecord>>("/documents/upload", {
+    method: "POST",
+    body: formData
+  });
+  return response.data;
+}
+
+export async function uploadDocumentVersion(documentId: string, formData: FormData): Promise<DocumentRecord> {
+  const response = await request<ApiEnvelope<DocumentRecord>>(`/documents/${documentId}/new-version`, {
+    method: "POST",
+    body: formData
+  });
+  return response.data;
+}
+
+export async function updateDocument(documentId: string, payload: Partial<DocumentRecord>): Promise<DocumentRecord> {
+  const response = await request<ApiEnvelope<DocumentRecord>>(`/documents/${documentId}`, {
+    method: "PATCH",
+    body: JSON.stringify(payload)
+  });
+  return response.data;
+}
+
+export function getDocumentDownloadUrl(documentId: string): string {
+  return `${API_BASE_URL}/api/v1/documents/${documentId}/download`;
+}
+
+export async function getPassport(buildingId: string): Promise<PassportSummary> {
+  const response = await request<ApiEnvelope<PassportSummary>>(`/buildings/${buildingId}/passport`);
+  return response.data;
 }

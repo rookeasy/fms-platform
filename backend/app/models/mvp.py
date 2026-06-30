@@ -161,6 +161,7 @@ class Building(Base, TimestampMixin, SoftDeleteMixin):
     organization: Mapped["Organization"] = relationship(back_populates="buildings")
     contacts: Mapped[list["BuildingContact"]] = relationship(back_populates="building")
     assets: Mapped[list["Asset"]] = relationship(back_populates="building")
+    documents: Mapped[list["Document"]] = relationship(back_populates="building")
     work_orders: Mapped[list["WorkOrder"]] = relationship(back_populates="building")
     inspections: Mapped[list["Inspection"]] = relationship(back_populates="building")
 
@@ -205,7 +206,9 @@ class AssetType(Base, TimestampMixin, SoftDeleteMixin):
     organization_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("organizations.id"), nullable=True)
     name: Mapped[str] = mapped_column(String(120), nullable=False)
     code: Mapped[str] = mapped_column(String(80), nullable=False)
+    category: Mapped[str | None] = mapped_column(String(80), nullable=True)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    default_inspection_frequency_months: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
     assets: Mapped[list["Asset"]] = relationship(back_populates="asset_type")
     inspection_templates: Mapped[list["InspectionTemplate"]] = relationship(back_populates="asset_type")
@@ -226,12 +229,26 @@ class Asset(Base, TimestampMixin, SoftDeleteMixin):
     asset_type_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("asset_types.id"), nullable=False)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     tag: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    asset_tag: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    location_description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    manufacturer: Mapped[str | None] = mapped_column(Text, nullable=True)
+    model: Mapped[str | None] = mapped_column(Text, nullable=True)
     serial_number: Mapped[str | None] = mapped_column(String(120), nullable=True)
     status: Mapped[str] = mapped_column(String(50), nullable=False, default="active")
     installed_on: Mapped[date | None] = mapped_column(Date, nullable=True)
+    installation_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    warranty_expiry_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    condition_rating: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    inspection_frequency_months: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    last_inspected_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    next_inspection_due_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    replacement_cost_estimate: Mapped[float | None] = mapped_column(Numeric(14, 2), nullable=True)
+    remaining_useful_life_years: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     building: Mapped["Building"] = relationship(back_populates="assets")
     asset_type: Mapped["AssetType"] = relationship(back_populates="assets")
+    documents: Mapped[list["Document"]] = relationship(back_populates="asset")
     work_orders: Mapped[list["WorkOrder"]] = relationship(back_populates="asset")
 
     __table_args__ = (
@@ -248,19 +265,41 @@ class Document(Base, TimestampMixin, SoftDeleteMixin):
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     organization_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("organizations.id"), nullable=False)
-    building_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("buildings.id"), nullable=True)
+    building_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("buildings.id"), nullable=False)
     asset_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("assets.id"), nullable=True)
     uploaded_by_user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"), nullable=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
+    title: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
     document_type: Mapped[str] = mapped_column(String(80), nullable=False)
     storage_uri: Mapped[str] = mapped_column(Text, nullable=False)
+    storage_bucket: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    storage_key: Mapped[str | None] = mapped_column(Text, nullable=True)
+    original_filename: Mapped[str | None] = mapped_column(String(255), nullable=True)
     mime_type: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    file_mime_type: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    file_size_bytes: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    version_number: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    parent_document_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("documents.id"), nullable=True)
+    generated_by_system: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    effective_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    expiry_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    is_public_to_client: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    is_passport_record: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+
+    building: Mapped["Building"] = relationship(back_populates="documents")
+    asset: Mapped["Asset | None"] = relationship(back_populates="documents")
+    parent_document: Mapped["Document | None"] = relationship(remote_side=[id], back_populates="versions")
+    versions: Mapped[list["Document"]] = relationship(back_populates="parent_document")
 
     __table_args__ = (
         Index("ix_documents_organization_id", "organization_id"),
         Index("ix_documents_building_id", "building_id"),
         Index("ix_documents_asset_id", "asset_id"),
         Index("ix_documents_org_type", "organization_id", "document_type"),
+        Index("ix_documents_org_building_type", "organization_id", "building_id", "document_type"),
+        Index("ix_documents_passport_record", "building_id", "is_passport_record"),
+        Index("ix_documents_parent_document_id", "parent_document_id"),
     )
 
 

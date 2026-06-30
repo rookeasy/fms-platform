@@ -30,3 +30,4 @@ Thumbs.db
 
 # Local data
 postgres-data/
+backend/storage/

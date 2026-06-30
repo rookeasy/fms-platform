@@ -16,20 +16,41 @@ ROLES = [
 ]
 
 ASSET_TYPES = [
-    {"name": "Sprinkler System", "code": "sprinkler_system", "description": "Sprinkler systems and connected equipment."},
-    {"name": "Standpipe System", "code": "standpipe_system", "description": "Standpipe systems."},
-    {"name": "Fire Pump", "code": "fire_pump", "description": "Fire pump equipment."},
-    {"name": "Backflow Preventer", "code": "backflow_preventer", "description": "Backflow prevention assemblies and devices."},
-    {"name": "Fire Alarm System", "code": "fire_alarm_system", "description": "Fire alarm panels, devices, and related systems."},
-    {"name": "Fire Extinguisher", "code": "fire_extinguisher", "description": "Portable fire extinguishers."},
-    {"name": "Emergency Lighting", "code": "emergency_lighting", "description": "Emergency lighting equipment."},
-    {"name": "Kitchen Suppression", "code": "kitchen_suppression", "description": "Kitchen suppression systems."},
-    {"name": "Special Hazard System", "code": "special_hazard_system", "description": "Special hazard suppression systems."},
-    {"name": "Control Valve", "code": "control_valve", "description": "Fire protection control valves."},
-    {"name": "Riser", "code": "riser", "description": "Fire protection risers."},
-    {"name": "Zone", "code": "zone", "description": "Fire protection zones."},
-    {"name": "Hydrant", "code": "hydrant", "description": "Hydrants."},
-    {"name": "Fire Department Connection", "code": "fire_department_connection", "description": "Fire department connections."},
+    {"name": "Wet Sprinkler System", "code": "wet_sprinkler_system", "category": "sprinkler"},
+    {"name": "Dry Sprinkler System", "code": "dry_sprinkler_system", "category": "sprinkler"},
+    {"name": "Preaction System", "code": "preaction_system", "category": "sprinkler"},
+    {"name": "Deluge System", "code": "deluge_system", "category": "sprinkler"},
+    {"name": "Antifreeze System", "code": "antifreeze_system", "category": "sprinkler"},
+    {"name": "Residential Sprinkler System", "code": "residential_sprinkler_system", "category": "sprinkler"},
+    {"name": "Standpipe System", "code": "standpipe_system", "category": "standpipe"},
+    {"name": "Fire Pump", "code": "fire_pump", "category": "fire_pump"},
+    {"name": "Jockey Pump", "code": "jockey_pump", "category": "fire_pump"},
+    {"name": "Fire Pump Controller", "code": "fire_pump_controller", "category": "fire_pump"},
+    {"name": "Fire Pump Transfer Switch", "code": "fire_pump_transfer_switch", "category": "fire_pump"},
+    {"name": "Backflow Preventer", "code": "backflow_preventer", "category": "backflow"},
+    {"name": "Double Check Valve Assembly", "code": "double_check_valve_assembly", "category": "backflow"},
+    {"name": "Reduced Pressure Principle Assembly", "code": "reduced_pressure_principle_assembly", "category": "backflow"},
+    {"name": "Control Valve", "code": "control_valve", "category": "valve"},
+    {"name": "Zone Valve", "code": "zone_valve", "category": "valve"},
+    {"name": "Sectional Valve", "code": "sectional_valve", "category": "valve"},
+    {"name": "Inspector's Test Connection", "code": "inspectors_test_connection", "category": "sprinkler"},
+    {"name": "Main Drain", "code": "main_drain", "category": "sprinkler"},
+    {"name": "Riser", "code": "riser", "category": "sprinkler"},
+    {"name": "Sprinkler Zone", "code": "sprinkler_zone", "category": "sprinkler"},
+    {"name": "Fire Department Connection", "code": "fire_department_connection", "category": "water_supply"},
+    {"name": "Private Hydrant", "code": "private_hydrant", "category": "hydrant"},
+    {"name": "Water Storage Tank", "code": "water_storage_tank", "category": "water_supply"},
+    {"name": "Fire Alarm System", "code": "fire_alarm_system", "category": "fire_alarm"},
+    {"name": "Fire Alarm Panel", "code": "fire_alarm_panel", "category": "fire_alarm"},
+    {"name": "Supervisory Device", "code": "supervisory_device", "category": "fire_alarm"},
+    {"name": "Kitchen Suppression System", "code": "kitchen_suppression_system", "category": "suppression"},
+    {"name": "Clean Agent System", "code": "clean_agent_system", "category": "suppression"},
+    {"name": "Foam System", "code": "foam_system", "category": "suppression"},
+    {"name": "Special Hazard System", "code": "special_hazard_system", "category": "suppression"},
+    {"name": "Portable Extinguisher", "code": "portable_extinguisher", "category": "life_safety"},
+    {"name": "Emergency Lighting", "code": "emergency_lighting", "category": "life_safety"},
+    {"name": "Exit Sign", "code": "exit_sign", "category": "life_safety"},
+    {"name": "Other", "code": "other", "category": "other"},
 ]
 
 MEMBERSHIP_PLANS = [
@@ -57,6 +78,9 @@ def get_or_create_asset_type(db: Session, payload: dict) -> None:
     )
     if asset_type is None:
         db.add(AssetType(organization_id=None, **payload))
+    else:
+        for key, value in payload.items():
+            setattr(asset_type, key, value)
 
 
 def get_or_create_membership_plan(db: Session, payload: dict) -> None:

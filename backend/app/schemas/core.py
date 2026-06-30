@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -236,3 +236,134 @@ class BuildingContactRead(BuildingContactBase):
     updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class AssetTypeRead(BaseModel):
+    id: UUID
+    name: str
+    code: str
+    category: str | None = None
+    description: str | None = None
+    default_inspection_frequency_months: int | None = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class AssetBase(BaseModel):
+    asset_type_id: UUID
+    name: str
+    asset_tag: str | None = None
+    location_description: str | None = None
+    manufacturer: str | None = None
+    model: str | None = None
+    serial_number: str | None = None
+    status: str = "active"
+    installation_date: date | None = None
+    warranty_expiry_date: date | None = None
+    condition_rating: str | None = None
+    inspection_frequency_months: int | None = Field(default=None, ge=0)
+    last_inspected_at: datetime | None = None
+    next_inspection_due_at: datetime | None = None
+    replacement_cost_estimate: float | None = Field(default=None, ge=0)
+    remaining_useful_life_years: int | None = None
+    notes: str | None = None
+
+
+class AssetCreate(AssetBase):
+    pass
+
+
+class AssetUpdate(BaseModel):
+    asset_type_id: UUID | None = None
+    name: str | None = None
+    asset_tag: str | None = None
+    location_description: str | None = None
+    manufacturer: str | None = None
+    model: str | None = None
+    serial_number: str | None = None
+    status: str | None = None
+    installation_date: date | None = None
+    warranty_expiry_date: date | None = None
+    condition_rating: str | None = None
+    inspection_frequency_months: int | None = Field(default=None, ge=0)
+    last_inspected_at: datetime | None = None
+    next_inspection_due_at: datetime | None = None
+    replacement_cost_estimate: float | None = Field(default=None, ge=0)
+    remaining_useful_life_years: int | None = None
+    notes: str | None = None
+
+
+class AssetRead(AssetBase):
+    id: UUID
+    organization_id: UUID
+    building_id: UUID
+    created_at: datetime
+    updated_at: datetime
+    asset_type: AssetTypeRead | None = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class DocumentBase(BaseModel):
+    document_type: str
+    title: str
+    description: str | None = None
+    asset_id: UUID | None = None
+    effective_date: date | None = None
+    expiry_date: date | None = None
+    is_public_to_client: bool = False
+    is_passport_record: bool = False
+
+
+class DocumentCreate(DocumentBase):
+    original_filename: str | None = None
+    storage_bucket: str | None = None
+    storage_key: str | None = None
+    file_mime_type: str | None = None
+    file_size_bytes: int | None = None
+
+
+class DocumentUpdate(BaseModel):
+    document_type: str | None = None
+    title: str | None = None
+    description: str | None = None
+    asset_id: UUID | None = None
+    effective_date: date | None = None
+    expiry_date: date | None = None
+    is_public_to_client: bool | None = None
+    is_passport_record: bool | None = None
+
+
+class DocumentRead(DocumentBase):
+    id: UUID
+    organization_id: UUID
+    building_id: UUID
+    original_filename: str | None = None
+    storage_bucket: str | None = None
+    storage_key: str | None = None
+    file_mime_type: str | None = None
+    file_size_bytes: int | None = None
+    version_number: int
+    parent_document_id: UUID | None = None
+    generated_by_system: bool
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class PassportTimelineItem(BaseModel):
+    event_type: str
+    label: str
+    occurred_at: datetime
+    record_id: UUID
+
+
+class PassportSummary(BaseModel):
+    building: BuildingRead
+    contacts: list[BuildingContactRead]
+    assets: list[AssetRead]
+    documents: list[DocumentRead]
+    timeline: list[PassportTimelineItem]
+    health_score: dict
+    membership: dict

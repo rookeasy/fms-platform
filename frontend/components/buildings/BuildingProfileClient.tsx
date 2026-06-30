@@ -9,18 +9,32 @@ import { EmptyState } from "@/components/EmptyState";
 import { ErrorState } from "@/components/ErrorState";
 import { LoadingState } from "@/components/LoadingState";
 import { StatusBadge } from "@/components/StatusBadge";
+import { BuildingAssetsPanel } from "@/components/buildings/BuildingAssetsPanel";
 import { BuildingContactsPanel } from "@/components/buildings/BuildingContactsPanel";
+import { BuildingDocumentsPanel } from "@/components/buildings/BuildingDocumentsPanel";
 import { BuildingForm } from "@/components/buildings/BuildingForm";
 import { formatControlledValue } from "@/lib/controlled-values";
 import {
   type Building,
+  type Asset,
+  type AssetPayload,
+  type AssetType,
   type BuildingContact,
   type BuildingContactPayload,
   type BuildingPayload,
+  type DocumentRecord,
+  createAsset,
   createBuildingContact,
+  deleteAsset,
   deleteBuildingContact,
   getBuilding,
+  listAssetTypes,
+  listBuildingAssets,
   listBuildingContacts,
+  listBuildingDocuments,
+  updateAsset,
+  uploadDocument,
+  uploadDocumentVersion,
   updateBuilding
 } from "@/lib/fms-api";
 
@@ -31,6 +45,10 @@ type BuildingProfileClientProps = {
 export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps) {
   const [building, setBuilding] = useState<Building | null>(null);
   const [contacts, setContacts] = useState<BuildingContact[]>([]);
+  const [assetTypes, setAssetTypes] = useState<AssetType[]>([]);
+  const [assets, setAssets] = useState<Asset[]>([]);
+  const [documents, setDocuments] = useState<DocumentRecord[]>([]);
+  const [activeTab, setActiveTab] = useState<"overview" | "assets" | "documents" | "contacts">("overview");
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -44,8 +62,16 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
         getBuilding(buildingId),
         listBuildingContacts(buildingId)
       ]);
+      const [loadedAssetTypes, loadedAssets, loadedDocuments] = await Promise.all([
+        listAssetTypes(),
+        listBuildingAssets(buildingId),
+        listBuildingDocuments(buildingId)
+      ]);
       setBuilding(loadedBuilding);
       setContacts(loadedContacts);
+      setAssetTypes(loadedAssetTypes);
+      setAssets(loadedAssets);
+      setDocuments(loadedDocuments);
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : "Unable to load building profile.");
     } finally {
@@ -92,6 +118,71 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
       setContacts((value) => value.filter((contact) => contact.id !== contactId));
     } catch (contactError) {
       setError(contactError instanceof Error ? contactError.message : "Unable to remove contact.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  async function handleCreateAsset(payload: AssetPayload) {
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      const asset = await createAsset(buildingId, payload);
+      setAssets((value) => [...value, asset]);
+    } catch (assetError) {
+      setError(assetError instanceof Error ? assetError.message : "Unable to add asset.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  async function handleUpdateAsset(assetId: string, payload: AssetPayload) {
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      const asset = await updateAsset(assetId, payload);
+      setAssets((value) => value.map((item) => (item.id === asset.id ? asset : item)));
+    } catch (assetError) {
+      setError(assetError instanceof Error ? assetError.message : "Unable to update asset.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  async function handleDeleteAsset(assetId: string) {
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      await deleteAsset(assetId);
+      setAssets((value) => value.filter((asset) => asset.id !== assetId));
+    } catch (assetError) {
+      setError(assetError instanceof Error ? assetError.message : "Unable to remove asset.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  async function handleUploadDocument(formData: FormData) {
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      const document = await uploadDocument(formData);
+      setDocuments((value) => [document, ...value]);
+    } catch (documentError) {
+      setError(documentError instanceof Error ? documentError.message : "Unable to upload document.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  async function handleUploadDocumentVersion(documentId: string, formData: FormData) {
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      const document = await uploadDocumentVersion(documentId, formData);
+      setDocuments((value) => [document, ...value]);
+    } catch (documentError) {
+      setError(documentError instanceof Error ? documentError.message : "Unable to upload document version.");
     } finally {
       setIsSubmitting(false);
     }
@@ -161,10 +252,30 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
       <div className="grid gap-4 md:grid-cols-3">
         <DashboardCard title="Building Type" value={formatControlledValue(building.building_type)} detail="Controlled by FMS-0010" />
         <DashboardCard title="Contacts" value={`${contacts.length}`} detail="Building-specific contacts" />
-        <DashboardCard title="Status" value={formatControlledValue(building.status)} detail="Registry status" />
+        <DashboardCard title="Assets" value={`${assets.length}`} detail="Building-owned records" />
       </div>
 
-      <section className="grid gap-6 xl:grid-cols-[1fr_420px]">
+      <nav className="flex flex-wrap gap-2 rounded-lg border border-slate-200 bg-white p-2 shadow-sm" aria-label="Building sections">
+        {[
+          ["overview", "Overview"],
+          ["assets", "Assets"],
+          ["documents", "Documents"],
+          ["contacts", "Contacts"]
+        ].map(([key, label]) => (
+          <button
+            key={key}
+            type="button"
+            onClick={() => setActiveTab(key as typeof activeTab)}
+            className={`h-10 rounded-md px-4 text-sm font-semibold ${
+              activeTab === key ? "bg-slate-950 text-white" : "text-slate-700 hover:bg-slate-100"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </nav>
+
+      {activeTab === "overview" ? (
         <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
           <h3 className="text-lg font-semibold text-slate-950">Building Details</h3>
           <dl className="mt-4 grid gap-4 md:grid-cols-2">
@@ -185,13 +296,38 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
             ))}
           </dl>
         </div>
+      ) : null}
+
+      {activeTab === "assets" ? (
+        <BuildingAssetsPanel
+          assets={assets}
+          assetTypes={assetTypes}
+          isSubmitting={isSubmitting}
+          onCreate={handleCreateAsset}
+          onUpdate={handleUpdateAsset}
+          onDelete={handleDeleteAsset}
+        />
+      ) : null}
+
+      {activeTab === "documents" ? (
+        <BuildingDocumentsPanel
+          buildingId={building.id}
+          assets={assets}
+          documents={documents}
+          isSubmitting={isSubmitting}
+          onUpload={handleUploadDocument}
+          onUploadVersion={handleUploadDocumentVersion}
+        />
+      ) : null}
+
+      {activeTab === "contacts" ? (
         <BuildingContactsPanel
           contacts={contacts}
           isSubmitting={isSubmitting}
           onCreate={handleCreateContact}
           onDelete={handleDeleteContact}
         />
-      </section>
+      ) : null}
     </div>
   );
 }
