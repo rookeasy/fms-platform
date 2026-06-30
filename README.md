@@ -2,7 +2,7 @@
 
 Repository foundation and frontend application shell for the FMS Platform.
 
-This repository currently includes FMS-0007 Phase 1, Phase 2, and Phase 3 only. Business modules and frontend/backend integration are intentionally out of scope.
+This repository currently includes FMS-0007 Phase 1 through Phase 4 only. Business modules and frontend/backend integration are intentionally out of scope.
 
 ## Stack
 
@@ -50,6 +50,7 @@ python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 alembic upgrade head
+python -m scripts.seed_reference_data
 uvicorn app.main:app --reload
 ```
 
@@ -91,5 +92,6 @@ npm run typecheck
 - Phase 1: repository foundation
 - Phase 2: frontend application shell using mock data only
 - Phase 3: backend application shell using placeholder API route groups
+- Phase 4: MVP database models, Alembic migration, and reference-data seed script
 
 No business modules or backend-connected frontend workflows have been built yet.
