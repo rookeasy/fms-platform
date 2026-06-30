@@ -11,7 +11,7 @@ router = APIRouter(prefix="/memberships", tags=["memberships"])
 def list_memberships(
     db: Session = Depends(get_db),
     _: object = Depends(get_current_user),
-    __: object = Depends(require_roles("admin")),
+    __: object = Depends(require_roles("platform_admin", "organization_admin")),
 ) -> PlaceholderResponse:
     _ = db
     return PlaceholderResponse(

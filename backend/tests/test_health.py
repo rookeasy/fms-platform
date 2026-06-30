@@ -12,13 +12,13 @@ def test_health_check() -> None:
     assert response.json() == {"status": "ok"}
 
 
-def test_api_v1_placeholder_route() -> None:
+def test_auth_placeholder_route() -> None:
     client = TestClient(app)
 
-    response = client.get("/api/v1/buildings")
+    response = client.get("/api/v1/auth/me")
 
     assert response.status_code == 200
-    assert response.json()["status"] == "placeholder"
+    assert response.json()["data"]["roles"] == ["platform_admin"]
 
 
 def test_standard_error_response() -> None:

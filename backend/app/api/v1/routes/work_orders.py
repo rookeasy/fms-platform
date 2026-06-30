@@ -11,7 +11,7 @@ router = APIRouter(prefix="/work-orders", tags=["work-orders"])
 def list_work_orders(
     db: Session = Depends(get_db),
     _: object = Depends(get_current_user),
-    __: object = Depends(require_roles("admin", "manager", "technician")),
+    __: object = Depends(require_roles("platform_admin", "organization_admin", "property_manager", "technician")),
 ) -> PlaceholderResponse:
     _ = db
     return PlaceholderResponse(

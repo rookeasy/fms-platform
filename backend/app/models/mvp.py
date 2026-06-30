@@ -41,8 +41,23 @@ class Organization(Base, TimestampMixin, SoftDeleteMixin):
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
-    slug: Mapped[str] = mapped_column(String(120), nullable=False, unique=True)
+    slug: Mapped[str | None] = mapped_column(String(120), nullable=True, unique=True)
+    legal_name: Mapped[str | None] = mapped_column(Text, nullable=True)
+    organization_type: Mapped[str] = mapped_column(String(80), nullable=False, default="client")
     status: Mapped[str] = mapped_column(String(50), nullable=False, default="active")
+    phone: Mapped[str | None] = mapped_column(Text, nullable=True)
+    email: Mapped[str | None] = mapped_column(Text, nullable=True)
+    website: Mapped[str | None] = mapped_column(Text, nullable=True)
+    address_line_1: Mapped[str | None] = mapped_column(Text, nullable=True)
+    address_line_2: Mapped[str | None] = mapped_column(Text, nullable=True)
+    city: Mapped[str | None] = mapped_column(Text, nullable=True)
+    province_state: Mapped[str | None] = mapped_column(Text, nullable=True)
+    postal_code: Mapped[str | None] = mapped_column(Text, nullable=True)
+    country: Mapped[str | None] = mapped_column(Text, nullable=True, default="Canada")
+    billing_contact_name: Mapped[str | None] = mapped_column(Text, nullable=True)
+    billing_contact_email: Mapped[str | None] = mapped_column(Text, nullable=True)
+    billing_contact_phone: Mapped[str | None] = mapped_column(Text, nullable=True)
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     users: Mapped[list["OrganizationUser"]] = relationship(back_populates="organization", cascade="all, delete-orphan")
     buildings: Mapped[list["Building"]] = relationship(back_populates="organization")
@@ -51,6 +66,7 @@ class Organization(Base, TimestampMixin, SoftDeleteMixin):
     __table_args__ = (
         Index("ix_organizations_slug", "slug"),
         Index("ix_organizations_status", "status"),
+        Index("ix_organizations_organization_type", "organization_type"),
     )
 
 
@@ -58,9 +74,15 @@ class User(Base, TimestampMixin, SoftDeleteMixin):
     __tablename__ = "users"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    auth_provider_user_id: Mapped[str | None] = mapped_column(Text, nullable=True, unique=True)
     email: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
-    full_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    full_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    first_name: Mapped[str | None] = mapped_column(Text, nullable=True)
+    last_name: Mapped[str | None] = mapped_column(Text, nullable=True)
+    phone: Mapped[str | None] = mapped_column(Text, nullable=True)
+    job_title: Mapped[str | None] = mapped_column(Text, nullable=True)
     status: Mapped[str] = mapped_column(String(50), nullable=False, default="active")
+    last_login_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     organizations: Mapped[list["OrganizationUser"]] = relationship(back_populates="user", cascade="all, delete-orphan")
     assigned_work_orders: Mapped[list["WorkOrder"]] = relationship(back_populates="assigned_user")
@@ -78,6 +100,7 @@ class Role(Base, TimestampMixin):
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name: Mapped[str] = mapped_column(String(80), nullable=False, unique=True)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    is_system_role: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
 
     organization_users: Mapped[list["OrganizationUser"]] = relationship(back_populates="role")
 
@@ -90,6 +113,8 @@ class OrganizationUser(Base, TimestampMixin):
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"), nullable=False)
     role_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("roles.id"), nullable=False)
     status: Mapped[str] = mapped_column(String(50), nullable=False, default="active")
+    invited_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    accepted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     organization: Mapped["Organization"] = relationship(back_populates="users")
     user: Mapped["User"] = relationship(back_populates="organizations")
@@ -107,14 +132,31 @@ class Building(Base, TimestampMixin, SoftDeleteMixin):
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     organization_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("organizations.id"), nullable=False)
+    bpid: Mapped[str | None] = mapped_column(Text, nullable=True, unique=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     code: Mapped[str | None] = mapped_column(String(80), nullable=True)
-    address_line1: Mapped[str] = mapped_column(String(255), nullable=False)
+    address_line1: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    address_line_1: Mapped[str | None] = mapped_column(Text, nullable=True)
+    address_line_2: Mapped[str | None] = mapped_column(Text, nullable=True)
     city: Mapped[str] = mapped_column(String(120), nullable=False)
     region: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    province_state: Mapped[str | None] = mapped_column(Text, nullable=True)
     country: Mapped[str] = mapped_column(String(120), nullable=False, default="Canada")
     postal_code: Mapped[str | None] = mapped_column(String(30), nullable=True)
+    latitude: Mapped[float | None] = mapped_column(Numeric(10, 7), nullable=True)
+    longitude: Mapped[float | None] = mapped_column(Numeric(10, 7), nullable=True)
+    building_type: Mapped[str | None] = mapped_column(Text, nullable=True)
+    occupancy_classification: Mapped[str | None] = mapped_column(Text, nullable=True)
+    construction_year: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    number_of_storeys: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    total_area_sq_ft: Mapped[float | None] = mapped_column(Numeric(14, 2), nullable=True)
+    owner_name: Mapped[str | None] = mapped_column(Text, nullable=True)
+    property_manager_name: Mapped[str | None] = mapped_column(Text, nullable=True)
+    fire_department: Mapped[str | None] = mapped_column(Text, nullable=True)
+    ahj_name: Mapped[str | None] = mapped_column(Text, nullable=True)
+    insurance_provider: Mapped[str | None] = mapped_column(Text, nullable=True)
     status: Mapped[str] = mapped_column(String(50), nullable=False, default="active")
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     organization: Mapped["Organization"] = relationship(back_populates="buildings")
     contacts: Mapped[list["BuildingContact"]] = relationship(back_populates="building")
@@ -125,6 +167,7 @@ class Building(Base, TimestampMixin, SoftDeleteMixin):
     __table_args__ = (
         UniqueConstraint("organization_id", "code", name="uq_buildings_org_code"),
         Index("ix_buildings_organization_id", "organization_id"),
+        Index("ix_buildings_bpid", "bpid"),
         Index("ix_buildings_org_status", "organization_id", "status"),
         Index("ix_buildings_org_name", "organization_id", "name"),
     )
@@ -137,9 +180,15 @@ class BuildingContact(Base, TimestampMixin, SoftDeleteMixin):
     organization_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("organizations.id"), nullable=False)
     building_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("buildings.id"), nullable=False)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
+    company: Mapped[str | None] = mapped_column(Text, nullable=True)
+    job_title: Mapped[str | None] = mapped_column(Text, nullable=True)
     email: Mapped[str | None] = mapped_column(String(255), nullable=True)
     phone: Mapped[str | None] = mapped_column(String(60), nullable=True)
+    mobile: Mapped[str | None] = mapped_column(Text, nullable=True)
     contact_type: Mapped[str] = mapped_column(String(80), nullable=False)
+    is_primary: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    is_emergency_contact: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     building: Mapped["Building"] = relationship(back_populates="contacts")
 

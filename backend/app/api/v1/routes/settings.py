@@ -9,7 +9,7 @@ router = APIRouter(prefix="/settings", tags=["settings"])
 @router.get("", response_model=PlaceholderResponse)
 def read_settings(
     _: object = Depends(get_current_user),
-    __: object = Depends(require_roles("admin")),
+    __: object = Depends(require_roles("platform_admin", "organization_admin")),
 ) -> PlaceholderResponse:
     return PlaceholderResponse(
         module="settings",

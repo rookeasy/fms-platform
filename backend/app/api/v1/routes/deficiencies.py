@@ -11,7 +11,7 @@ router = APIRouter(prefix="/deficiencies", tags=["deficiencies"])
 def list_deficiencies(
     db: Session = Depends(get_db),
     _: object = Depends(get_current_user),
-    __: object = Depends(require_roles("admin", "manager", "inspector")),
+    __: object = Depends(require_roles("platform_admin", "organization_admin", "property_manager", "technician", "engineer")),
 ) -> PlaceholderResponse:
     _ = db
     return PlaceholderResponse(

@@ -11,7 +11,7 @@ router = APIRouter(prefix="/certificates", tags=["certificates"])
 def list_certificates(
     db: Session = Depends(get_db),
     _: object = Depends(get_current_user),
-    __: object = Depends(require_roles("admin", "manager", "viewer")),
+    __: object = Depends(require_roles("platform_admin", "organization_admin", "property_manager", "readonly_viewer")),
 ) -> PlaceholderResponse:
     _ = db
     return PlaceholderResponse(

@@ -2,7 +2,7 @@
 
 Repository foundation and frontend application shell for the FMS Platform.
 
-This repository currently includes FMS-0007 Phase 1 through Phase 4 only. Business modules and frontend/backend integration are intentionally out of scope.
+This repository currently includes FMS-0007 Phase 1 through Phase 5 only. Frontend/backend integration is intentionally out of scope.
 
 ## Stack
 
@@ -93,5 +93,6 @@ npm run typecheck
 - Phase 2: frontend application shell using mock data only
 - Phase 3: backend application shell using placeholder API route groups
 - Phase 4: MVP database models, Alembic migration, and reference-data seed script
+- Phase 5: core domain services and CRUD APIs for organizations, users, roles, buildings, and building contacts
 
 No business modules or backend-connected frontend workflows have been built yet.

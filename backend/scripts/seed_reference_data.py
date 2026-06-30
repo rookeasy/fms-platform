@@ -5,23 +5,35 @@ from app.db.session import SessionLocal
 from app.models import AssetType, MembershipPlan, Role
 
 ROLES = [
-    {"name": "admin", "description": "Full organization administration access."},
-    {"name": "manager", "description": "Manages buildings, work, inspections, and documents."},
+    {"name": "platform_admin", "description": "Full access across the entire platform.", "is_system_role": True},
+    {"name": "organization_admin", "description": "Full administrative access within an organization.", "is_system_role": True},
+    {"name": "property_manager", "description": "Operational access to assigned buildings.", "is_system_role": True},
+    {"name": "building_owner", "description": "Client-side owner access to building records.", "is_system_role": True},
     {"name": "technician", "description": "Completes assigned work orders and field tasks."},
-    {"name": "inspector", "description": "Performs inspections and records deficiencies."},
-    {"name": "viewer", "description": "Read-only access to assigned organization data."},
+    {"name": "engineer", "description": "Technical reviewer for drawings, reports, calculations, and letters.", "is_system_role": True},
+    {"name": "readonly_viewer", "description": "Limited view-only access.", "is_system_role": True},
+    {"name": "ahj_viewer", "description": "Limited compliance verification access for AHJ users.", "is_system_role": True},
 ]
 
 ASSET_TYPES = [
-    {"name": "Fire Alarm System", "code": "fire_alarm", "description": "Fire alarm panels, devices, and related systems."},
-    {"name": "Sprinkler System", "code": "sprinkler", "description": "Sprinkler risers, valves, and connected equipment."},
-    {"name": "Elevator", "code": "elevator", "description": "Passenger, service, and freight elevators."},
-    {"name": "HVAC", "code": "hvac", "description": "Heating, ventilation, and air conditioning equipment."},
-    {"name": "Backflow Preventer", "code": "backflow", "description": "Backflow prevention assemblies and devices."},
+    {"name": "Sprinkler System", "code": "sprinkler_system", "description": "Sprinkler systems and connected equipment."},
+    {"name": "Standpipe System", "code": "standpipe_system", "description": "Standpipe systems."},
+    {"name": "Fire Pump", "code": "fire_pump", "description": "Fire pump equipment."},
+    {"name": "Backflow Preventer", "code": "backflow_preventer", "description": "Backflow prevention assemblies and devices."},
+    {"name": "Fire Alarm System", "code": "fire_alarm_system", "description": "Fire alarm panels, devices, and related systems."},
+    {"name": "Fire Extinguisher", "code": "fire_extinguisher", "description": "Portable fire extinguishers."},
+    {"name": "Emergency Lighting", "code": "emergency_lighting", "description": "Emergency lighting equipment."},
+    {"name": "Kitchen Suppression", "code": "kitchen_suppression", "description": "Kitchen suppression systems."},
+    {"name": "Special Hazard System", "code": "special_hazard_system", "description": "Special hazard suppression systems."},
+    {"name": "Control Valve", "code": "control_valve", "description": "Fire protection control valves."},
+    {"name": "Riser", "code": "riser", "description": "Fire protection risers."},
+    {"name": "Zone", "code": "zone", "description": "Fire protection zones."},
+    {"name": "Hydrant", "code": "hydrant", "description": "Hydrants."},
+    {"name": "Fire Department Connection", "code": "fire_department_connection", "description": "Fire department connections."},
 ]
 
 MEMBERSHIP_PLANS = [
-    {"name": "Starter", "code": "starter", "description": "Entry plan for small portfolios.", "monthly_price": 0},
+    {"name": "Essentials", "code": "essentials", "description": "Entry Protection Plan for small portfolios.", "monthly_price": 0},
     {"name": "Professional", "code": "professional", "description": "Operational plan for active portfolios.", "monthly_price": 199},
     {"name": "Enterprise", "code": "enterprise", "description": "Advanced plan for large organizations.", "monthly_price": 499},
 ]
@@ -31,6 +43,9 @@ def get_or_create_role(db: Session, payload: dict) -> None:
     role = db.scalar(select(Role).where(Role.name == payload["name"]))
     if role is None:
         db.add(Role(**payload))
+    else:
+        for key, value in payload.items():
+            setattr(role, key, value)
 
 
 def get_or_create_asset_type(db: Session, payload: dict) -> None:
