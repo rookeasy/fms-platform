@@ -220,7 +220,7 @@ class BuildingContactUpdate(BaseModel):
     name: str | None = None
     company: str | None = None
     job_title: str | None = None
-    email: EmailStr | None = None
+    email: str | None = None
     phone: str | None = None
     mobile: str | None = None
     is_primary: bool | None = None
