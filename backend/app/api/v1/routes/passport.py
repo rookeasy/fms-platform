@@ -1,6 +1,7 @@
 from uuid import UUID
 
 from fastapi import APIRouter, Depends
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 
 from app.api.deps import CurrentUser, get_current_user, get_db, require_roles
@@ -17,4 +18,4 @@ def get_building_passport(
     _: object = Depends(require_roles("platform_admin", "organization_admin", "property_manager", "building_owner", "technician", "engineer", "readonly_viewer")),
 ) -> dict:
     passport = passport_service.get_passport(db, building_id, current_user)
-    return {"data": passport}
+    return {"data": jsonable_encoder(passport)}
