@@ -136,6 +136,105 @@ class OrganizationUserRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class PropertyBase(BaseModel):
+    organization_id: UUID
+    name: str
+    property_type: str = "single_site"
+    status: str = "active"
+    address_line_1: str | None = None
+    address_line_2: str | None = None
+    city: str | None = None
+    province_state: str | None = None
+    postal_code: str | None = None
+    country: str | None = "Canada"
+    owner_name: str | None = None
+    property_manager_name: str | None = None
+    notes: str | None = None
+
+
+class PropertyCreate(PropertyBase):
+    pass
+
+
+class PropertyUpdate(BaseModel):
+    name: str | None = None
+    property_type: str | None = None
+    status: str | None = None
+    address_line_1: str | None = None
+    address_line_2: str | None = None
+    city: str | None = None
+    province_state: str | None = None
+    postal_code: str | None = None
+    country: str | None = None
+    owner_name: str | None = None
+    property_manager_name: str | None = None
+    notes: str | None = None
+
+
+class PropertyRead(PropertyBase):
+    id: UUID
+    created_at: datetime
+    updated_at: datetime
+    campus_count: int = 0
+    building_count: int = 0
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class CampusBase(BaseModel):
+    organization_id: UUID
+    property_id: UUID | None = None
+    name: str
+    campus_type: str = "campus"
+    status: str = "active"
+    address_line_1: str | None = None
+    address_line_2: str | None = None
+    city: str | None = None
+    province_state: str | None = None
+    postal_code: str | None = None
+    country: str | None = "Canada"
+    notes: str | None = None
+
+
+class CampusCreate(CampusBase):
+    pass
+
+
+class CampusUpdate(BaseModel):
+    property_id: UUID | None = None
+    name: str | None = None
+    campus_type: str | None = None
+    status: str | None = None
+    address_line_1: str | None = None
+    address_line_2: str | None = None
+    city: str | None = None
+    province_state: str | None = None
+    postal_code: str | None = None
+    country: str | None = None
+    notes: str | None = None
+
+
+class CampusRead(CampusBase):
+    id: UUID
+    created_at: datetime
+    updated_at: datetime
+    building_count: int = 0
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class BuildingAssignment(BaseModel):
+    property_id: UUID | None = None
+    campus_id: UUID | None = None
+
+
+class PropertyCampusSummary(BaseModel):
+    properties: int
+    campuses: int
+    assigned_buildings: int
+    unassigned_buildings: int
+
+
 class BuildingBase(BaseModel):
     organization_id: UUID
     name: str
@@ -191,6 +290,8 @@ class BuildingUpdate(BaseModel):
 
 class BuildingRead(BuildingBase):
     id: UUID
+    property_id: UUID | None = None
+    campus_id: UUID | None = None
     bpid: str
     created_at: datetime
     updated_at: datetime

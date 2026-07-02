@@ -13,6 +13,7 @@ from app.api.v1.routes import (
     organization_users,
     organizations,
     passport,
+    properties,
     reports,
     roles,
     settings,
@@ -31,6 +32,7 @@ api_router.include_router(inspections.router)
 api_router.include_router(deficiencies.router)
 api_router.include_router(documents.router)
 api_router.include_router(passport.router)
+api_router.include_router(properties.router)
 api_router.include_router(reports.router)
 api_router.include_router(certificates.router)
 api_router.include_router(memberships.router)

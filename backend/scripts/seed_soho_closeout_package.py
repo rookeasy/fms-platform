@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from sqlalchemy import MetaData, Table, create_engine, func, insert, select
+from sqlalchemy import MetaData, Table, and_, create_engine, func, insert, or_, select
 
 from app.core.config import settings
 
@@ -188,6 +188,30 @@ def first_id(connection, table: Table, *criteria):
     return row[0] if row else None
 
 
+def find_building_id(connection, buildings: Table, organization_id, names: list[str], addresses: list[str]):
+    criteria = [buildings.c.organization_id == organization_id]
+    if "deleted_at" in buildings.c:
+        criteria.append(buildings.c.deleted_at.is_(None))
+
+    match_criteria = []
+    if names:
+        match_criteria.append(buildings.c.name.in_(names))
+    if "address_line_1" in buildings.c and addresses:
+        match_criteria.append(and_(buildings.c.address_line_1.in_(addresses), buildings.c.name.in_(names)))
+    if "address_line1" in buildings.c and addresses:
+        match_criteria.append(and_(buildings.c.address_line1.in_(addresses), buildings.c.name.in_(names)))
+    if not match_criteria:
+        return None
+
+    row = connection.execute(
+        select(buildings.c.id)
+        .where(*criteria, or_(*match_criteria))
+        .order_by(buildings.c.created_at if "created_at" in buildings.c else buildings.c.id)
+        .limit(1)
+    ).first()
+    return row[0] if row else None
+
+
 def generate_bpid(connection, buildings: Table) -> str:
     if "bpid" not in buildings.c:
         return ""
@@ -258,12 +282,20 @@ def seed_soho_closeout_package() -> SeedSummary:
         summary.organization_id = organization_id
 
         building_criteria = [buildings.c.organization_id == organization_id]
+        if "deleted_at" in buildings.c:
+            building_criteria.append(buildings.c.deleted_at.is_(None))
         if "code" in buildings.c:
             building_id = first_id(connection, buildings, *building_criteria, buildings.c.code == BUILDING["code"])
         else:
             building_id = None
         if not building_id:
-            building_id = first_id(connection, buildings, *building_criteria, buildings.c.name == BUILDING["name"])
+            building_id = find_building_id(
+                connection,
+                buildings,
+                organization_id,
+                [BUILDING["name"], "SOHO Phase I Building A", "SOHO Phase 1 Building A"],
+                [BUILDING["address_line_1"], BUILDING["address_line1"]],
+            )
 
         if building_id:
             summary.buildings_reused += 1

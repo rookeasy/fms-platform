@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from sqlalchemy import MetaData, Table, create_engine, func, insert, select
+from sqlalchemy import MetaData, Table, create_engine, func, insert, or_, select
 
 from app.core.config import settings
 
@@ -138,6 +138,30 @@ def first_id(connection, table: Table, *criteria):
     return row[0] if row else None
 
 
+def find_building_id(connection, buildings: Table, organization_id, names: list[str], addresses: list[str]):
+    criteria = [buildings.c.organization_id == organization_id]
+    if "deleted_at" in buildings.c:
+        criteria.append(buildings.c.deleted_at.is_(None))
+
+    match_criteria = []
+    if names:
+        match_criteria.append(buildings.c.name.in_(names))
+    if "address_line_1" in buildings.c and addresses:
+        match_criteria.append(buildings.c.address_line_1.in_(addresses))
+    if "address_line1" in buildings.c and addresses:
+        match_criteria.append(buildings.c.address_line1.in_(addresses))
+    if not match_criteria:
+        return None
+
+    row = connection.execute(
+        select(buildings.c.id)
+        .where(*criteria, or_(*match_criteria))
+        .order_by(buildings.c.created_at if "created_at" in buildings.c else buildings.c.id)
+        .limit(1)
+    ).first()
+    return row[0] if row else None
+
+
 def generate_bpid(connection, buildings: Table) -> str:
     if "bpid" not in buildings.c:
         return ""
@@ -185,11 +209,12 @@ def seed_linhaven() -> SeedSummary:
             organization_id = insert_row(connection, organizations, ORGANIZATION)
             summary.organizations_created += 1
 
-        building_id = first_id(
+        building_id = find_building_id(
             connection,
             buildings,
-            buildings.c.organization_id == organization_id,
-            buildings.c.name.in_(["Linhaven LTC", "Linhaven Long-Term Care"]),
+            organization_id,
+            ["Linhaven LTC", "Linhaven Long-Term Care"],
+            [BUILDING["address_line_1"], BUILDING["address_line1"]],
         )
         if building_id:
             summary.buildings_reused += 1

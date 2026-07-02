@@ -60,6 +60,7 @@ class Organization(Base, TimestampMixin, SoftDeleteMixin):
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     users: Mapped[list["OrganizationUser"]] = relationship(back_populates="organization", cascade="all, delete-orphan")
+    properties: Mapped[list["Property"]] = relationship(back_populates="organization")
     buildings: Mapped[list["Building"]] = relationship(back_populates="organization")
     memberships: Mapped[list["Membership"]] = relationship(back_populates="organization")
 
@@ -67,6 +68,64 @@ class Organization(Base, TimestampMixin, SoftDeleteMixin):
         Index("ix_organizations_slug", "slug"),
         Index("ix_organizations_status", "status"),
         Index("ix_organizations_organization_type", "organization_type"),
+    )
+
+
+class Property(Base, TimestampMixin, SoftDeleteMixin):
+    __tablename__ = "properties"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    organization_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("organizations.id"), nullable=False)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    property_type: Mapped[str] = mapped_column(String(80), nullable=False, default="single_site")
+    status: Mapped[str] = mapped_column(String(50), nullable=False, default="active")
+    address_line_1: Mapped[str | None] = mapped_column(Text, nullable=True)
+    address_line_2: Mapped[str | None] = mapped_column(Text, nullable=True)
+    city: Mapped[str | None] = mapped_column(Text, nullable=True)
+    province_state: Mapped[str | None] = mapped_column(Text, nullable=True)
+    postal_code: Mapped[str | None] = mapped_column(Text, nullable=True)
+    country: Mapped[str | None] = mapped_column(Text, nullable=True, default="Canada")
+    owner_name: Mapped[str | None] = mapped_column(Text, nullable=True)
+    property_manager_name: Mapped[str | None] = mapped_column(Text, nullable=True)
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    organization: Mapped["Organization"] = relationship(back_populates="properties")
+    campuses: Mapped[list["Campus"]] = relationship(back_populates="property")
+    buildings: Mapped[list["Building"]] = relationship(back_populates="property")
+
+    __table_args__ = (
+        UniqueConstraint("organization_id", "name", name="uq_properties_org_name"),
+        Index("ix_properties_organization_id", "organization_id"),
+        Index("ix_properties_org_status", "organization_id", "status"),
+        Index("ix_properties_org_type", "organization_id", "property_type"),
+    )
+
+
+class Campus(Base, TimestampMixin, SoftDeleteMixin):
+    __tablename__ = "campuses"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    organization_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("organizations.id"), nullable=False)
+    property_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("properties.id"), nullable=True)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    campus_type: Mapped[str] = mapped_column(String(80), nullable=False, default="campus")
+    status: Mapped[str] = mapped_column(String(50), nullable=False, default="active")
+    address_line_1: Mapped[str | None] = mapped_column(Text, nullable=True)
+    address_line_2: Mapped[str | None] = mapped_column(Text, nullable=True)
+    city: Mapped[str | None] = mapped_column(Text, nullable=True)
+    province_state: Mapped[str | None] = mapped_column(Text, nullable=True)
+    postal_code: Mapped[str | None] = mapped_column(Text, nullable=True)
+    country: Mapped[str | None] = mapped_column(Text, nullable=True, default="Canada")
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    property: Mapped["Property | None"] = relationship(back_populates="campuses")
+    buildings: Mapped[list["Building"]] = relationship(back_populates="campus")
+
+    __table_args__ = (
+        UniqueConstraint("organization_id", "name", name="uq_campuses_org_name"),
+        Index("ix_campuses_organization_id", "organization_id"),
+        Index("ix_campuses_property_id", "property_id"),
+        Index("ix_campuses_org_status", "organization_id", "status"),
     )
 
 
@@ -132,6 +191,8 @@ class Building(Base, TimestampMixin, SoftDeleteMixin):
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     organization_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("organizations.id"), nullable=False)
+    property_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("properties.id"), nullable=True)
+    campus_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("campuses.id"), nullable=True)
     bpid: Mapped[str | None] = mapped_column(Text, nullable=True, unique=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     code: Mapped[str | None] = mapped_column(String(80), nullable=True)
@@ -159,6 +220,8 @@ class Building(Base, TimestampMixin, SoftDeleteMixin):
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     organization: Mapped["Organization"] = relationship(back_populates="buildings")
+    property: Mapped["Property | None"] = relationship(back_populates="buildings")
+    campus: Mapped["Campus | None"] = relationship(back_populates="buildings")
     contacts: Mapped[list["BuildingContact"]] = relationship(back_populates="building")
     assets: Mapped[list["Asset"]] = relationship(back_populates="building")
     documents: Mapped[list["Document"]] = relationship(back_populates="building")
@@ -168,6 +231,8 @@ class Building(Base, TimestampMixin, SoftDeleteMixin):
     __table_args__ = (
         UniqueConstraint("organization_id", "code", name="uq_buildings_org_code"),
         Index("ix_buildings_organization_id", "organization_id"),
+        Index("ix_buildings_property_id", "property_id"),
+        Index("ix_buildings_campus_id", "campus_id"),
         Index("ix_buildings_bpid", "bpid"),
         Index("ix_buildings_org_status", "organization_id", "status"),
         Index("ix_buildings_org_name", "organization_id", "name"),

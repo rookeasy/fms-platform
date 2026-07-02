@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+import argparse
 from dataclasses import dataclass
 from typing import Any
 
-from sqlalchemy import MetaData, Table, create_engine, func, insert, select
+from sqlalchemy import MetaData, Table, create_engine, func, insert, or_, select, update
 
 from app.core.config import settings
 
@@ -24,6 +25,10 @@ class SeedSummary:
     documents_reused: int = 0
     organization_id: Any | None = None
     building_ids: dict[str, Any] | None = None
+    cleanup_buildings_archived: int = 0
+    cleanup_contacts_archived: int = 0
+    cleanup_assets_archived: int = 0
+    cleanup_documents_archived: int = 0
 
 
 ORGANIZATION = {
@@ -53,6 +58,27 @@ ASSET_TYPES = {
     "special_suppression_system": ("Special Suppression System", "suppression"),
     "emergency_lighting": ("Emergency Lighting", "life_safety"),
     "fire_extinguishers": ("Fire Extinguishers", "life_safety"),
+}
+
+REMOVED_PLACEHOLDER_BUILDING_NAMES = {
+    "2700 Aquitaine Avenue",
+    "5500 North Service Road",
+    "CS Viamonde Elementary School",
+    "Griffin Way Industrial",
+    "Niagara Falls CES",
+    "Prologis DC1 Halton Hills",
+    "Waterloo Avenue Public School",
+}
+
+DEDUPLICATE_BUILDING_GROUPS = {
+    "Linhaven": {
+        "names": ["Linhaven LTC", "Linhaven Long-Term Care"],
+        "addresses": ["403 Ontario Street"],
+    },
+    "SOHO Phase I / Building A": {
+        "names": ["SOHO Phase I / Building A", "SOHO Phase I Building A", "SOHO Phase 1 Building A"],
+        "addresses": ["505-517 Highland Road West"],
+    },
 }
 
 
@@ -246,119 +272,6 @@ REFERENCE_BUILDINGS = [
         "documents": [("High-Rise Fire Protection Matrix", "engineering_letter", True, True)],
     },
     {
-        "name": "Waterloo Avenue Public School",
-        "address_line_1": "24 Waterloo Avenue",
-        "city": "Guelph",
-        "province_state": "ON",
-        "postal_code": "N1H 3H3",
-        "building_type": "school",
-        "occupancy_classification": "assembly_education",
-        "number_of_storeys": 2,
-        "owner_name": "Reference District School Board",
-        "property_manager_name": "Reference Facilities Department",
-        "fire_department": "Guelph Fire Department",
-        "ahj_name": "City of Guelph",
-        "notes": "Education-sector reference site for internal demos and board-facing Passport workflows.",
-        "assets": [
-            ("Wet Sprinkler System", "wet_sprinkler_system", "School-wide"),
-            ("Fire Alarm Control Panel", "fire_alarm_control_panel", "Main office"),
-            ("Fire Department Connection", "fire_department_connection", "Front elevation"),
-            ("Emergency Lighting", "emergency_lighting", "Corridors and gym"),
-        ],
-        "documents": [("School Fire Safety Reference Package", "other", True, True)],
-    },
-    {
-        "name": "Niagara Falls CES",
-        "address_line_1": "7771 St. Michael Avenue",
-        "city": "Niagara Falls",
-        "province_state": "ON",
-        "postal_code": "L2H 2Y6",
-        "building_type": "school",
-        "occupancy_classification": "assembly_education",
-        "number_of_storeys": 2,
-        "owner_name": "Reference Catholic School Board",
-        "property_manager_name": "Reference Facilities Department",
-        "fire_department": "Niagara Falls Fire Department",
-        "ahj_name": "City of Niagara Falls",
-        "notes": "Catholic elementary school reference profile for education portfolio demonstrations.",
-        "assets": [
-            ("Wet Sprinkler System", "wet_sprinkler_system", "School-wide"),
-            ("Fire Alarm Control Panel", "fire_alarm_control_panel", "Administration area"),
-            ("Fire Department Connection", "fire_department_connection", "Front driveway"),
-            ("Fire Extinguisher Program", "fire_extinguishers", "Classroom corridors"),
-        ],
-        "documents": [("Elementary School Drawing Index", "drawing", True, True)],
-    },
-    {
-        "name": "CS Viamonde Elementary School",
-        "address_line_1": "600 River Road",
-        "city": "Welland",
-        "province_state": "ON",
-        "postal_code": "L3B 5N4",
-        "building_type": "school",
-        "occupancy_classification": "assembly_education",
-        "number_of_storeys": 2,
-        "owner_name": "Reference French Public School Board",
-        "property_manager_name": "Reference Facilities Department",
-        "fire_department": "Welland Fire and Emergency Services",
-        "ahj_name": "City of Welland",
-        "notes": "French-language school reference site for training and sales discovery examples.",
-        "assets": [
-            ("Wet Sprinkler System", "wet_sprinkler_system", "School-wide"),
-            ("Fire Alarm Control Panel", "fire_alarm_control_panel", "Main office"),
-            ("Emergency Lighting", "emergency_lighting", "Corridors"),
-            ("Backflow Preventer", "backflow_preventer", "Service room"),
-        ],
-        "documents": [("Bilingual Client Handoff Notes", "owner_manual", False, False)],
-    },
-    {
-        "name": "Griffin Way Industrial",
-        "address_line_1": "10 Griffin Way",
-        "city": "Chelsea",
-        "province_state": "MA",
-        "postal_code": "02150",
-        "country": "United States",
-        "building_type": "industrial",
-        "occupancy_classification": "industrial",
-        "number_of_storeys": 1,
-        "owner_name": "Reference Industrial Owner",
-        "property_manager_name": "Reference Industrial Management",
-        "fire_department": "Chelsea Fire Department",
-        "ahj_name": "City of Chelsea",
-        "notes": "Industrial reference building for demonstrating non-Canadian and warehouse-style profiles.",
-        "assets": [
-            ("Wet Sprinkler System - Warehouse", "wet_sprinkler_system", "Warehouse"),
-            ("Fire Pump", "fire_pump", "Pump room"),
-            ("Fire Alarm Control Panel", "fire_alarm_control_panel", "Shipping office"),
-            ("Fire Department Connection", "fire_department_connection", "Truck court"),
-            ("Backflow Preventer", "backflow_preventer", "Water entry"),
-        ],
-        "documents": [("Industrial Warehouse Fire Protection Overview", "engineering_letter", True, True)],
-    },
-    {
-        "name": "Prologis DC1 Halton Hills",
-        "address_line_1": "8450 Boston Church Road",
-        "city": "Halton Hills",
-        "province_state": "ON",
-        "postal_code": "L0P 1E0",
-        "building_type": "warehouse_distribution",
-        "occupancy_classification": "storage",
-        "number_of_storeys": 1,
-        "owner_name": "Reference Logistics Owner",
-        "property_manager_name": "Reference Logistics Management",
-        "fire_department": "Halton Hills Fire Department",
-        "ahj_name": "Town of Halton Hills",
-        "notes": "Distribution-centre reference site for sales demos with high-value sprinkler assets.",
-        "assets": [
-            ("ESFR Wet Sprinkler System", "wet_sprinkler_system", "Warehouse ceiling"),
-            ("Fire Pump", "fire_pump", "Pump house"),
-            ("Backflow Preventer", "backflow_preventer", "Water entry"),
-            ("Fire Alarm Control Panel", "fire_alarm_control_panel", "Security office"),
-            ("Fire Department Connection", "fire_department_connection", "Truck court"),
-        ],
-        "documents": [("Distribution Centre Hydraulic Design Narrative", "hydraulic_calculation", True, True)],
-    },
-    {
         "name": "Darling Ingredients",
         "address_line_1": "1000 Heritage Road",
         "city": "Burlington",
@@ -381,50 +294,6 @@ REFERENCE_BUILDINGS = [
         ],
         "documents": [("Special Suppression System Data Sheet", "manufacturer_data", True, True)],
     },
-    {
-        "name": "2700 Aquitaine Avenue",
-        "address_line_1": "2700 Aquitaine Avenue",
-        "city": "Mississauga",
-        "province_state": "ON",
-        "postal_code": "L5N 3J6",
-        "building_type": "residential",
-        "occupancy_classification": "residential",
-        "number_of_storeys": 10,
-        "owner_name": "Reference Residential Owner",
-        "property_manager_name": "Reference Property Management",
-        "fire_department": "Mississauga Fire and Emergency Services",
-        "ahj_name": "City of Mississauga",
-        "notes": "Residential tower reference building for Passport demonstrations with older-building assumptions.",
-        "assets": [
-            ("Wet Sprinkler System", "wet_sprinkler_system", "Residential floors"),
-            ("Standpipe System", "standpipe_system", "Exit stairs"),
-            ("Fire Alarm Control Panel", "fire_alarm_control_panel", "Lobby"),
-            ("Fire Department Connection", "fire_department_connection", "Aquitaine Avenue exterior"),
-        ],
-        "documents": [("Residential Tower Passport Intake Notes", "other", False, False)],
-    },
-    {
-        "name": "5500 North Service Road",
-        "address_line_1": "5500 North Service Road",
-        "city": "Burlington",
-        "province_state": "ON",
-        "postal_code": "L7L 6W6",
-        "building_type": "commercial_office",
-        "occupancy_classification": "business_personal_services",
-        "number_of_storeys": 4,
-        "owner_name": "Reference Commercial Owner",
-        "property_manager_name": "Reference Commercial Management",
-        "fire_department": "Burlington Fire Department",
-        "ahj_name": "City of Burlington",
-        "notes": "Commercial office reference site for internal operations and client-facing sales demos.",
-        "assets": [
-            ("Wet Sprinkler System", "wet_sprinkler_system", "Office floors"),
-            ("Fire Alarm Control Panel", "fire_alarm_control_panel", "Main lobby"),
-            ("Fire Department Connection", "fire_department_connection", "North Service Road exterior"),
-            ("Emergency Lighting", "emergency_lighting", "Exit paths"),
-        ],
-        "documents": [("Commercial Office Fire Protection Summary", "building_health_report", True, True)],
-    },
 ]
 
 
@@ -434,6 +303,30 @@ def payload_for(table: Table, payload: dict[str, Any]) -> dict[str, Any]:
 
 def first_id(connection, table: Table, *criteria):
     row = connection.execute(select(table.c.id).where(*criteria).limit(1)).first()
+    return row[0] if row else None
+
+
+def find_building_id(connection, buildings: Table, organization_id, names: list[str], addresses: list[str]):
+    criteria = [buildings.c.organization_id == organization_id]
+    if "deleted_at" in buildings.c:
+        criteria.append(buildings.c.deleted_at.is_(None))
+
+    match_criteria = []
+    if names:
+        match_criteria.append(buildings.c.name.in_(names))
+    if "address_line_1" in buildings.c and addresses:
+        match_criteria.append(buildings.c.address_line_1.in_(addresses))
+    if "address_line1" in buildings.c and addresses:
+        match_criteria.append(buildings.c.address_line1.in_(addresses))
+    if not match_criteria:
+        return None
+
+    row = connection.execute(
+        select(buildings.c.id)
+        .where(*criteria, or_(*match_criteria))
+        .order_by(buildings.c.created_at if "created_at" in buildings.c else buildings.c.id)
+        .limit(1)
+    ).first()
     return row[0] if row else None
 
 
@@ -449,6 +342,22 @@ def generate_bpid(connection, buildings: Table) -> str:
 def insert_row(connection, table: Table, payload: dict[str, Any]):
     result = connection.execute(insert(table).values(**payload_for(table, payload)).returning(table.c.id))
     return result.scalar_one()
+
+
+def soft_delete_by_ids(connection, table: Table, ids: list[Any]) -> int:
+    if not ids or "deleted_at" not in table.c:
+        return 0
+    result = connection.execute(update(table).where(table.c.id.in_(ids)).values(deleted_at=func.now()))
+    return int(result.rowcount or 0)
+
+
+def bpid_sort_value(value: Any) -> int:
+    if not value:
+        return 999999999
+    try:
+        return int(str(value).rsplit("-", 1)[1])
+    except (IndexError, ValueError):
+        return 999999999
 
 
 def ensure_schema(metadata: MetaData) -> None:
@@ -548,11 +457,12 @@ def seed_reference_portfolio() -> SeedSummary:
             asset_type_ids[code] = asset_type_id
 
         for building in REFERENCE_BUILDINGS:
-            building_id = first_id(
+            building_id = find_building_id(
                 connection,
                 buildings,
-                buildings.c.organization_id == organization_id,
-                buildings.c.name == building["name"],
+                organization_id,
+                [building["name"]],
+                [building["address_line_1"], building.get("address_line1", building["address_line_1"])],
             )
             if building_id:
                 summary.buildings_reused += 1
@@ -664,6 +574,193 @@ def seed_reference_portfolio() -> SeedSummary:
     return summary
 
 
+def cleanup_removed_placeholder_buildings() -> SeedSummary:
+    engine = create_engine(settings.database_url, pool_pre_ping=True)
+    metadata = MetaData()
+    metadata.reflect(bind=engine)
+    ensure_schema(metadata)
+
+    organizations = metadata.tables["organizations"]
+    buildings = metadata.tables["buildings"]
+    contacts = metadata.tables["building_contacts"]
+    assets = metadata.tables["assets"]
+    documents = metadata.tables["documents"]
+    summary = SeedSummary(building_ids={})
+
+    with engine.begin() as connection:
+        organization_id = first_id(connection, organizations, organizations.c.name == ORGANIZATION["name"])
+        summary.organization_id = organization_id
+        if not organization_id:
+            return summary
+
+        candidate_rows = connection.execute(
+            select(buildings.c.id, buildings.c.name, buildings.c.notes)
+            .where(
+                buildings.c.organization_id == organization_id,
+                buildings.c.name.in_(REMOVED_PLACEHOLDER_BUILDING_NAMES),
+                buildings.c.deleted_at.is_(None) if "deleted_at" in buildings.c else True,
+            )
+            .order_by(buildings.c.name)
+        ).all()
+
+        safe_building_ids = []
+        for building_id, name, notes in candidate_rows:
+            seeded_document = connection.execute(
+                select(documents.c.id)
+                .where(
+                    documents.c.organization_id == organization_id,
+                    documents.c.building_id == building_id,
+                    documents.c.storage_key.like(f"reference-portfolio/{safe_slug(name)}/%"),
+                )
+                .limit(1)
+            ).first()
+            seeded_asset = connection.execute(
+                select(assets.c.id)
+                .where(
+                    assets.c.organization_id == organization_id,
+                    assets.c.building_id == building_id,
+                    assets.c.asset_tag.like(f"FMS0023-{safe_slug(name)[:24]}-%") if "asset_tag" in assets.c else True,
+                )
+                .limit(1)
+            ).first()
+            seeded_note = "reference" in str(notes or "").lower()
+            if seeded_document or seeded_asset or seeded_note:
+                safe_building_ids.append(building_id)
+                summary.building_ids[name] = building_id
+
+        if not safe_building_ids:
+            return summary
+
+        document_ids = [
+            row[0]
+            for row in connection.execute(
+                select(documents.c.id).where(
+                    documents.c.organization_id == organization_id,
+                    documents.c.building_id.in_(safe_building_ids),
+                    documents.c.deleted_at.is_(None) if "deleted_at" in documents.c else True,
+                )
+            ).all()
+        ]
+        contact_ids = [
+            row[0]
+            for row in connection.execute(
+                select(contacts.c.id).where(
+                    contacts.c.organization_id == organization_id,
+                    contacts.c.building_id.in_(safe_building_ids),
+                    contacts.c.deleted_at.is_(None) if "deleted_at" in contacts.c else True,
+                )
+            ).all()
+        ]
+        asset_ids = [
+            row[0]
+            for row in connection.execute(
+                select(assets.c.id).where(
+                    assets.c.organization_id == organization_id,
+                    assets.c.building_id.in_(safe_building_ids),
+                    assets.c.deleted_at.is_(None) if "deleted_at" in assets.c else True,
+                )
+            ).all()
+        ]
+
+        summary.cleanup_documents_archived = soft_delete_by_ids(connection, documents, document_ids)
+        summary.cleanup_contacts_archived = soft_delete_by_ids(connection, contacts, contact_ids)
+        summary.cleanup_assets_archived = soft_delete_by_ids(connection, assets, asset_ids)
+        summary.cleanup_buildings_archived = soft_delete_by_ids(connection, buildings, safe_building_ids)
+
+    return summary
+
+
+def cleanup_duplicate_linhaven_soho_buildings() -> SeedSummary:
+    engine = create_engine(settings.database_url, pool_pre_ping=True)
+    metadata = MetaData()
+    metadata.reflect(bind=engine)
+    ensure_schema(metadata)
+
+    organizations = metadata.tables["organizations"]
+    buildings = metadata.tables["buildings"]
+    contacts = metadata.tables["building_contacts"]
+    assets = metadata.tables["assets"]
+    documents = metadata.tables["documents"]
+    summary = SeedSummary(building_ids={})
+
+    with engine.begin() as connection:
+        organization_id = first_id(connection, organizations, organizations.c.name == ORGANIZATION["name"])
+        summary.organization_id = organization_id
+        if not organization_id:
+            return summary
+
+        duplicate_ids = []
+        for group_name, group in DEDUPLICATE_BUILDING_GROUPS.items():
+            criteria = [buildings.c.organization_id == organization_id]
+            if "deleted_at" in buildings.c:
+                criteria.append(buildings.c.deleted_at.is_(None))
+
+            match_criteria = [buildings.c.name.in_(group["names"])]
+            if "address_line_1" in buildings.c:
+                match_criteria.append(buildings.c.address_line_1.in_(group["addresses"]))
+            if "address_line1" in buildings.c:
+                match_criteria.append(buildings.c.address_line1.in_(group["addresses"]))
+
+            selected_columns = [buildings.c.id, buildings.c.name]
+            selected_columns.append(buildings.c.bpid if "bpid" in buildings.c else buildings.c.id.label("bpid"))
+            selected_columns.append(buildings.c.created_at if "created_at" in buildings.c else buildings.c.id.label("created_at"))
+            candidate_rows = connection.execute(
+                select(*selected_columns)
+                .where(*criteria, or_(*match_criteria))
+            ).all()
+
+            if len(candidate_rows) <= 1:
+                continue
+
+            ordered_rows = sorted(candidate_rows, key=lambda row: (bpid_sort_value(row[2]), row[3], str(row[0])))
+            keep_row = ordered_rows[0]
+            summary.building_ids[f"Kept {group_name}"] = keep_row[0]
+            for duplicate_row in ordered_rows[1:]:
+                duplicate_ids.append(duplicate_row[0])
+                summary.building_ids[f"Archived {duplicate_row[1]}"] = duplicate_row[0]
+
+        if not duplicate_ids:
+            return summary
+
+        document_ids = [
+            row[0]
+            for row in connection.execute(
+                select(documents.c.id).where(
+                    documents.c.organization_id == organization_id,
+                    documents.c.building_id.in_(duplicate_ids),
+                    documents.c.deleted_at.is_(None) if "deleted_at" in documents.c else True,
+                )
+            ).all()
+        ]
+        contact_ids = [
+            row[0]
+            for row in connection.execute(
+                select(contacts.c.id).where(
+                    contacts.c.organization_id == organization_id,
+                    contacts.c.building_id.in_(duplicate_ids),
+                    contacts.c.deleted_at.is_(None) if "deleted_at" in contacts.c else True,
+                )
+            ).all()
+        ]
+        asset_ids = [
+            row[0]
+            for row in connection.execute(
+                select(assets.c.id).where(
+                    assets.c.organization_id == organization_id,
+                    assets.c.building_id.in_(duplicate_ids),
+                    assets.c.deleted_at.is_(None) if "deleted_at" in assets.c else True,
+                )
+            ).all()
+        ]
+
+        summary.cleanup_documents_archived = soft_delete_by_ids(connection, documents, document_ids)
+        summary.cleanup_contacts_archived = soft_delete_by_ids(connection, contacts, contact_ids)
+        summary.cleanup_assets_archived = soft_delete_by_ids(connection, assets, asset_ids)
+        summary.cleanup_buildings_archived = soft_delete_by_ids(connection, buildings, duplicate_ids)
+
+    return summary
+
+
 def print_summary(summary: SeedSummary) -> None:
     print("FMS-0023 Reference Portfolio seed complete")
     print(f"Organization ID: {summary.organization_id}")
@@ -676,5 +773,48 @@ def print_summary(summary: SeedSummary) -> None:
         print(f"- {name}: {building_id}")
 
 
+def print_cleanup_summary(summary: SeedSummary) -> None:
+    print("FMS-0023 Reference Portfolio placeholder cleanup complete")
+    print(f"Organization ID: {summary.organization_id or 'not found'}")
+    print(f"Placeholder buildings matched: {len(summary.building_ids or {})}")
+    print(f"cleanup_buildings_archived: {summary.cleanup_buildings_archived}")
+    print(f"cleanup_contacts_archived: {summary.cleanup_contacts_archived}")
+    print(f"cleanup_assets_archived: {summary.cleanup_assets_archived}")
+    print(f"cleanup_documents_archived: {summary.cleanup_documents_archived}")
+    print("Buildings archived:")
+    for name, building_id in (summary.building_ids or {}).items():
+        print(f"- {name}: {building_id}")
+
+
+def print_duplicate_cleanup_summary(summary: SeedSummary) -> None:
+    print("FMS-0023 Reference Portfolio duplicate Linhaven/SOHO cleanup complete")
+    print(f"Organization ID: {summary.organization_id or 'not found'}")
+    print(f"cleanup_buildings_archived: {summary.cleanup_buildings_archived}")
+    print(f"cleanup_contacts_archived: {summary.cleanup_contacts_archived}")
+    print(f"cleanup_assets_archived: {summary.cleanup_assets_archived}")
+    print(f"cleanup_documents_archived: {summary.cleanup_documents_archived}")
+    print("Building decisions:")
+    for name, building_id in (summary.building_ids or {}).items():
+        print(f"- {name}: {building_id}")
+
+
 if __name__ == "__main__":
-    print_summary(seed_reference_portfolio())
+    parser = argparse.ArgumentParser(description="Seed or clean up the FMS-0023 reference portfolio.")
+    parser.add_argument(
+        "--cleanup-placeholders",
+        action="store_true",
+        help="Soft-delete removed placeholder reference buildings and their seeded child records.",
+    )
+    parser.add_argument(
+        "--cleanup-duplicates",
+        action="store_true",
+        help="Soft-delete duplicate Linhaven/SOHO building records, keeping the lowest BPID or earliest record.",
+    )
+    args = parser.parse_args()
+
+    if args.cleanup_duplicates:
+        print_duplicate_cleanup_summary(cleanup_duplicate_linhaven_soho_buildings())
+    elif args.cleanup_placeholders:
+        print_cleanup_summary(cleanup_removed_placeholder_buildings())
+    else:
+        print_summary(seed_reference_portfolio())
