@@ -21,6 +21,8 @@ export type Organization = {
 export type Building = {
   id: string;
   organization_id: string;
+  property_id?: string | null;
+  campus_id?: string | null;
   bpid: string;
   name: string;
   address_line_1: string;
@@ -46,6 +48,66 @@ export type Building = {
 };
 
 export type BuildingPayload = Omit<Building, "id" | "bpid">;
+
+export type PropertyRecord = {
+  id: string;
+  organization_id: string;
+  name: string;
+  property_type: string;
+  status: string;
+  address_line_1?: string | null;
+  address_line_2?: string | null;
+  city?: string | null;
+  province_state?: string | null;
+  postal_code?: string | null;
+  country?: string | null;
+  owner_name?: string | null;
+  property_manager_name?: string | null;
+  notes?: string | null;
+  campus_count: number;
+  building_count: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type PropertyPayload = Omit<PropertyRecord, "id" | "campus_count" | "building_count" | "created_at" | "updated_at">;
+
+export type Campus = {
+  id: string;
+  organization_id: string;
+  property_id?: string | null;
+  name: string;
+  campus_type: string;
+  status: string;
+  address_line_1?: string | null;
+  address_line_2?: string | null;
+  city?: string | null;
+  province_state?: string | null;
+  postal_code?: string | null;
+  country?: string | null;
+  notes?: string | null;
+  building_count: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type CampusPayload = Omit<Campus, "id" | "building_count" | "created_at" | "updated_at">;
+
+export type PropertyCampusSummary = {
+  properties: number;
+  campuses: number;
+  assigned_buildings: number;
+  unassigned_buildings: number;
+};
+
+export type SearchResult = {
+  id: string;
+  type: "organization" | "property" | "campus" | "building" | "asset" | "document" | "passport";
+  title: string;
+  subtitle: string;
+  matched_field: string;
+  url: string;
+};
 
 export type BuildingContact = {
   id: string;
@@ -147,6 +209,165 @@ export type PassportSummary = {
   };
 };
 
+export type PropertyIntelligenceScore = {
+  score: number;
+  label: string;
+  status: string;
+  drivers: string[];
+};
+
+export type PropertyIntelligenceCount = {
+  label: string;
+  value: number;
+  status: string;
+};
+
+export type PropertyBuildingIntelligence = {
+  id: string;
+  name: string;
+  building_type?: string | null;
+  bpid?: string | null;
+  asset_count: number;
+  document_count: number;
+  passport_record_count: number;
+  open_deficiency_count: number;
+  overdue_work_order_count: number;
+  readiness_status: string;
+  health_score?: number | null;
+};
+
+export type PropertyIntelligenceFactor = {
+  category: string;
+  factor_key: string;
+  label: string;
+  severity: string;
+  source_type?: string | null;
+  source_id?: string | null;
+  impact_score: number;
+  metadata: Record<string, unknown>;
+};
+
+export type PropertyHealthSummary = {
+  score: number;
+  status: string;
+  label: string;
+  building_count: number;
+  active_building_count: number;
+  shared_infrastructure_count: number;
+  drivers: string[];
+  factors: PropertyIntelligenceFactor[];
+};
+
+export type PropertyConfidenceSummary = {
+  score: number;
+  status: string;
+  label: string;
+  addressed_building_count: number;
+  assets_with_condition_count: number;
+  documents_with_visibility_count: number;
+  data_gap_count: number;
+  drivers: string[];
+  factors: PropertyIntelligenceFactor[];
+};
+
+export type PropertyRiskSummary = {
+  score: number;
+  status: string;
+  label: string;
+  open_deficiency_count: number;
+  critical_or_high_deficiency_count: number;
+  overdue_work_order_count: number;
+  expired_document_count: number;
+  poor_condition_asset_count: number;
+  drivers: string[];
+  factors: PropertyIntelligenceFactor[];
+};
+
+export type PropertyReadinessSummary = {
+  score: number;
+  status: string;
+  label: string;
+  ready_for_handover: boolean;
+  checklist: Array<{ key?: string; label: string; complete: boolean }>;
+  drivers: string[];
+  factors: PropertyIntelligenceFactor[];
+};
+
+export type PropertyPassportSummary = {
+  score: number;
+  status: string;
+  label: string;
+  passport_records: number;
+  client_visible_records: number;
+  building_count: number;
+  shared_infrastructure_count: number;
+  completeness_score: number;
+  drivers: string[];
+  factors: PropertyIntelligenceFactor[];
+};
+
+export type PropertyCapitalSummary = {
+  replacement_cost_estimate: number;
+  near_term_asset_count: number;
+  open_deficiency_count: number;
+  planning_status: string;
+  assets_missing_replacement_cost_count: number;
+  by_building: Array<{
+    building_id: string;
+    building_name: string;
+    replacement_cost_estimate: number;
+    near_term_asset_count: number;
+  }>;
+};
+
+export type PropertyDeficiencySummary = {
+  open: number;
+  critical_or_high: number;
+  by_severity: Record<string, number>;
+  by_status: Record<string, number>;
+  by_building: Array<{
+    building_id: string;
+    building_name: string;
+    open: number;
+    critical_or_high: number;
+  }>;
+};
+
+export type PropertyIntelligenceSnapshot = {
+  id?: string | null;
+  calculation_version: string;
+  calculated_at: string;
+  health_score: number;
+  confidence_score: number;
+  risk_score: number;
+  readiness_score: number;
+  passport_score: number;
+};
+
+export type PropertyIntelligence = {
+  property: PropertyRecord;
+  calculated_at: string;
+  health: PropertyIntelligenceScore;
+  confidence: PropertyIntelligenceScore;
+  risk: PropertyIntelligenceScore;
+  readiness: PropertyIntelligenceScore;
+  passport: PropertyIntelligenceScore;
+  executive_summary: string;
+  counts: PropertyIntelligenceCount[];
+  buildings: PropertyBuildingIntelligence[];
+  health_summary?: PropertyHealthSummary | null;
+  confidence_summary?: PropertyConfidenceSummary | null;
+  risk_summary?: PropertyRiskSummary | null;
+  readiness_summary?: PropertyReadinessSummary | null;
+  passport_rollup?: PropertyPassportSummary | null;
+  passport_summary: Record<string, unknown>;
+  capital_summary: PropertyCapitalSummary;
+  deficiency_summary: PropertyDeficiencySummary;
+  readiness_checklist: Array<{ key?: string; label: string; complete: boolean }>;
+  executive_review: Record<string, unknown>;
+  latest_snapshot?: PropertyIntelligenceSnapshot | null;
+};
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
@@ -188,6 +409,78 @@ export async function listOrganizations(): Promise<Organization[]> {
 export async function listBuildings(organizationId?: string): Promise<Building[]> {
   const suffix = organizationId ? `?organization_id=${organizationId}` : "";
   const response = await request<ApiEnvelope<Building[]>>(`/buildings${suffix}`);
+  return response.data;
+}
+
+export async function globalSearch(query: string, type?: SearchResult["type"]): Promise<SearchResult[]> {
+  const searchParams = new URLSearchParams();
+  searchParams.set("q", query);
+  if (type) {
+    searchParams.set("type", type);
+  }
+  const response = await request<ApiEnvelope<SearchResult[]>>(`/search?${searchParams.toString()}`);
+  return response.data;
+}
+
+export async function getPropertyCampusSummary(organizationId?: string): Promise<PropertyCampusSummary> {
+  const suffix = organizationId ? `?organization_id=${organizationId}` : "";
+  const response = await request<ApiEnvelope<PropertyCampusSummary>>(`/properties/summary${suffix}`);
+  return response.data;
+}
+
+export async function listProperties(organizationId?: string): Promise<PropertyRecord[]> {
+  const suffix = organizationId ? `?organization_id=${organizationId}` : "";
+  const response = await request<ApiEnvelope<PropertyRecord[]>>(`/properties${suffix}`);
+  return response.data;
+}
+
+export async function getProperty(propertyId: string): Promise<PropertyRecord> {
+  const response = await request<ApiEnvelope<PropertyRecord>>(`/properties/${propertyId}`);
+  return response.data;
+}
+
+export async function getPropertyIntelligence(propertyId: string): Promise<PropertyIntelligence> {
+  const response = await request<ApiEnvelope<PropertyIntelligence>>(`/properties/${propertyId}/intelligence`);
+  return response.data;
+}
+
+export async function createProperty(payload: PropertyPayload): Promise<PropertyRecord> {
+  const response = await request<ApiEnvelope<PropertyRecord>>("/properties", {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+  return response.data;
+}
+
+export async function listCampuses(params?: { organizationId?: string; propertyId?: string }): Promise<Campus[]> {
+  const searchParams = new URLSearchParams();
+  if (params?.organizationId) {
+    searchParams.set("organization_id", params.organizationId);
+  }
+  if (params?.propertyId) {
+    searchParams.set("property_id", params.propertyId);
+  }
+  const suffix = searchParams.toString() ? `?${searchParams.toString()}` : "";
+  const response = await request<ApiEnvelope<Campus[]>>(`/campuses${suffix}`);
+  return response.data;
+}
+
+export async function createCampus(payload: CampusPayload): Promise<Campus> {
+  const response = await request<ApiEnvelope<Campus>>("/campuses", {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+  return response.data;
+}
+
+export async function assignBuildingToPropertyCampus(
+  buildingId: string,
+  payload: { property_id?: string | null; campus_id?: string | null }
+): Promise<Building> {
+  const response = await request<ApiEnvelope<Building>>(`/buildings/${buildingId}/property-campus`, {
+    method: "PATCH",
+    body: JSON.stringify(payload)
+  });
   return response.data;
 }
 

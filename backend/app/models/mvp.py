@@ -601,6 +601,66 @@ class HealthScore(Base, TimestampMixin):
     )
 
 
+class PropertyIntelligenceSnapshot(Base, TimestampMixin):
+    __tablename__ = "property_intelligence_snapshots"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    organization_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("organizations.id"), nullable=False)
+    property_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("properties.id"), nullable=False)
+    calculated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    calculation_version: Mapped[str] = mapped_column(String(40), nullable=False, default="m7-001")
+    health_score: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    confidence_score: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    risk_score: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    readiness_score: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    passport_score: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    building_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    shared_infrastructure_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    asset_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    document_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    passport_record_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    client_visible_record_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    open_deficiency_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    overdue_work_order_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    capital_exposure_estimate: Mapped[float] = mapped_column(Numeric(14, 2), nullable=False, default=0)
+    summary: Mapped[dict[str, Any] | None] = mapped_column(JSONB, nullable=True)
+
+    __table_args__ = (
+        CheckConstraint("health_score >= 0 AND health_score <= 100", name="ck_property_intelligence_health_score_range"),
+        CheckConstraint("confidence_score >= 0 AND confidence_score <= 100", name="ck_property_intelligence_confidence_score_range"),
+        CheckConstraint("risk_score >= 0 AND risk_score <= 100", name="ck_property_intelligence_risk_score_range"),
+        CheckConstraint("readiness_score >= 0 AND readiness_score <= 100", name="ck_property_intelligence_readiness_score_range"),
+        CheckConstraint("passport_score >= 0 AND passport_score <= 100", name="ck_property_intelligence_passport_score_range"),
+        Index("ix_property_intelligence_snapshots_organization_id", "organization_id"),
+        Index("ix_property_intelligence_snapshots_property_id", "property_id"),
+        Index("ix_property_intelligence_snapshots_property_calculated_at", "property_id", "calculated_at"),
+    )
+
+
+class PropertyIntelligenceFactor(Base, TimestampMixin):
+    __tablename__ = "property_intelligence_factors"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    organization_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("organizations.id"), nullable=False)
+    property_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("properties.id"), nullable=False)
+    snapshot_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("property_intelligence_snapshots.id"), nullable=True)
+    category: Mapped[str] = mapped_column(String(80), nullable=False)
+    factor_key: Mapped[str] = mapped_column(String(120), nullable=False)
+    label: Mapped[str] = mapped_column(String(255), nullable=False)
+    severity: Mapped[str] = mapped_column(String(50), nullable=False, default="info")
+    source_type: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    source_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), nullable=True)
+    impact_score: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    metadata_: Mapped[dict[str, Any] | None] = mapped_column("metadata", JSONB, nullable=True)
+
+    __table_args__ = (
+        Index("ix_property_intelligence_factors_organization_id", "organization_id"),
+        Index("ix_property_intelligence_factors_property_id", "property_id"),
+        Index("ix_property_intelligence_factors_snapshot_id", "snapshot_id"),
+        Index("ix_property_intelligence_factors_category", "property_id", "category"),
+    )
+
+
 class Notification(Base, TimestampMixin):
     __tablename__ = "notifications"
 

@@ -235,6 +235,163 @@ class PropertyCampusSummary(BaseModel):
     unassigned_buildings: int
 
 
+class SearchResult(BaseModel):
+    id: str
+    type: str
+    title: str
+    subtitle: str
+    matched_field: str
+    url: str
+
+
+class PropertyIntelligenceScore(BaseModel):
+    score: int
+    label: str
+    status: str
+    drivers: list[str] = []
+
+
+class PropertyIntelligenceCount(BaseModel):
+    label: str
+    value: int | float
+    status: str = "neutral"
+
+
+class PropertyBuildingIntelligence(BaseModel):
+    id: UUID
+    name: str
+    building_type: str | None = None
+    bpid: str | None = None
+    asset_count: int
+    document_count: int
+    passport_record_count: int
+    open_deficiency_count: int
+    overdue_work_order_count: int
+    readiness_status: str
+
+
+class PropertyIntelligenceFactorRead(BaseModel):
+    category: str
+    factor_key: str
+    label: str
+    severity: str = "info"
+    source_type: str | None = None
+    source_id: UUID | None = None
+    impact_score: int = 0
+    metadata: dict = Field(default_factory=dict)
+
+
+class PropertyHealthSummary(BaseModel):
+    score: int
+    status: str
+    label: str = "Property Health"
+    building_count: int = 0
+    active_building_count: int = 0
+    shared_infrastructure_count: int = 0
+    drivers: list[str] = Field(default_factory=list)
+    factors: list[PropertyIntelligenceFactorRead] = Field(default_factory=list)
+
+
+class PropertyConfidenceSummary(BaseModel):
+    score: int
+    status: str
+    label: str = "Property Confidence Index"
+    addressed_building_count: int = 0
+    assets_with_condition_count: int = 0
+    documents_with_visibility_count: int = 0
+    data_gap_count: int = 0
+    drivers: list[str] = Field(default_factory=list)
+    factors: list[PropertyIntelligenceFactorRead] = Field(default_factory=list)
+
+
+class PropertyRiskSummary(BaseModel):
+    score: int
+    status: str
+    label: str = "Property Risk"
+    open_deficiency_count: int = 0
+    critical_or_high_deficiency_count: int = 0
+    overdue_work_order_count: int = 0
+    expired_document_count: int = 0
+    poor_condition_asset_count: int = 0
+    drivers: list[str] = Field(default_factory=list)
+    factors: list[PropertyIntelligenceFactorRead] = Field(default_factory=list)
+
+
+class PropertyReadinessSummary(BaseModel):
+    score: int
+    status: str
+    label: str = "Property Readiness"
+    ready_for_handover: bool = False
+    checklist: list[dict] = Field(default_factory=list)
+    drivers: list[str] = Field(default_factory=list)
+    factors: list[PropertyIntelligenceFactorRead] = Field(default_factory=list)
+
+
+class PropertyPassportSummary(BaseModel):
+    score: int
+    status: str
+    label: str = "Property Passport"
+    passport_records: int = 0
+    client_visible_records: int = 0
+    building_count: int = 0
+    shared_infrastructure_count: int = 0
+    completeness_score: int = 0
+    drivers: list[str] = Field(default_factory=list)
+    factors: list[PropertyIntelligenceFactorRead] = Field(default_factory=list)
+
+
+class PropertyCapitalSummary(BaseModel):
+    replacement_cost_estimate: float = 0
+    near_term_asset_count: int = 0
+    open_deficiency_count: int = 0
+    planning_status: str = "placeholder"
+    assets_missing_replacement_cost_count: int = 0
+    by_building: list[dict] = Field(default_factory=list)
+
+
+class PropertyDeficiencySummary(BaseModel):
+    open: int = 0
+    critical_or_high: int = 0
+    by_severity: dict[str, int] = Field(default_factory=dict)
+    by_status: dict[str, int] = Field(default_factory=dict)
+    by_building: list[dict] = Field(default_factory=list)
+
+
+class PropertyIntelligenceSnapshotRead(BaseModel):
+    id: UUID | None = None
+    calculation_version: str = "m7-001"
+    calculated_at: datetime
+    health_score: int
+    confidence_score: int
+    risk_score: int
+    readiness_score: int
+    passport_score: int
+
+
+class PropertyIntelligenceRead(BaseModel):
+    property: PropertyRead
+    calculated_at: datetime
+    health: PropertyIntelligenceScore
+    confidence: PropertyIntelligenceScore
+    risk: PropertyIntelligenceScore
+    readiness: PropertyIntelligenceScore
+    passport: PropertyIntelligenceScore
+    executive_summary: str
+    counts: list[PropertyIntelligenceCount]
+    buildings: list[PropertyBuildingIntelligence]
+    health_summary: PropertyHealthSummary | None = None
+    confidence_summary: PropertyConfidenceSummary | None = None
+    risk_summary: PropertyRiskSummary | None = None
+    readiness_summary: PropertyReadinessSummary | None = None
+    passport_rollup: PropertyPassportSummary | None = None
+    passport_summary: dict
+    capital_summary: PropertyCapitalSummary
+    deficiency_summary: PropertyDeficiencySummary
+    readiness_checklist: list[dict]
+    executive_review: dict
+    latest_snapshot: PropertyIntelligenceSnapshotRead | None = None
+
+
 class BuildingBase(BaseModel):
     organization_id: UUID
     name: str

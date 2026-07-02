@@ -1,99 +1,48 @@
-# FMS Platform
+# FOP Developer Toolkit
 
-Repository foundation and frontend application shell for the FMS Platform.
+## Install
 
-This repository currently includes FMS-0007 Phase 1 through Phase 6. Frontend/backend integration currently covers the Building Registry only.
-
-## Stack
-
-- Frontend: Next.js, React, TypeScript, Tailwind CSS
-- Backend: FastAPI, SQLAlchemy, Alembic, Pydantic
-- Database: PostgreSQL
-- Local infrastructure: Docker Compose
-
-## Project Structure
-
-```text
-frontend/        Next.js application shell
-backend/         FastAPI application and database migration setup
-infrastructure/  Local development services
-docs/            Project documentation
-```
-
-## Prerequisites
-
-- Node.js 20+
-- Python 3.12+
-- Docker Desktop
-
-## Setup
-
-Copy environment files:
+Copy `fop-dev.ps1` to:
 
 ```powershell
-Copy-Item frontend\.env.example frontend\.env.local
-Copy-Item backend\.env.example backend\.env
-Copy-Item infrastructure\.env.example infrastructure\.env
+C:\Users\Adam\Documents\Projects\fms-platform\fop-dev.ps1
 ```
 
-Start PostgreSQL:
+Then load it in PowerShell:
 
 ```powershell
-docker compose --env-file infrastructure\.env -f infrastructure\docker-compose.yml up -d
+. "C:\Users\Adam\Documents\Projects\fms-platform\fop-dev.ps1"
 ```
 
-Install and run the backend:
+## Optional: Auto-load every time PowerShell opens
+
+Run:
 
 ```powershell
-cd backend
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-alembic upgrade head
-python -m scripts.seed_reference_data
-uvicorn app.main:app --reload
+notepad $PROFILE
 ```
 
-Install and run the frontend:
+Add this line:
 
 ```powershell
-cd frontend
-npm install
-npm run dev
+. "C:\Users\Adam\Documents\Projects\fms-platform\fop-dev.ps1"
 ```
 
-## Local URLs
+Save and reopen PowerShell.
 
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000
-- Backend health check: http://localhost:8000/health
-- Backend API v1 placeholder routes: http://localhost:8000/api/v1/buildings
-- API docs: http://localhost:8000/docs
-
-## Testing
-
-Backend:
+## Commands
 
 ```powershell
-cd backend
-pytest
+fop-root
+fop-backend
+fop-frontend
+fop-migrate
+fop-seed-soho
+fop-clean-soho
+fop-backend-run
+fop-frontend-run
+fop-typecheck
+fop-check
+fop-open
+fop-status
 ```
-
-Frontend:
-
-```powershell
-cd frontend
-npm run lint
-npm run typecheck
-```
-
-## Current Scope
-
-- Phase 1: repository foundation
-- Phase 2: frontend application shell using mock data only
-- Phase 3: backend application shell using placeholder API route groups
-- Phase 4: MVP database models, Alembic migration, and reference-data seed script
-- Phase 5: core domain services and CRUD APIs for organizations, users, roles, buildings, and building contacts
-- Phase 6: Building Registry frontend/backend integration
-
-No business modules or backend-connected frontend workflows have been built yet.

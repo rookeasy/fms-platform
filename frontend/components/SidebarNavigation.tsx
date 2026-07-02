@@ -7,6 +7,7 @@ import {
   BarChart3,
   Building2,
   ClipboardCheck,
+  Map,
   FileText,
   Gauge,
   LayoutDashboard,
@@ -21,6 +22,7 @@ import { cn } from "@/lib/utils";
 const navigation = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/buildings", label: "Buildings", icon: Building2 },
+  { href: "/properties", label: "Properties", icon: Map },
   { href: "/work-orders", label: "Work Orders", icon: Wrench },
   { href: "/inspections", label: "Inspections", icon: ClipboardCheck },
   { href: "/deficiencies", label: "Deficiencies", icon: Gauge },

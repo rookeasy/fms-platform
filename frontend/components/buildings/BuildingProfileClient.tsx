@@ -22,16 +22,20 @@ import {
   type BuildingContact,
   type BuildingContactPayload,
   type BuildingPayload,
+  type Campus,
   type DocumentRecord,
+  type PropertyRecord,
   createAsset,
   createBuildingContact,
   deleteAsset,
   deleteBuildingContact,
   getBuilding,
+  getProperty,
   listAssetTypes,
   listBuildingAssets,
   listBuildingContacts,
   listBuildingDocuments,
+  listCampuses,
   updateAsset,
   uploadDocument,
   uploadDocumentVersion,
@@ -44,6 +48,8 @@ type BuildingProfileClientProps = {
 
 export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps) {
   const [building, setBuilding] = useState<Building | null>(null);
+  const [property, setProperty] = useState<PropertyRecord | null>(null);
+  const [campus, setCampus] = useState<Campus | null>(null);
   const [contacts, setContacts] = useState<BuildingContact[]>([]);
   const [assetTypes, setAssetTypes] = useState<AssetType[]>([]);
   const [assets, setAssets] = useState<Asset[]>([]);
@@ -62,12 +68,16 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
         getBuilding(buildingId),
         listBuildingContacts(buildingId)
       ]);
-      const [loadedAssetTypes, loadedAssets, loadedDocuments] = await Promise.all([
+      const [loadedAssetTypes, loadedAssets, loadedDocuments, loadedProperty, loadedCampuses] = await Promise.all([
         listAssetTypes(),
         listBuildingAssets(buildingId),
-        listBuildingDocuments(buildingId)
+        listBuildingDocuments(buildingId),
+        loadedBuilding.property_id ? getProperty(loadedBuilding.property_id) : Promise.resolve(null),
+        loadedBuilding.property_id ? listCampuses({ propertyId: loadedBuilding.property_id }) : Promise.resolve([])
       ]);
       setBuilding(loadedBuilding);
+      setProperty(loadedProperty);
+      setCampus(loadedCampuses.find((item) => item.id === loadedBuilding.campus_id) ?? null);
       setContacts(loadedContacts);
       setAssetTypes(loadedAssetTypes);
       setAssets(loadedAssets);
@@ -237,6 +247,12 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
           <span>{formatControlledValue(building.building_type)}</span>
           {building.owner_name ? <span>Owner: {building.owner_name}</span> : null}
           {building.property_manager_name ? <span>Manager: {building.property_manager_name}</span> : null}
+          {property ? (
+            <Link href={`/properties/${property.id}`} className="font-semibold text-slate-950 underline">
+              Property: {property.name}
+            </Link>
+          ) : null}
+          {campus ? <span>Campus: {campus.name}</span> : null}
           <Link href={`/buildings/${building.id}/passport`} className="font-semibold text-slate-950 underline">
             View Passport
           </Link>
@@ -286,6 +302,7 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
               ["Total Area Sq Ft", building.total_area_sq_ft],
               ["AHJ", building.ahj_name],
               ["Fire Department", building.fire_department],
+              ["Property / Campus", property ? `${property.name}${campus ? ` / ${campus.name}` : ""}` : null],
               ["Insurance Provider", building.insurance_provider],
               ["Notes", building.notes]
             ].map(([label, value]) => (

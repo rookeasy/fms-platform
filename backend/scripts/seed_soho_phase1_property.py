@@ -171,6 +171,15 @@ class CleanupSummary:
     documents_reassigned: int = 0
     assets_reassigned: int = 0
     duplicates_archived: int = 0
+    health_scores_created: int = 0
+    health_scores_reused: int = 0
+    deficiencies_created: int = 0
+    deficiencies_reused: int = 0
+    work_orders_created: int = 0
+    work_orders_reused: int = 0
+    intelligence_snapshots_created: int = 0
+    intelligence_snapshots_reused: int = 0
+    assets_enriched: int = 0
     organization_id: Any | None = None
     property_id: Any | None = None
     campus_id: Any | None = None
@@ -220,6 +229,45 @@ SEEDED_DOCUMENTS = {
     "common": [(title, "contractors_material_test_certificate", title) for title in sorted(COMMON_DOCUMENTS)],
 }
 
+M7_ASSET_INTELLIGENCE = {
+    "Building A Wet Sprinkler System": ("good", 185000, 18),
+    "Building A Garbage Chute Sprinkler System": ("good", 42000, 15),
+    "Building A Mechanical Penthouse Wet System": ("good", 65000, 16),
+    "Building A Floor Wet Systems": ("good", 210000, 18),
+    "Building B Wet Sprinkler System": ("good", 172000, 18),
+    "Building B Garbage Chute Sprinkler System": ("fair", 39000, 9),
+    "Building B Mechanical Penthouse Wet System": ("good", 60000, 16),
+    "Fire Pump": ("good", 95000, 14),
+    "Jockey Pump": ("fair", 12000, 5),
+    "6 inch Backflow Preventer": ("good", 28000, 12),
+    "Fire Department Connection": ("good", 18000, 20),
+    "Common Standpipe System": ("good", 135000, 20),
+    "Dry Parking Garage System": ("fair", 155000, 8),
+    "Underground Fire Main": ("good", 240000, 25),
+}
+
+M7_BUILDING_SCORES = {
+    "building_a": (92, "SOHO Building A has strong closeout evidence, active Passport records, and complete floor wet system coverage."),
+    "building_b": (84, "SOHO Building B has core Passport evidence with minor readiness follow-up items."),
+    "common": (79, "Shared infrastructure is documented with moderate capital and readiness watch items."),
+}
+
+M7_DEFICIENCIES = {
+    "building_b": [
+        ("Building B garbage chute sprinkler final verification", "medium", "open"),
+    ],
+    "common": [
+        ("Dry parking garage supervisory device labeling", "medium", "open"),
+        ("Jockey pump controller documentation closeout", "low", "open"),
+    ],
+}
+
+M7_WORK_ORDERS = {
+    "common": [
+        ("Finalize shared infrastructure O&M binder", "medium", "open"),
+    ],
+}
+
 
 def payload_for(table: Table, payload: dict[str, Any]) -> dict[str, Any]:
     return {key: value for key, value in payload.items() if key in table.c}
@@ -263,6 +311,10 @@ def ensure_schema(metadata: MetaData) -> None:
             + ", ".join(missing)
             + ". Run alembic upgrade head before this cleanup."
         )
+
+
+def has_tables(metadata: MetaData, *table_names: str) -> bool:
+    return all(table_name in metadata.tables for table_name in table_names)
 
 
 def safe_slug(value: str) -> str:
@@ -537,6 +589,177 @@ def ensure_seeded_documents(connection, documents: Table, organization_id, build
         summary.documents_created += 1
 
 
+def enrich_assets_for_m7(connection, assets: Table, organization_id, building_ids: list[Any], summary: CleanupSummary) -> None:
+    values_supported = {"condition_rating", "replacement_cost_estimate", "remaining_useful_life_years", "notes"} & set(assets.c.keys())
+    if not values_supported:
+        return
+    rows = connection.execute(
+        select(assets).where(
+            assets.c.organization_id == organization_id,
+            assets.c.building_id.in_(building_ids),
+            assets.c.name.in_(list(M7_ASSET_INTELLIGENCE)),
+            *active_criteria(assets),
+        )
+    ).all()
+    for row in rows:
+        mapping = row._mapping
+        condition, cost, useful_life = M7_ASSET_INTELLIGENCE[str(mapping["name"])]
+        update_values = payload_for(
+            assets,
+            {
+                "condition_rating": condition,
+                "replacement_cost_estimate": cost,
+                "remaining_useful_life_years": useful_life,
+                "notes": "M7 SOHO Property Intelligence demo asset with seeded condition, capital exposure, and useful-life data.",
+            },
+        )
+        if update_values:
+            connection.execute(update(assets).where(assets.c.id == mapping["id"]).values(**update_values))
+            summary.assets_enriched += 1
+
+
+def ensure_m7_health_score(connection, health_scores: Table, organization_id, building_id, score: int, note: str, summary: CleanupSummary) -> None:
+    score_id = first_id(
+        connection,
+        health_scores,
+        health_scores.c.organization_id == organization_id,
+        health_scores.c.building_id == building_id,
+        health_scores.c.score_type == "overall",
+        health_scores.c.inputs.op("@>")({"source": "m7_soho_phase1_seed"}),
+    )
+    payload = {
+        "organization_id": organization_id,
+        "building_id": building_id,
+        "score": score,
+        "score_type": "overall",
+        "inputs": {
+            "source": "m7_soho_phase1_seed",
+            "note": note,
+            "readiness_status": "ready" if score >= 80 else "watch",
+        },
+    }
+    if score_id:
+        connection.execute(update(health_scores).where(health_scores.c.id == score_id).values(**payload_for(health_scores, payload)))
+        summary.health_scores_reused += 1
+    else:
+        insert_row(connection, health_scores, payload)
+        summary.health_scores_created += 1
+
+
+def ensure_m7_health_scores(connection, health_scores: Table, organization_id, building_a_id, building_b_id, common_id, summary: CleanupSummary) -> None:
+    for key, building_id in {"building_a": building_a_id, "building_b": building_b_id, "common": common_id}.items():
+        score, note = M7_BUILDING_SCORES[key]
+        ensure_m7_health_score(connection, health_scores, organization_id, building_id, score, note, summary)
+
+
+def ensure_m7_deficiency(connection, deficiencies: Table, organization_id, building_id, title: str, severity: str, status: str, summary: CleanupSummary) -> None:
+    deficiency_id = first_id(
+        connection,
+        deficiencies,
+        deficiencies.c.organization_id == organization_id,
+        deficiencies.c.building_id == building_id,
+        deficiencies.c.title == title,
+        *active_criteria(deficiencies),
+    )
+    payload = {
+        "organization_id": organization_id,
+        "building_id": building_id,
+        "title": title,
+        "severity": severity,
+        "status": status,
+    }
+    if deficiency_id:
+        connection.execute(update(deficiencies).where(deficiencies.c.id == deficiency_id).values(**payload_for(deficiencies, payload)))
+        summary.deficiencies_reused += 1
+    else:
+        insert_row(connection, deficiencies, payload)
+        summary.deficiencies_created += 1
+
+
+def ensure_m7_deficiencies(connection, deficiencies: Table, organization_id, building_b_id, common_id, summary: CleanupSummary) -> None:
+    target_ids = {"building_b": building_b_id, "common": common_id}
+    for key, rows in M7_DEFICIENCIES.items():
+        for title, severity, status in rows:
+            ensure_m7_deficiency(connection, deficiencies, organization_id, target_ids[key], title, severity, status, summary)
+
+
+def ensure_m7_work_order(connection, work_orders: Table, organization_id, building_id, title: str, priority: str, status: str, summary: CleanupSummary) -> None:
+    work_order_id = first_id(
+        connection,
+        work_orders,
+        work_orders.c.organization_id == organization_id,
+        work_orders.c.building_id == building_id,
+        work_orders.c.title == title,
+        *active_criteria(work_orders),
+    )
+    payload = {
+        "organization_id": organization_id,
+        "building_id": building_id,
+        "title": title,
+        "description": "M7 SOHO Property Intelligence demo work order for readiness tracking.",
+        "priority": priority,
+        "status": status,
+    }
+    if work_order_id:
+        connection.execute(update(work_orders).where(work_orders.c.id == work_order_id).values(**payload_for(work_orders, payload)))
+        summary.work_orders_reused += 1
+    else:
+        insert_row(connection, work_orders, payload)
+        summary.work_orders_created += 1
+
+
+def ensure_m7_work_orders(connection, work_orders: Table, organization_id, common_id, summary: CleanupSummary) -> None:
+    for title, priority, status in M7_WORK_ORDERS["common"]:
+        ensure_m7_work_order(connection, work_orders, organization_id, common_id, title, priority, status, summary)
+
+
+def ensure_m7_intelligence_snapshot(connection, snapshots: Table, organization_id, property_id, summary: CleanupSummary) -> None:
+    snapshot_id = first_id(
+        connection,
+        snapshots,
+        snapshots.c.organization_id == organization_id,
+        snapshots.c.property_id == property_id,
+        snapshots.c.calculation_version == "m7-soho-demo",
+        snapshots.c.summary.op("@>")({"source": "m7_soho_phase1_seed"}),
+    )
+    payload = {
+        "organization_id": organization_id,
+        "property_id": property_id,
+        "calculation_version": "m7-soho-demo",
+        "health_score": 86,
+        "confidence_score": 91,
+        "risk_score": 34,
+        "readiness_score": 86,
+        "passport_score": 100,
+        "building_count": 2,
+        "shared_infrastructure_count": 1,
+        "asset_count": len(M7_ASSET_INTELLIGENCE),
+        "document_count": sum(len(items) for items in SEEDED_DOCUMENTS.values()),
+        "passport_record_count": sum(len(items) for items in SEEDED_DOCUMENTS.values()),
+        "client_visible_record_count": sum(len(items) for items in SEEDED_DOCUMENTS.values()),
+        "open_deficiency_count": sum(len(items) for items in M7_DEFICIENCIES.values()),
+        "overdue_work_order_count": 0,
+        "capital_exposure_estimate": sum(item[1] for item in M7_ASSET_INTELLIGENCE.values()),
+        "summary": {
+            "source": "m7_soho_phase1_seed",
+            "property_health_rollup": "Strong demo health rollup across Building A, Building B, and shared infrastructure.",
+            "readiness_status": "ready_for_handover_with_watch_items",
+            "passport_status": "complete_demo_passport",
+            "executive_review": {
+                "status": "placeholder",
+                "title": "SOHO Phase I Executive Review",
+                "message": "Seeded M7 demo status for future executive review workflow.",
+            },
+        },
+    }
+    if snapshot_id:
+        connection.execute(update(snapshots).where(snapshots.c.id == snapshot_id).values(**payload_for(snapshots, payload)))
+        summary.intelligence_snapshots_reused += 1
+    else:
+        insert_row(connection, snapshots, payload)
+        summary.intelligence_snapshots_created += 1
+
+
 def document_title(row: Any) -> str:
     mapping = row._mapping
     return str(mapping.get("title") or mapping.get("name") or "")
@@ -602,6 +825,10 @@ def cleanup_soho_phase1_property() -> CleanupSummary:
     asset_types = metadata.tables["asset_types"]
     assets = metadata.tables["assets"]
     documents = metadata.tables["documents"]
+    health_scores = metadata.tables.get("health_scores")
+    deficiencies = metadata.tables.get("deficiencies")
+    work_orders = metadata.tables.get("work_orders")
+    intelligence_snapshots = metadata.tables.get("property_intelligence_snapshots")
 
     summary = CleanupSummary()
 
@@ -631,6 +858,16 @@ def cleanup_soho_phase1_property() -> CleanupSummary:
         ensure_seeded_documents(connection, documents, organization_id, building_b_id, SEEDED_DOCUMENTS["building_b"], "Building B", summary)
         ensure_seeded_documents(connection, documents, organization_id, common_id, SEEDED_DOCUMENTS["common"], "Common Infrastructure", summary)
 
+        enrich_assets_for_m7(connection, assets, organization_id, [building_a_id, building_b_id, common_id], summary)
+        if health_scores is not None:
+            ensure_m7_health_scores(connection, health_scores, organization_id, building_a_id, building_b_id, common_id, summary)
+        if deficiencies is not None:
+            ensure_m7_deficiencies(connection, deficiencies, organization_id, building_b_id, common_id, summary)
+        if work_orders is not None:
+            ensure_m7_work_orders(connection, work_orders, organization_id, common_id, summary)
+        if intelligence_snapshots is not None:
+            ensure_m7_intelligence_snapshot(connection, intelligence_snapshots, organization_id, property_id, summary)
+
     return summary
 
 
@@ -658,6 +895,15 @@ def print_summary(summary: CleanupSummary) -> None:
     print(f"documents_reassigned: {summary.documents_reassigned}")
     print(f"assets_reassigned: {summary.assets_reassigned}")
     print(f"duplicates_archived: {summary.duplicates_archived}")
+    print(f"assets_enriched: {summary.assets_enriched}")
+    print(f"health_scores_created: {summary.health_scores_created}")
+    print(f"health_scores_reused: {summary.health_scores_reused}")
+    print(f"deficiencies_created: {summary.deficiencies_created}")
+    print(f"deficiencies_reused: {summary.deficiencies_reused}")
+    print(f"work_orders_created: {summary.work_orders_created}")
+    print(f"work_orders_reused: {summary.work_orders_reused}")
+    print(f"intelligence_snapshots_created: {summary.intelligence_snapshots_created}")
+    print(f"intelligence_snapshots_reused: {summary.intelligence_snapshots_reused}")
 
 
 def main() -> None:

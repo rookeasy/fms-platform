@@ -1,4 +1,6 @@
-import { Bell, Search, UserCircle } from "lucide-react";
+import { Bell, UserCircle } from "lucide-react";
+
+import { GlobalSearch } from "@/components/GlobalSearch";
 
 type TopBarProps = {
   title: string;
@@ -6,20 +8,13 @@ type TopBarProps = {
 
 export function TopBar({ title }: TopBarProps) {
   return (
-    <header className="flex min-h-16 items-center justify-between border-b border-slate-200 bg-white px-6">
-      <div>
+    <header className="flex min-h-16 flex-wrap items-center justify-between gap-4 border-b border-slate-200 bg-white px-6 py-3">
+      <div className="min-w-0">
         <p className="text-xs font-semibold uppercase text-slate-500">FMS Platform</p>
         <h1 className="text-xl font-semibold text-slate-950">{title}</h1>
       </div>
-      <div className="flex items-center gap-2">
-        <button
-          type="button"
-          className="flex h-10 w-10 items-center justify-center rounded-md border border-slate-200 text-slate-600"
-          aria-label="Search"
-          title="Search"
-        >
-          <Search size={18} />
-        </button>
+      <div className="flex min-w-0 flex-1 items-center justify-end gap-2">
+        <GlobalSearch />
         <button
           type="button"
           className="flex h-10 w-10 items-center justify-center rounded-md border border-slate-200 text-slate-600"
