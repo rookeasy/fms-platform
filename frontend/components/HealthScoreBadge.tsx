@@ -13,7 +13,7 @@ export function HealthScoreBadge({ score }: HealthScoreBadgeProps) {
         : "bg-rose-600 text-white";
 
   return (
-    <span className={cn("inline-flex h-10 w-14 items-center justify-center rounded-md text-sm font-bold", tone)}>
+    <span className={cn("inline-flex h-10 w-14 items-center justify-center rounded-xl text-sm font-bold shadow-sm", tone)}>
       {score}
     </span>
   );

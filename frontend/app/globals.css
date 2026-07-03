@@ -3,20 +3,229 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: light;
-  --background: #f6f7f9;
-  --foreground: #172033;
+  color-scheme: dark;
+  --background: #050a18;
+  --surface: #0b1224;
+  --surface-elevated: #111827;
+  --text-primary: #ffffff;
+  --text-secondary: #b6c1cf;
+  --text-muted: #7d8ca3;
+  --accent: #ff6b5f;
+  --accent-soft: #ffb4ad;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --border: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.18);
+  --radius-card: 1rem;
+  --shadow-card: 0 18px 60px rgba(0, 0, 0, 0.24);
+  --shadow-panel: 0 24px 80px rgba(0, 0, 0, 0.38);
 }
 
 * {
   box-sizing: border-box;
 }
 
+html {
+  background: var(--background);
+}
+
 body {
   margin: 0;
   background: var(--background);
-  color: var(--foreground);
+  color: var(--text-primary);
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
+}
+
+::selection {
+  background: rgba(255, 107, 95, 0.28);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+input:not([type="checkbox"]):not([type="radio"]),
+select,
+textarea {
+  min-height: 2.75rem;
+  border-radius: 0.75rem;
+  border-color: rgba(255, 255, 255, 0.16);
+  background-color: rgba(5, 10, 24, 0.72);
+  color: var(--text-primary);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-muted);
+}
+
+select option {
+  background: var(--surface-elevated);
+  color: var(--text-primary);
+}
+
+.fop-app-bg,
+.fop-blueprint {
+  background:
+    radial-gradient(circle at 18% 8%, rgba(255, 107, 95, 0.16), transparent 24rem),
+    radial-gradient(circle at 82% 18%, rgba(59, 130, 246, 0.1), transparent 28rem),
+    linear-gradient(rgba(182, 193, 207, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(182, 193, 207, 0.05) 1px, transparent 1px),
+    var(--background);
+  background-size:
+    auto,
+    auto,
+    44px 44px,
+    44px 44px,
+    auto;
+}
+
+.fop-page {
+  animation: fopFadeSlide 240ms ease-out both;
+}
+
+.fop-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: linear-gradient(180deg, rgba(17, 24, 39, 0.96), rgba(11, 18, 36, 0.94));
+  box-shadow: var(--shadow-card);
+}
+
+.fop-card-muted {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-card);
+  background: rgba(11, 18, 36, 0.72);
+}
+
+.fop-button-primary {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.75rem;
+  background: var(--accent);
+  padding: 0 1rem;
+  color: var(--background);
+  font-size: 0.875rem;
+  font-weight: 750;
+  transition: background-color 220ms ease, transform 220ms ease, box-shadow 220ms ease;
+  box-shadow: 0 14px 34px rgba(255, 107, 95, 0.18);
+}
+
+.fop-button-primary:hover {
+  background: #ff857b;
+  transform: translateY(-1px);
+}
+
+.fop-button-secondary {
+  display: inline-flex;
+  min-height: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0 1rem;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 700;
+  transition: border-color 220ms ease, background-color 220ms ease, color 220ms ease;
+}
+
+.fop-button-secondary:hover {
+  border-color: rgba(255, 107, 95, 0.45);
+  background: rgba(255, 107, 95, 0.08);
+  color: var(--text-primary);
+}
+
+.fop-field {
+  min-height: 2.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-strong);
+  background: rgba(5, 10, 24, 0.72);
+  padding: 0 0.75rem;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  transition: border-color 220ms ease, box-shadow 220ms ease;
+}
+
+.fop-field:focus {
+  border-color: rgba(255, 107, 95, 0.78);
+  box-shadow: 0 0 0 3px rgba(255, 107, 95, 0.14);
+  outline: none;
+}
+
+.fop-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.fop-link {
+  color: var(--text-primary);
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 255, 255, 0.24);
+  text-underline-offset: 4px;
+}
+
+.fop-link:hover {
+  text-decoration-color: var(--accent);
+}
+
+.fop-fade-in {
+  animation: fopFadeSlide 240ms ease-out both;
+}
+
+.fop-logo-fade {
+  animation: fopLogoFade 260ms ease-out 80ms both;
+}
+
+.fop-mark-pulse {
+  animation: fopMarkPulse 820ms ease-out 420ms 1 both;
+}
+
+@keyframes fopFadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fopLogoFade {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fopMarkPulse {
+  0% {
+    opacity: 0.85;
+    transform: scale(0.75);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.1);
+  }
 }

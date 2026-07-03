@@ -2,7 +2,7 @@
 
 ## Purpose
 
-FMS-0029 introduces the public front door for the Fuzion Operations Platform. The root route now presents FOP as the entry point for Building Protection Passport&trade;, Digital Closeout, property readiness, and building operations. The `/login` route provides the branded MVP sign-in surface.
+FMS-0029 introduces the public front door for the Fuzion Operating Platform. The root route now presents FOP as the entry point for Building Protection Passport&trade;, Digital Closeout, property readiness, and building operations. The `/login` route provides the branded MVP sign-in surface for Fuzion Tech Inc.
 
 ## Local URLs
 
@@ -16,12 +16,12 @@ FMS-0029 introduces the public front door for the Fuzion Operations Platform. Th
 
 Possible production entry points include:
 
-- `https://operations.fuzionfire.ca`
-- `https://fop.fuzionfire.ca`
-- `https://passport.fuzionfire.ca`
-- `https://closeout.fuzionfire.ca`
+- `https://operations.fuziontech.ca`
+- `https://fop.fuziontech.ca`
+- `https://passport.fuziontech.ca`
+- `https://closeout.fuziontech.ca`
 
-The final URL should match the production identity decision for whether FOP is positioned as the parent operations platform, the Passport portal, or the Digital Closeout workspace.
+The final URL should match the production identity decision for whether FOP is positioned as the parent operating platform, the Passport portal, or the Digital Closeout workspace.
 
 ## MVP Limitations
 

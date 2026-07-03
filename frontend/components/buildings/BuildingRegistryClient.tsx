@@ -86,14 +86,14 @@ export function BuildingRegistryClient() {
     <div className="space-y-6">
       <section className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <p className="text-sm font-medium text-slate-500">Building Registry</p>
-          <h2 className="text-2xl font-semibold text-slate-950">{selectedOrganizationName}</h2>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#7D8CA3]">Building Registry</p>
+          <h2 className="mt-1 text-2xl font-semibold tracking-normal text-white">{selectedOrganizationName}</h2>
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <select
             value={selectedOrganizationId}
             onChange={(event) => void handleOrganizationChange(event.target.value)}
-            className="h-11 min-w-64 rounded-md border border-slate-300 bg-white px-3 text-sm"
+            className="fop-field min-w-64 bg-white"
           >
             {organizations.map((organization) => (
               <option key={organization.id} value={organization.id}>
@@ -104,7 +104,7 @@ export function BuildingRegistryClient() {
           <button
             type="button"
             onClick={() => void loadData()}
-            className="flex h-11 w-11 items-center justify-center rounded-md border border-slate-300 bg-white text-slate-700"
+            className="fop-button-secondary h-11 w-11 px-0"
             aria-label="Refresh buildings"
             title="Refresh buildings"
           >
@@ -113,7 +113,7 @@ export function BuildingRegistryClient() {
           <button
             type="button"
             onClick={() => setIsFormOpen((value) => !value)}
-            className="flex h-11 items-center gap-2 rounded-md bg-slate-950 px-4 text-sm font-semibold text-white"
+            className="fop-button-primary"
           >
             <Plus size={18} />
             Add Building
@@ -146,7 +146,7 @@ export function BuildingRegistryClient() {
             <button
               type="button"
               onClick={() => setIsFormOpen(true)}
-              className="h-11 rounded-md bg-slate-950 px-5 text-sm font-semibold text-white"
+              className="fop-button-primary"
             >
               Add Building
             </button>
@@ -161,10 +161,10 @@ export function BuildingRegistryClient() {
               header: "Building Name",
               render: (building) => (
                 <div>
-                  <Link href={`/buildings/${building.id}`} className="font-semibold text-slate-950 underline">
+                  <Link href={`/buildings/${building.id}`} className="font-semibold text-white underline decoration-white/25 underline-offset-4 hover:decoration-[#FF6B5F]">
                     {building.name}
                   </Link>
-                  <p className="mt-1 text-xs text-slate-500">{building.bpid}</p>
+                  <p className="mt-1 text-xs text-[#7D8CA3]">{building.bpid}</p>
                 </div>
               )
             },
@@ -193,7 +193,7 @@ export function BuildingRegistryClient() {
               key: "actions",
               header: "Actions",
               render: (building) => (
-                <Link href={`/buildings/${building.id}`} className="text-sm font-semibold text-slate-950 underline">
+                <Link href={`/buildings/${building.id}`} className="text-sm font-semibold text-white underline decoration-white/25 underline-offset-4 hover:decoration-[#FF6B5F]">
                   View Building
                 </Link>
               )
@@ -204,3 +204,5 @@ export function BuildingRegistryClient() {
     </div>
   );
 }
+
+

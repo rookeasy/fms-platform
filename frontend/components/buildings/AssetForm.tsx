@@ -85,24 +85,24 @@ export function AssetForm({ asset, assetTypes, isSubmitting, submitLabel, onSubm
   }
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+    <form onSubmit={handleSubmit} className="fop-card p-5">
       <div className="grid gap-4 md:grid-cols-2">
-        <label className="text-sm font-medium text-slate-700">
+        <label className="text-sm font-medium text-[#B6C1CF]">
           Asset Name
           <input
             required
             value={values.name}
             onChange={(event) => updateValue("name", event.target.value)}
-            className="mt-1 h-10 w-full rounded-md border border-slate-300 px-3 text-sm"
+            className="mt-1 h-10 w-full rounded-md border border-white/15 px-3 text-sm"
           />
         </label>
-        <label className="text-sm font-medium text-slate-700">
+        <label className="text-sm font-medium text-[#B6C1CF]">
           Asset Type
           <select
             required
             value={values.asset_type_id}
             onChange={(event) => updateValue("asset_type_id", event.target.value)}
-            className="mt-1 h-10 w-full rounded-md border border-slate-300 px-3 text-sm"
+            className="mt-1 h-10 w-full rounded-md border border-white/15 px-3 text-sm"
           >
             {assetTypes.map((assetType) => (
               <option key={assetType.id} value={assetType.id}>
@@ -111,20 +111,20 @@ export function AssetForm({ asset, assetTypes, isSubmitting, submitLabel, onSubm
             ))}
           </select>
         </label>
-        <label className="text-sm font-medium text-slate-700">
+        <label className="text-sm font-medium text-[#B6C1CF]">
           Asset Tag
           <input
             value={values.asset_tag ?? ""}
             onChange={(event) => updateValue("asset_tag", event.target.value)}
-            className="mt-1 h-10 w-full rounded-md border border-slate-300 px-3 text-sm"
+            className="mt-1 h-10 w-full rounded-md border border-white/15 px-3 text-sm"
           />
         </label>
-        <label className="text-sm font-medium text-slate-700">
+        <label className="text-sm font-medium text-[#B6C1CF]">
           Status
           <select
             value={values.status}
             onChange={(event) => updateValue("status", event.target.value)}
-            className="mt-1 h-10 w-full rounded-md border border-slate-300 px-3 text-sm"
+            className="mt-1 h-10 w-full rounded-md border border-white/15 px-3 text-sm"
           >
             {assetStatuses.map((status) => (
               <option key={status.key} value={status.key}>
@@ -133,12 +133,12 @@ export function AssetForm({ asset, assetTypes, isSubmitting, submitLabel, onSubm
             ))}
           </select>
         </label>
-        <label className="text-sm font-medium text-slate-700">
+        <label className="text-sm font-medium text-[#B6C1CF]">
           Condition
           <select
             value={values.condition_rating ?? "unknown"}
             onChange={(event) => updateValue("condition_rating", event.target.value)}
-            className="mt-1 h-10 w-full rounded-md border border-slate-300 px-3 text-sm"
+            className="mt-1 h-10 w-full rounded-md border border-white/15 px-3 text-sm"
           >
             {assetConditionRatings.map((condition) => (
               <option key={condition.key} value={condition.key}>
@@ -147,61 +147,61 @@ export function AssetForm({ asset, assetTypes, isSubmitting, submitLabel, onSubm
             ))}
           </select>
         </label>
-        <label className="text-sm font-medium text-slate-700">
+        <label className="text-sm font-medium text-[#B6C1CF]">
           Location
           <input
             value={values.location_description ?? ""}
             onChange={(event) => updateValue("location_description", event.target.value)}
-            className="mt-1 h-10 w-full rounded-md border border-slate-300 px-3 text-sm"
+            className="mt-1 h-10 w-full rounded-md border border-white/15 px-3 text-sm"
           />
         </label>
-        <label className="text-sm font-medium text-slate-700">
+        <label className="text-sm font-medium text-[#B6C1CF]">
           Manufacturer
           <input
             value={values.manufacturer ?? ""}
             onChange={(event) => updateValue("manufacturer", event.target.value)}
-            className="mt-1 h-10 w-full rounded-md border border-slate-300 px-3 text-sm"
+            className="mt-1 h-10 w-full rounded-md border border-white/15 px-3 text-sm"
           />
         </label>
-        <label className="text-sm font-medium text-slate-700">
+        <label className="text-sm font-medium text-[#B6C1CF]">
           Model
           <input
             value={values.model ?? ""}
             onChange={(event) => updateValue("model", event.target.value)}
-            className="mt-1 h-10 w-full rounded-md border border-slate-300 px-3 text-sm"
+            className="mt-1 h-10 w-full rounded-md border border-white/15 px-3 text-sm"
           />
         </label>
-        <label className="text-sm font-medium text-slate-700">
+        <label className="text-sm font-medium text-[#B6C1CF]">
           Serial Number
           <input
             value={values.serial_number ?? ""}
             onChange={(event) => updateValue("serial_number", event.target.value)}
-            className="mt-1 h-10 w-full rounded-md border border-slate-300 px-3 text-sm"
+            className="mt-1 h-10 w-full rounded-md border border-white/15 px-3 text-sm"
           />
         </label>
-        <label className="text-sm font-medium text-slate-700">
+        <label className="text-sm font-medium text-[#B6C1CF]">
           Installation Date
           <input
             type="date"
             value={values.installation_date ?? ""}
             onChange={(event) => updateValue("installation_date", event.target.value)}
-            className="mt-1 h-10 w-full rounded-md border border-slate-300 px-3 text-sm"
+            className="mt-1 h-10 w-full rounded-md border border-white/15 px-3 text-sm"
           />
         </label>
       </div>
-      <label className="mt-4 block text-sm font-medium text-slate-700">
+      <label className="mt-4 block text-sm font-medium text-[#B6C1CF]">
         Notes
         <textarea
           value={values.notes ?? ""}
           onChange={(event) => updateValue("notes", event.target.value)}
-          className="mt-1 min-h-24 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+          className="mt-1 min-h-24 w-full rounded-md border border-white/15 px-3 py-2 text-sm"
         />
       </label>
       <div className="mt-5 flex justify-end">
         <button
           type="submit"
           disabled={isSubmitting || assetTypes.length === 0}
-          className="h-10 rounded-md bg-red-700 px-4 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:bg-slate-300"
+          className="fop-button-primary disabled:cursor-not-allowed disabled:bg-slate-300"
         >
           {isSubmitting ? "Saving" : submitLabel}
         </button>
@@ -209,3 +209,4 @@ export function AssetForm({ asset, assetTypes, isSubmitting, submitLabel, onSubm
     </form>
   );
 }
+

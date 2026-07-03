@@ -5,14 +5,14 @@ type ErrorStateProps = {
 
 export function ErrorState({ message, onRetry }: ErrorStateProps) {
   return (
-    <section className="rounded-lg border border-rose-200 bg-rose-50 p-5">
-      <h2 className="text-sm font-semibold text-rose-800">Unable to load Building Registry.</h2>
-      <p className="mt-1 text-sm text-rose-700">{message}</p>
+    <section className="rounded-2xl border border-red-400/25 bg-red-500/10 p-5">
+      <h2 className="text-sm font-semibold text-red-200">Unable to load this workspace.</h2>
+      <p className="mt-1 text-sm text-red-100/80">{message}</p>
       {onRetry ? (
         <button
           type="button"
           onClick={onRetry}
-          className="mt-4 h-10 rounded-md bg-rose-700 px-4 text-sm font-semibold text-white"
+          className="fop-button-secondary mt-4 h-10"
         >
           Retry
         </button>

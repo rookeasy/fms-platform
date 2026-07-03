@@ -21,11 +21,11 @@ function displayValue(value: string | number | boolean | null | undefined) {
 
 export function IntelligenceSummaryPanel({ title, summary, metricRows }: IntelligenceSummaryPanelProps) {
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="fop-card p-5">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h4 className="font-semibold text-slate-950">{title}</h4>
-          {summary ? <p className="mt-1 text-sm text-slate-500">{summary.label}</p> : null}
+          <h4 className="font-semibold tracking-normal text-white">{title}</h4>
+          {summary ? <p className="mt-1 text-sm text-[#7D8CA3]">{summary.label}</p> : null}
         </div>
         {summary ? <StatusBadge status={formatControlledValue(summary.status)} /> : null}
       </div>
@@ -33,8 +33,8 @@ export function IntelligenceSummaryPanel({ title, summary, metricRows }: Intelli
       <dl className="mt-4 grid gap-3 sm:grid-cols-2">
         {metricRows.map((row) => (
           <div key={row.label}>
-            <dt className="text-xs font-medium uppercase text-slate-500">{row.label}</dt>
-            <dd className="mt-1 text-sm font-semibold text-slate-950">{displayValue(row.value)}</dd>
+            <dt className="text-xs font-medium uppercase text-[#7D8CA3]">{row.label}</dt>
+            <dd className="mt-1 text-sm font-semibold text-white">{displayValue(row.value)}</dd>
           </div>
         ))}
       </dl>
@@ -42,7 +42,7 @@ export function IntelligenceSummaryPanel({ title, summary, metricRows }: Intelli
       {summary?.drivers?.length ? (
         <div className="mt-4 space-y-2">
           {summary.drivers.slice(0, 3).map((driver) => (
-            <p key={driver} className="text-sm text-slate-600">
+            <p key={driver} className="text-sm text-[#B6C1CF]">
               {driver}
             </p>
           ))}
@@ -51,3 +51,4 @@ export function IntelligenceSummaryPanel({ title, summary, metricRows }: Intelli
     </div>
   );
 }
+

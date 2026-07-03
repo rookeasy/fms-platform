@@ -1,8 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, LockKeyhole, Mail, ShieldCheck } from "lucide-react";
+import { ArrowRight, LockKeyhole, Mail } from "lucide-react";
+
+import { fuzionBrand } from "@/lib/brand";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -13,96 +16,107 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="grid min-h-screen bg-slate-100 lg:grid-cols-[1fr_480px]">
-      <section className="flex min-h-[42vh] flex-col justify-between bg-slate-950 px-6 py-8 text-white sm:px-10 lg:min-h-screen">
-        <Link href="/" className="flex w-fit items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-md bg-red-700 text-sm font-semibold">F</span>
+    <main className="fop-blueprint fop-fade-in grid min-h-screen overflow-hidden bg-[#050A18] text-white lg:grid-cols-[minmax(0,1fr)_520px]">
+      <section className="relative flex min-h-[52vh] flex-col justify-between px-5 py-6 sm:px-10 lg:min-h-screen lg:px-14 lg:py-10">
+        <div className="pointer-events-none absolute right-8 top-16 hidden h-72 w-72 rounded-full border border-[#FF6B5F]/10 lg:block" />
+        <div className="pointer-events-none absolute bottom-24 right-36 hidden h-2 w-2 rounded-full bg-[#FF6B5F] shadow-[0_0_38px_rgba(255,107,95,0.65)] lg:block" />
+        <div className="pointer-events-none absolute bottom-28 right-36 hidden h-px w-48 rotate-[-18deg] bg-gradient-to-r from-[#FF6B5F]/50 to-transparent lg:block" />
+
+        <Link href="/" className="relative flex w-fit items-center gap-3">
+          <Image src="/brand/fuzion-tech-mark.svg" alt={`${fuzionBrand.companyName} logo`} width={44} height={44} priority />
           <span>
-            <span className="block text-sm font-semibold">FOP</span>
-            <span className="block text-xs text-slate-300">Fuzion Operations Platform</span>
+            <span className="block text-sm font-semibold tracking-[0.18em]">{fuzionBrand.shortName}</span>
+            <span className="block text-xs text-slate-400">{fuzionBrand.companyName}</span>
           </span>
         </Link>
 
-        <div className="max-w-2xl py-12">
-          <p className="text-sm font-semibold uppercase text-red-300">Fuzion Operations Platform</p>
-          <h1 className="mt-4 text-4xl font-semibold tracking-normal sm:text-5xl">
-            Building Protection Passport&trade; & Digital Closeout.
+        <div className="relative max-w-3xl py-12 lg:py-16">
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#FFB4AD]">Fuzion Operating Platform</p>
+          <h1 className="mt-5 max-w-3xl text-4xl font-semibold leading-tight tracking-normal text-white sm:text-5xl xl:text-6xl">
+            {fuzionBrand.subtitle}
           </h1>
-          <p className="mt-5 text-base leading-7 text-slate-300">
-            Access building profiles, property readiness, closeout scoring, and Fuzion handover operations from one workspace.
+          <p className="mt-5 max-w-2xl text-base leading-7 text-slate-300">
+            Access building profiles, closeout scoring, handover readiness, and contractor operations intelligence from one secure workspace.
           </p>
         </div>
 
-        <div className="grid gap-3 text-sm text-slate-300 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
-          {["Registry", "Closeout", "Readiness"].map((item) => (
-            <div key={item} className="rounded-md border border-white/10 bg-white/5 p-3">
-              <p className="font-semibold text-white">{item}</p>
-              <p className="mt-1 text-xs">MVP access enabled</p>
+        <div className="relative grid gap-3 sm:grid-cols-3">
+          {fuzionBrand.brandPromise.map((item) => (
+            <div key={item.label} className="rounded-xl border border-white/10 bg-white/[0.045] p-4 shadow-2xl backdrop-blur">
+              <p className="text-sm font-semibold tracking-[0.2em] text-[#FFB4AD]">{item.label}</p>
+              <p className="mt-2 text-sm text-slate-300">{item.description}</p>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="flex items-center justify-center px-6 py-10">
-        <div className="w-full max-w-md rounded-lg border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <p className="text-sm font-semibold uppercase text-slate-500">Sign in</p>
-              <h2 className="mt-2 text-2xl font-semibold text-slate-950">Fuzion Operations Platform</h2>
+      <section className="relative flex items-center justify-center px-5 py-8 sm:px-8 lg:min-h-screen lg:py-10">
+        <div className="w-full max-w-md rounded-3xl border border-white/12 bg-white/[0.08] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-xl sm:p-8">
+          <div className="text-center">
+            <div className="fop-logo-fade relative mx-auto h-[61px] w-[228px]">
+              <Image src="/brand/fuzion-tech-logo.svg" alt={`${fuzionBrand.companyName} logo`} width={228} height={61} priority />
+              <span className="fop-mark-pulse pointer-events-none absolute left-6 top-5 h-5 w-5 rounded-full border border-[#FFB4AD]/80" />
             </div>
-            <ShieldCheck className="text-red-700" size={24} />
+            <h2 className="mt-6 text-2xl font-semibold text-white">Sign in to FOP</h2>
+            <p className="mt-2 text-sm text-slate-300">{fuzionBrand.contractorSubtitle}</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+          <form onSubmit={handleSubmit} className="mt-8 space-y-5">
             <label className="block">
-              <span className="text-sm font-medium text-slate-700">Email</span>
-              <span className="mt-2 flex h-11 items-center gap-2 rounded-md border border-slate-300 px-3">
-                <Mail size={17} className="text-slate-400" />
+              <span className="text-sm font-medium text-slate-200">Email</span>
+              <span className="mt-2 flex h-12 items-center gap-3 rounded-xl border border-white/12 bg-[#050A18]/60 px-3 text-slate-100 ring-1 ring-transparent transition focus-within:border-[#FF6B5F]/70 focus-within:ring-[#FF6B5F]/20">
+                <Mail size={18} className="text-[#7D8CA3]" />
                 <input
                   name="email"
                   type="email"
                   autoComplete="email"
                   defaultValue="demo@fop.local"
-                  className="min-w-0 flex-1 border-0 bg-transparent text-sm outline-none"
+                  className="min-w-0 flex-1 border-0 bg-transparent text-sm outline-none placeholder:text-[#B6C1CF]"
                 />
               </span>
             </label>
 
             <label className="block">
-              <span className="text-sm font-medium text-slate-700">Password</span>
-              <span className="mt-2 flex h-11 items-center gap-2 rounded-md border border-slate-300 px-3">
-                <LockKeyhole size={17} className="text-slate-400" />
+              <span className="text-sm font-medium text-slate-200">Password</span>
+              <span className="mt-2 flex h-12 items-center gap-3 rounded-xl border border-white/12 bg-[#050A18]/60 px-3 text-slate-100 ring-1 ring-transparent transition focus-within:border-[#FF6B5F]/70 focus-within:ring-[#FF6B5F]/20">
+                <LockKeyhole size={18} className="text-[#7D8CA3]" />
                 <input
                   name="password"
                   type="password"
                   autoComplete="current-password"
                   defaultValue="password"
-                  className="min-w-0 flex-1 border-0 bg-transparent text-sm outline-none"
+                  className="min-w-0 flex-1 border-0 bg-transparent text-sm outline-none placeholder:text-[#B6C1CF]"
                 />
               </span>
             </label>
 
+            <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
+              <label className="flex items-center gap-2 text-slate-300">
+                <input type="checkbox" className="h-4 w-4 rounded border-white/20 bg-[#050A18] accent-[#FF6B5F]" />
+                Remember me
+              </label>
+              <Link href="/login" className="font-medium text-[#FFB4AD] hover:text-white">
+                Forgot password?
+              </Link>
+            </div>
+
             <button
               type="submit"
-              className="flex h-11 w-full items-center justify-center gap-2 rounded-md bg-red-700 text-sm font-semibold text-white hover:bg-red-800"
+              className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#FF6B5F] text-sm font-semibold text-[#050A18] shadow-[0_16px_36px_rgba(255,107,95,0.22)] transition hover:bg-[#FF857B]"
             >
-              Sign in
+              Sign In
               <ArrowRight size={16} />
             </button>
-
-            <Link
-              href="/dashboard"
-              className="flex h-11 w-full items-center justify-center rounded-md border border-slate-300 text-sm font-semibold text-slate-800 hover:bg-slate-50"
-            >
-              Continue to dashboard
-            </Link>
           </form>
 
-          <p className="mt-5 rounded-md bg-amber-50 px-3 py-2 text-xs leading-5 text-amber-900 ring-1 ring-amber-200">
-            MVP note: authentication is placeholder-only in this environment.
-          </p>
+          <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-5 text-xs text-slate-400">
+            <span>{fuzionBrand.version}</span>
+            <span>© {fuzionBrand.companyName}</span>
+          </div>
         </div>
       </section>
     </main>
   );
 }
+
+

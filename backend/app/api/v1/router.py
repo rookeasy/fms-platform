@@ -10,6 +10,7 @@ from app.api.v1.routes import (
     documents,
     inspections,
     memberships,
+    mobile,
     organization_users,
     organizations,
     passport,
@@ -39,6 +40,7 @@ api_router.include_router(properties.router)
 api_router.include_router(reports.router)
 api_router.include_router(certificates.router)
 api_router.include_router(memberships.router)
+api_router.include_router(mobile.router)
 api_router.include_router(roles.router)
 api_router.include_router(organization_users.router)
 api_router.include_router(users.router)

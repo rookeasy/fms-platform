@@ -212,12 +212,12 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
 
   return (
     <div className="space-y-6">
-      <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+      <section className="fop-card p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-sm font-medium text-slate-500">{building.bpid}</p>
-            <h2 className="mt-2 text-2xl font-semibold text-slate-950">{building.name}</h2>
-            <p className="mt-1 text-slate-600">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#7D8CA3]">{building.bpid}</p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-normal text-white">{building.name}</h2>
+            <p className="mt-1 text-[#B6C1CF]">
               {[building.address_line_1, building.city, building.province_state, building.postal_code]
                 .filter(Boolean)
                 .join(", ")}
@@ -228,7 +228,7 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
             <button
               type="button"
               onClick={() => void loadBuilding()}
-              className="flex h-10 w-10 items-center justify-center rounded-md border border-slate-300 text-slate-700"
+              className="fop-button-secondary h-10 w-10 px-0"
               aria-label="Refresh building"
               title="Refresh building"
             >
@@ -237,23 +237,23 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
             <button
               type="button"
               onClick={() => setIsEditing((value) => !value)}
-              className="h-10 rounded-md bg-slate-950 px-4 text-sm font-semibold text-white"
+              className="fop-button-primary h-10"
             >
               {isEditing ? "Close" : "Edit Building"}
             </button>
           </div>
         </div>
-        <div className="mt-5 flex flex-wrap gap-3 text-sm text-slate-600">
+        <div className="mt-5 flex flex-wrap gap-3 text-sm text-[#B6C1CF]">
           <span>{formatControlledValue(building.building_type)}</span>
           {building.owner_name ? <span>Owner: {building.owner_name}</span> : null}
           {building.property_manager_name ? <span>Manager: {building.property_manager_name}</span> : null}
           {property ? (
-            <Link href={`/properties/${property.id}`} className="font-semibold text-slate-950 underline">
+            <Link href={`/properties/${property.id}`} className="font-semibold text-white underline decoration-white/25 underline-offset-4 hover:decoration-[#FF6B5F]">
               Property: {property.name}
             </Link>
           ) : null}
           {campus ? <span>Campus: {campus.name}</span> : null}
-          <Link href={`/buildings/${building.id}/passport`} className="font-semibold text-slate-950 underline">
+          <Link href={`/buildings/${building.id}/passport`} className="font-semibold text-white underline decoration-white/25 underline-offset-4 hover:decoration-[#FF6B5F]">
             View Passport
           </Link>
         </div>
@@ -271,7 +271,7 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
         <DashboardCard title="Assets" value={`${assets.length}`} detail="Building-owned records" />
       </div>
 
-      <nav className="flex flex-wrap gap-2 rounded-lg border border-slate-200 bg-white p-2 shadow-sm" aria-label="Building sections">
+      <nav className="fop-card flex flex-wrap gap-2 p-2" aria-label="Building sections">
         {[
           ["overview", "Overview"],
           ["assets", "Assets"],
@@ -282,8 +282,8 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
             key={key}
             type="button"
             onClick={() => setActiveTab(key as typeof activeTab)}
-            className={`h-10 rounded-md px-4 text-sm font-semibold ${
-              activeTab === key ? "bg-slate-950 text-white" : "text-slate-700 hover:bg-slate-100"
+            className={`h-10 rounded-xl px-4 text-sm font-semibold transition ${
+              activeTab === key ? "bg-[#050A18] text-white shadow-md" : "text-[#B6C1CF] hover:bg-white/10"
             }`}
           >
             {label}
@@ -292,8 +292,8 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
       </nav>
 
       {activeTab === "overview" ? (
-        <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-          <h3 className="text-lg font-semibold text-slate-950">Building Details</h3>
+        <div className="fop-card p-5">
+          <h3 className="text-lg font-semibold tracking-normal text-white">Building Details</h3>
           <dl className="mt-4 grid gap-4 md:grid-cols-2">
             {[
               ["Occupancy Classification", building.occupancy_classification],
@@ -307,8 +307,8 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
               ["Notes", building.notes]
             ].map(([label, value]) => (
               <div key={String(label)}>
-                <dt className="text-sm font-medium text-slate-500">{label}</dt>
-                <dd className="mt-1 text-sm text-slate-950">{value || "-"}</dd>
+                <dt className="text-sm font-medium text-[#7D8CA3]">{label}</dt>
+                <dd className="mt-1 text-sm text-white">{value || "-"}</dd>
               </div>
             ))}
           </dl>
@@ -348,3 +348,5 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
     </div>
   );
 }
+
+

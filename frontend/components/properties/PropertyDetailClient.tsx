@@ -119,12 +119,12 @@ export function PropertyDetailClient({ propertyId }: PropertyDetailClientProps) 
 
   return (
     <div className="space-y-6">
-      <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+      <section className="fop-card p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-sm font-medium text-slate-500">{organization?.name ?? "Organization"}</p>
-            <h2 className="mt-2 text-2xl font-semibold text-slate-950">{property.name}</h2>
-            <p className="mt-1 text-slate-600">{fullAddress(property) || "No address recorded"}</p>
+            <p className="text-sm font-medium text-[#7D8CA3]">{organization?.name ?? "Organization"}</p>
+            <h2 className="mt-2 text-2xl font-semibold text-white">{property.name}</h2>
+            <p className="mt-1 text-[#B6C1CF]">{fullAddress(property) || "No address recorded"}</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <StatusBadge status={formatControlledValue(property.status)} />
@@ -133,20 +133,20 @@ export function PropertyDetailClient({ propertyId }: PropertyDetailClientProps) 
         </div>
         <div className="mt-5 grid gap-4 md:grid-cols-4">
           <div>
-            <p className="text-sm font-medium text-slate-500">Type</p>
-            <p className="mt-1 text-sm font-semibold text-slate-950">{formatControlledValue(property.property_type)}</p>
+            <p className="text-sm font-medium text-[#7D8CA3]">Type</p>
+            <p className="mt-1 text-sm font-semibold text-white">{formatControlledValue(property.property_type)}</p>
           </div>
           <div>
-            <p className="text-sm font-medium text-slate-500">Campuses</p>
-            <p className="mt-1 text-sm font-semibold text-slate-950">{campuses.length}</p>
+            <p className="text-sm font-medium text-[#7D8CA3]">Campuses</p>
+            <p className="mt-1 text-sm font-semibold text-white">{campuses.length}</p>
           </div>
           <div>
-            <p className="text-sm font-medium text-slate-500">Buildings</p>
-            <p className="mt-1 text-sm font-semibold text-slate-950">{regularBuildings.length}</p>
+            <p className="text-sm font-medium text-[#7D8CA3]">Buildings</p>
+            <p className="mt-1 text-sm font-semibold text-white">{regularBuildings.length}</p>
           </div>
           <div>
-            <p className="text-sm font-medium text-slate-500">Shared Infrastructure</p>
-            <p className="mt-1 text-sm font-semibold text-slate-950">{sharedInfrastructure.length}</p>
+            <p className="text-sm font-medium text-[#7D8CA3]">Shared Infrastructure</p>
+            <p className="mt-1 text-sm font-semibold text-white">{sharedInfrastructure.length}</p>
           </div>
         </div>
       </section>
@@ -164,37 +164,37 @@ export function PropertyDetailClient({ propertyId }: PropertyDetailClientProps) 
         ].map((item) => {
           const Icon = item.icon;
           return (
-            <div key={item.label} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+            <div key={item.label} className="fop-card p-5">
               <div className="flex items-center justify-between gap-3">
-                <p className="text-sm font-medium text-slate-500">{item.label}</p>
+                <p className="text-sm font-medium text-[#7D8CA3]">{item.label}</p>
                 <Icon className="text-slate-400" size={18} />
               </div>
-              <p className="mt-2 text-2xl font-semibold text-slate-950">{item.value}</p>
+              <p className="mt-2 text-2xl font-semibold text-white">{item.value}</p>
             </div>
           );
         })}
       </div>
 
       <section className="space-y-3">
-        <h3 className="text-lg font-semibold text-slate-950">SOHO Phase I Structure</h3>
+        <h3 className="text-lg font-semibold text-white">SOHO Phase I Structure</h3>
         <div className="grid gap-4 lg:grid-cols-3">
           {buildingEvidence.map(({ building, assets: buildingAssets, documents: buildingDocuments }) => (
-            <Link key={building.id} href={`/buildings/${building.id}`} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm hover:border-slate-400">
+            <Link key={building.id} href={`/buildings/${building.id}`} className="fop-card p-5 hover:border-white/30">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="font-semibold text-slate-950">{building.name}</p>
-                  <p className="mt-1 text-sm text-slate-600">{formatControlledValue(building.building_type)}</p>
+                  <p className="font-semibold text-white">{building.name}</p>
+                  <p className="mt-1 text-sm text-[#B6C1CF]">{formatControlledValue(building.building_type)}</p>
                 </div>
                 <StatusBadge status={formatControlledValue(building.status)} />
               </div>
               <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
                 <div>
-                  <p className="text-slate-500">Assets</p>
-                  <p className="font-semibold text-slate-950">{buildingAssets.length}</p>
+                  <p className="text-[#7D8CA3]">Assets</p>
+                  <p className="font-semibold text-white">{buildingAssets.length}</p>
                 </div>
                 <div>
-                  <p className="text-slate-500">Evidence</p>
-                  <p className="font-semibold text-slate-950">{buildingDocuments.length}</p>
+                  <p className="text-[#7D8CA3]">Evidence</p>
+                  <p className="font-semibold text-white">{buildingDocuments.length}</p>
                 </div>
               </div>
             </Link>
@@ -203,14 +203,14 @@ export function PropertyDetailClient({ propertyId }: PropertyDetailClientProps) 
       </section>
 
       <section className="grid gap-6 lg:grid-cols-2">
-        <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-          <h3 className="text-lg font-semibold text-slate-950">Key Assets</h3>
+        <div className="fop-card p-5">
+          <h3 className="text-lg font-semibold text-white">Key Assets</h3>
           <div className="mt-4 space-y-3">
             {assets.slice(0, 12).map((asset) => (
               <div key={asset.id} className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3 last:border-b-0 last:pb-0">
                 <div>
-                  <p className="text-sm font-semibold text-slate-950">{asset.name}</p>
-                  <p className="text-sm text-slate-500">{asset.location_description || "No location"}</p>
+                  <p className="text-sm font-semibold text-white">{asset.name}</p>
+                  <p className="text-sm text-[#7D8CA3]">{asset.location_description || "No location"}</p>
                 </div>
                 <StatusBadge status={formatControlledValue(asset.status)} />
               </div>
@@ -219,27 +219,27 @@ export function PropertyDetailClient({ propertyId }: PropertyDetailClientProps) 
           </div>
         </div>
 
-        <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-          <h3 className="text-lg font-semibold text-slate-950">Document / Evidence Summary</h3>
+        <div className="fop-card p-5">
+          <h3 className="text-lg font-semibold text-white">Document / Evidence Summary</h3>
           <dl className="mt-4 grid gap-4 sm:grid-cols-3">
             <div>
-              <dt className="text-sm font-medium text-slate-500">Total</dt>
-              <dd className="mt-1 text-2xl font-semibold text-slate-950">{documents.length}</dd>
+              <dt className="text-sm font-medium text-[#7D8CA3]">Total</dt>
+              <dd className="mt-1 text-2xl font-semibold text-white">{documents.length}</dd>
             </div>
             <div>
-              <dt className="text-sm font-medium text-slate-500">Client Visible</dt>
-              <dd className="mt-1 text-2xl font-semibold text-slate-950">{clientVisibleDocuments.length}</dd>
+              <dt className="text-sm font-medium text-[#7D8CA3]">Client Visible</dt>
+              <dd className="mt-1 text-2xl font-semibold text-white">{clientVisibleDocuments.length}</dd>
             </div>
             <div>
-              <dt className="text-sm font-medium text-slate-500">Passport</dt>
-              <dd className="mt-1 text-2xl font-semibold text-slate-950">{passportDocuments.length}</dd>
+              <dt className="text-sm font-medium text-[#7D8CA3]">Passport</dt>
+              <dd className="mt-1 text-2xl font-semibold text-white">{passportDocuments.length}</dd>
             </div>
           </dl>
           <div className="mt-5 space-y-2">
             {documents.slice(0, 8).map((document) => (
               <div key={document.id} className="flex items-center justify-between gap-3 text-sm">
-                <span className="font-medium text-slate-950">{document.title}</span>
-                <span className="text-slate-500">{formatControlledValue(document.document_type)}</span>
+                <span className="font-medium text-white">{document.title}</span>
+                <span className="text-[#7D8CA3]">{formatControlledValue(document.document_type)}</span>
               </div>
             ))}
           </div>
@@ -248,3 +248,5 @@ export function PropertyDetailClient({ propertyId }: PropertyDetailClientProps) 
     </div>
   );
 }
+
+

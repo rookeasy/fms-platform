@@ -57,12 +57,12 @@ export function BuildingPassportClient({ buildingId }: BuildingPassportClientPro
 
   return (
     <div className="space-y-6">
-      <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="text-sm font-medium text-slate-500">{passport.building.bpid}</p>
+      <section className="fop-card p-6">
+        <p className="text-sm font-medium text-[#7D8CA3]">{passport.building.bpid}</p>
         <div className="mt-2 flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h2 className="text-2xl font-semibold text-slate-950">{passport.building.name}</h2>
-            <p className="mt-1 text-slate-600">
+            <h2 className="text-2xl font-semibold text-white">{passport.building.name}</h2>
+            <p className="mt-1 text-[#B6C1CF]">
               {[
                 passport.building.address_line_1,
                 passport.building.city,
@@ -73,7 +73,7 @@ export function BuildingPassportClient({ buildingId }: BuildingPassportClientPro
                 .join(", ")}
             </p>
           </div>
-          <Link href={`/buildings/${passport.building.id}`} className="h-10 rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-800">
+          <Link href={`/buildings/${passport.building.id}`} className="h-10 rounded-md border border-white/15 px-4 py-2 text-sm font-semibold text-[#DCE5F2]">
             Building Profile
           </Link>
         </div>
@@ -92,8 +92,8 @@ export function BuildingPassportClient({ buildingId }: BuildingPassportClientPro
                 ["Fire Department", passport.building.fire_department]
               ].map(([label, value]) => (
                 <div key={label}>
-                  <dt className="text-sm font-medium text-slate-500">{label}</dt>
-                  <dd className="mt-1 text-sm text-slate-950">{value || "-"}</dd>
+                  <dt className="text-sm font-medium text-[#7D8CA3]">{label}</dt>
+                  <dd className="mt-1 text-sm text-white">{value || "-"}</dd>
                 </div>
               ))}
             </dl>
@@ -103,10 +103,10 @@ export function BuildingPassportClient({ buildingId }: BuildingPassportClientPro
             {passport.contacts.length ? (
               <div className="grid gap-3 md:grid-cols-2">
                 {passport.contacts.map((contact) => (
-                  <div key={contact.id} className="rounded-md border border-slate-200 p-4">
-                    <div className="font-semibold text-slate-950">{contact.name}</div>
-                    <div className="text-sm text-slate-600">{formatControlledValue(contact.contact_type)}</div>
-                    <div className="mt-2 text-sm text-slate-700">{contact.email || contact.phone || "-"}</div>
+                  <div key={contact.id} className="rounded-md border border-white/10 p-4">
+                    <div className="font-semibold text-white">{contact.name}</div>
+                    <div className="text-sm text-[#B6C1CF]">{formatControlledValue(contact.contact_type)}</div>
+                    <div className="mt-2 text-sm text-[#B6C1CF]">{contact.email || contact.phone || "-"}</div>
                   </div>
                 ))}
               </div>
@@ -119,13 +119,13 @@ export function BuildingPassportClient({ buildingId }: BuildingPassportClientPro
             {passport.assets.length ? (
               <div className="grid gap-3 md:grid-cols-2">
                 {passport.assets.map((asset) => (
-                  <div key={asset.id} className="rounded-md border border-slate-200 p-4">
+                  <div key={asset.id} className="rounded-md border border-white/10 p-4">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <div className="font-semibold text-slate-950">{asset.name}</div>
+                      <div className="font-semibold text-white">{asset.name}</div>
                       <StatusBadge status={formatControlledValue(asset.status)} />
                     </div>
-                    <div className="mt-1 text-sm text-slate-600">{asset.asset_type?.name ?? "Unknown asset type"}</div>
-                    <div className="mt-2 text-sm text-slate-700">{formatControlledValue(asset.condition_rating) || "Condition unknown"}</div>
+                    <div className="mt-1 text-sm text-[#B6C1CF]">{asset.asset_type?.name ?? "Unknown asset type"}</div>
+                    <div className="mt-2 text-sm text-[#B6C1CF]">{formatControlledValue(asset.condition_rating) || "Condition unknown"}</div>
                   </div>
                 ))}
               </div>
@@ -138,14 +138,14 @@ export function BuildingPassportClient({ buildingId }: BuildingPassportClientPro
             {passport.documents.length ? (
               <div className="grid gap-3">
                 {passport.documents.map((document) => (
-                  <div key={document.id} className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-slate-200 p-4">
+                  <div key={document.id} className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-white/10 p-4">
                     <div>
-                      <div className="font-semibold text-slate-950">{document.title}</div>
-                      <div className="text-sm text-slate-600">
+                      <div className="font-semibold text-white">{document.title}</div>
+                      <div className="text-sm text-[#B6C1CF]">
                         {formatControlledValue(document.document_type)} - v{document.version_number}
                       </div>
                     </div>
-                    <a href={getDocumentDownloadUrl(document.id)} className="h-9 rounded-md border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-800">
+                    <a href={getDocumentDownloadUrl(document.id)} className="h-9 rounded-md border border-white/15 px-3 py-2 text-sm font-semibold text-[#DCE5F2]">
                       Download
                     </a>
                   </div>
@@ -162,15 +162,16 @@ export function BuildingPassportClient({ buildingId }: BuildingPassportClientPro
             {timelineItems.length ? <Timeline items={timelineItems} /> : <EmptyState title="No timeline records." message="Asset and document activity will appear here." />}
           </PassportSection>
           <PassportSection title="Health Score">
-            <div className="text-3xl font-semibold text-slate-950">{passport.health_score.score ?? "-"}</div>
-            <p className="mt-1 text-sm text-slate-600">{formatControlledValue(passport.health_score.status)}</p>
+            <div className="text-3xl font-semibold text-white">{passport.health_score.score ?? "-"}</div>
+            <p className="mt-1 text-sm text-[#B6C1CF]">{formatControlledValue(passport.health_score.status)}</p>
           </PassportSection>
           <PassportSection title="Membership">
-            <div className="text-lg font-semibold text-slate-950">{passport.membership.plan ?? "No active plan"}</div>
-            <p className="mt-1 text-sm text-slate-600">{formatControlledValue(passport.membership.status)}</p>
+            <div className="text-lg font-semibold text-white">{passport.membership.plan ?? "No active plan"}</div>
+            <p className="mt-1 text-sm text-[#B6C1CF]">{formatControlledValue(passport.membership.status)}</p>
           </PassportSection>
         </div>
       </div>
     </div>
   );
 }
+

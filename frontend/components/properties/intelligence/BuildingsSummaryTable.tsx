@@ -10,11 +10,11 @@ type BuildingsSummaryTableProps = {
 
 export function BuildingsSummaryTable({ buildings }: BuildingsSummaryTableProps) {
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-      <h4 className="font-semibold text-slate-950">Buildings Summary</h4>
+    <div className="fop-card p-5">
+      <h4 className="font-semibold tracking-normal text-white">Buildings Summary</h4>
       <div className="mt-4 overflow-x-auto">
         <table className="w-full min-w-[820px] text-left text-sm">
-          <thead className="border-b border-slate-200 text-xs uppercase text-slate-500">
+          <thead className="border-b border-white/10 text-[11px] uppercase tracking-[0.16em] text-[#7D8CA3]">
             <tr>
               <th className="py-2 pr-4">Record</th>
               <th className="py-2 pr-4">Health</th>
@@ -27,12 +27,12 @@ export function BuildingsSummaryTable({ buildings }: BuildingsSummaryTableProps)
           </thead>
           <tbody>
             {buildings.map((building) => (
-              <tr key={building.id} className="border-b border-slate-100 last:border-b-0">
+              <tr key={building.id} className="border-b border-slate-100 transition last:border-b-0 hover:bg-[#fff7f6]">
                 <td className="py-3 pr-4">
-                  <Link href={`/buildings/${building.id}`} className="font-semibold text-slate-950 underline">
+                  <Link href={`/buildings/${building.id}`} className="font-semibold text-white underline decoration-white/25 underline-offset-4 hover:decoration-[#FF6B5F]">
                     {building.name}
                   </Link>
-                  <p className="text-xs text-slate-500">{building.bpid ?? formatControlledValue(building.building_type ?? "")}</p>
+                  <p className="text-xs text-[#7D8CA3]">{building.bpid ?? formatControlledValue(building.building_type ?? "")}</p>
                 </td>
                 <td className="py-3 pr-4">{building.health_score ?? "Not scored"}</td>
                 <td className="py-3 pr-4">{building.asset_count}</td>
@@ -50,3 +50,5 @@ export function BuildingsSummaryTable({ buildings }: BuildingsSummaryTableProps)
     </div>
   );
 }
+
+

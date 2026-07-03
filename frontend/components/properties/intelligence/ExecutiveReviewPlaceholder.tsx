@@ -12,15 +12,16 @@ export function ExecutiveReviewPlaceholder({ review, calculatedAt }: ExecutiveRe
   const message = typeof review.message === "string" ? review.message : "Executive review generation is reserved for a future phase.";
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="fop-card p-5">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h4 className="font-semibold text-slate-950">{title}</h4>
-          <p className="mt-1 text-sm text-slate-600">{message}</p>
+          <h4 className="font-semibold tracking-normal text-white">{title}</h4>
+          <p className="mt-1 text-sm text-[#B6C1CF]">{message}</p>
         </div>
         <StatusBadge status={formatControlledValue(status)} />
       </div>
-      <p className="mt-4 text-xs font-medium uppercase text-slate-500">Calculated {new Date(calculatedAt).toLocaleString()}</p>
+      <p className="mt-4 text-xs font-medium uppercase text-[#7D8CA3]">Calculated {new Date(calculatedAt).toLocaleString()}</p>
     </div>
   );
 }
+

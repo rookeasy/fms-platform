@@ -22,10 +22,10 @@ export function Timeline({ items }: TimelineProps) {
           />
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <p className="font-medium text-slate-950">{item.title}</p>
-              <p className="text-xs font-medium uppercase text-slate-500">{item.date}</p>
+              <p className="font-medium text-white">{item.title}</p>
+              <p className="text-xs font-medium uppercase text-[#7D8CA3]">{item.date}</p>
             </div>
-            <p className="mt-1 text-sm leading-6 text-slate-600">{item.description}</p>
+            <p className="mt-1 text-sm leading-6 text-[#B6C1CF]">{item.description}</p>
           </div>
         </li>
       ))}

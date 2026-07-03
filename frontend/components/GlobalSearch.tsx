@@ -87,7 +87,7 @@ export function GlobalSearch() {
 
   return (
     <div ref={containerRef} className="relative w-full max-w-xl">
-      <div className="flex h-10 items-center gap-2 rounded-md border border-slate-200 bg-white px-3 text-slate-600 focus-within:border-slate-400">
+      <div className="flex h-10 items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 text-[#B6C1CF] shadow-sm transition focus-within:border-[#FF6B5F]/70 focus-within:shadow-md">
         <Search size={18} />
         <input
           ref={inputRef}
@@ -99,7 +99,7 @@ export function GlobalSearch() {
           onFocus={() => setIsOpen(true)}
           onKeyDown={handleKeyDown}
           placeholder="Search FOP"
-          className="min-w-0 flex-1 bg-transparent text-sm text-slate-950 outline-none placeholder:text-slate-400"
+          className="min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-[#7D8CA3]"
           aria-label="Global search"
         />
         {query ? (
@@ -110,7 +110,7 @@ export function GlobalSearch() {
               setResults([]);
               setIsOpen(false);
             }}
-            className="flex h-6 w-6 items-center justify-center rounded-md text-slate-500 hover:bg-slate-100"
+            className="flex h-6 w-6 items-center justify-center rounded-lg text-[#7D8CA3] hover:bg-white/10 hover:text-white"
             aria-label="Clear search"
             title="Clear search"
           >
@@ -120,26 +120,26 @@ export function GlobalSearch() {
       </div>
 
       {isOpen && query.trim() ? (
-        <div className="absolute right-0 z-50 mt-2 max-h-[70vh] w-full min-w-[320px] overflow-auto rounded-lg border border-slate-200 bg-white shadow-lg">
-          {isLoading ? <div className="p-4 text-sm text-slate-600">Searching...</div> : null}
+        <div className="absolute right-0 z-50 mt-2 max-h-[70vh] w-full min-w-[320px] overflow-auto rounded-2xl border border-white/10 bg-[#111827] shadow-2xl">
+          {isLoading ? <div className="p-4 text-sm text-[#B6C1CF]">Searching...</div> : null}
           {error ? <div className="p-4 text-sm text-red-700">{error}</div> : null}
-          {!isLoading && !error && !results.length ? <div className="p-4 text-sm text-slate-600">No results found.</div> : null}
+          {!isLoading && !error && !results.length ? <div className="p-4 text-sm text-[#B6C1CF]">No results found.</div> : null}
           {!isLoading && !error && groupedResults.length ? (
             <div className="py-2">
               {groupedResults.map((group) => (
-                <div key={group.type} className="border-b border-slate-100 py-2 last:border-b-0">
-                  <p className="px-3 pb-1 text-xs font-semibold uppercase text-slate-500">{formatControlledValue(group.type)}</p>
+                <div key={group.type} className="border-b border-white/10 py-2 last:border-b-0">
+                  <p className="px-3 pb-1 text-xs font-semibold uppercase text-[#7D8CA3]">{formatControlledValue(group.type)}</p>
                   <div className="space-y-1">
                     {group.results.map((result) => (
                       <button
                         key={`${result.type}-${result.id}-${result.url}`}
                         type="button"
                         onClick={() => openResult(result)}
-                        className="flex w-full items-start justify-between gap-3 px-3 py-2 text-left hover:bg-slate-50"
+                        className="flex w-full items-start justify-between gap-3 px-3 py-2 text-left transition hover:bg-white/[0.045]"
                       >
                         <span className="min-w-0">
-                          <span className="block truncate text-sm font-semibold text-slate-950">{result.title}</span>
-                          <span className="block truncate text-xs text-slate-500">{result.subtitle || result.matched_field}</span>
+                          <span className="block truncate text-sm font-semibold text-white">{result.title}</span>
+                          <span className="block truncate text-xs text-[#7D8CA3]">{result.subtitle || result.matched_field}</span>
                         </span>
                         <StatusBadge status={formatControlledValue(result.type)} />
                       </button>

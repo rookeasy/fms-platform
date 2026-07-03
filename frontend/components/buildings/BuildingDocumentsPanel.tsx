@@ -59,7 +59,7 @@ export function BuildingDocumentsPanel({
         key: "title",
         header: "Document",
         render: (document) => (
-          <button type="button" onClick={() => setSelectedDocument(document)} className="text-left font-semibold text-slate-950">
+          <button type="button" onClick={() => setSelectedDocument(document)} className="text-left font-semibold text-white">
             {document.title}
           </button>
         )
@@ -83,7 +83,7 @@ export function BuildingDocumentsPanel({
         render: (document) => (
           <a
             href={getDocumentDownloadUrl(document.id)}
-            className="flex h-9 w-9 items-center justify-center rounded-md border border-slate-300 text-slate-700"
+            className="flex h-9 w-9 items-center justify-center rounded-md border border-white/15 text-[#B6C1CF]"
             aria-label={`Download ${document.title}`}
             title={`Download ${document.title}`}
           >
@@ -129,23 +129,23 @@ export function BuildingDocumentsPanel({
   return (
     <section className="space-y-5">
       <div>
-        <h3 className="text-lg font-semibold text-slate-950">Documents</h3>
-        <p className="text-sm text-slate-600">Secure building document metadata and local MVP storage.</p>
+        <h3 className="text-lg font-semibold tracking-normal text-white">Documents</h3>
+        <p className="text-sm text-[#B6C1CF]">Secure building document metadata and local MVP storage.</p>
       </div>
 
-      <form onSubmit={handleUpload} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+      <form onSubmit={handleUpload} className="fop-card p-5">
         <div className="grid gap-4 md:grid-cols-3">
-          <label className="text-sm font-medium text-slate-700">
+          <label className="text-sm font-medium text-[#B6C1CF]">
             Title
-            <input name="title" required className="mt-1 h-10 w-full rounded-md border border-slate-300 px-3 text-sm" />
+            <input name="title" required className="mt-1 h-10 w-full rounded-md border border-white/15 px-3 text-sm" />
           </label>
-          <label className="text-sm font-medium text-slate-700">
+          <label className="text-sm font-medium text-[#B6C1CF]">
             Document Type
             <select
               name="document_type"
               value={documentType}
               onChange={(event) => setDocumentType(event.target.value)}
-              className="mt-1 h-10 w-full rounded-md border border-slate-300 px-3 text-sm"
+              className="mt-1 h-10 w-full rounded-md border border-white/15 px-3 text-sm"
             >
               {documentTypes.map((type) => (
                 <option key={type.key} value={type.key}>
@@ -154,9 +154,9 @@ export function BuildingDocumentsPanel({
               ))}
             </select>
           </label>
-          <label className="text-sm font-medium text-slate-700">
+          <label className="text-sm font-medium text-[#B6C1CF]">
             Related Asset
-            <select name="asset_id" className="mt-1 h-10 w-full rounded-md border border-slate-300 px-3 text-sm">
+            <select name="asset_id" className="mt-1 h-10 w-full rounded-md border border-white/15 px-3 text-sm">
               <option value="">Building level</option>
               {assets.map((asset) => (
                 <option key={asset.id} value={asset.id}>
@@ -165,30 +165,30 @@ export function BuildingDocumentsPanel({
               ))}
             </select>
           </label>
-          <label className="text-sm font-medium text-slate-700 md:col-span-2">
+          <label className="text-sm font-medium text-[#B6C1CF] md:col-span-2">
             File
-            <input name="file" type="file" required className="mt-1 block w-full text-sm text-slate-700" />
+            <input name="file" type="file" required className="mt-1 block w-full text-sm text-[#B6C1CF]" />
           </label>
           <div className="flex flex-wrap items-end gap-4">
-            <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
-              <input name="is_public_to_client" type="checkbox" value="true" className="h-4 w-4 rounded border-slate-300" />
+            <label className="flex items-center gap-2 text-sm font-medium text-[#B6C1CF]">
+              <input name="is_public_to_client" type="checkbox" value="true" className="h-4 w-4 rounded border-white/15" />
               Client Visible
             </label>
-            <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
-              <input name="is_passport_record" type="checkbox" value="true" className="h-4 w-4 rounded border-slate-300" />
+            <label className="flex items-center gap-2 text-sm font-medium text-[#B6C1CF]">
+              <input name="is_passport_record" type="checkbox" value="true" className="h-4 w-4 rounded border-white/15" />
               Passport Record
             </label>
           </div>
         </div>
-        <label className="mt-4 block text-sm font-medium text-slate-700">
+        <label className="mt-4 block text-sm font-medium text-[#B6C1CF]">
           Description
-          <textarea name="description" className="mt-1 min-h-20 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" />
+          <textarea name="description" className="mt-1 min-h-20 w-full rounded-md border border-white/15 px-3 py-2 text-sm" />
         </label>
         <div className="mt-5 flex justify-end">
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex h-10 items-center gap-2 rounded-md bg-red-700 px-4 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:bg-slate-300"
+            className="fop-button-primary disabled:cursor-not-allowed disabled:bg-slate-300"
           >
             <Upload size={16} />
             {isSubmitting ? "Uploading" : "Upload Document"}
@@ -206,8 +206,8 @@ export function BuildingDocumentsPanel({
             key={key}
             type="button"
             onClick={() => setFilter(key as FilterValue)}
-            className={`h-9 rounded-md border px-3 text-sm font-semibold ${
-              filter === key ? "border-red-700 bg-red-50 text-red-800" : "border-slate-300 bg-white text-slate-700"
+            className={`h-9 rounded-xl border px-3 text-sm font-semibold transition ${
+              filter === key ? "border-[#FF6B5F] bg-[#FF6B5F] text-[#050A18]" : "border-white/15 bg-white/5 text-[#B6C1CF] hover:border-white/30"
             }`}
           >
             {label}
@@ -222,14 +222,14 @@ export function BuildingDocumentsPanel({
       )}
 
       {selectedDocument ? (
-        <aside className="grid gap-5 rounded-lg border border-slate-200 bg-white p-5 shadow-sm lg:grid-cols-[1fr_360px]">
+        <aside className="fop-card grid gap-5 p-5 lg:grid-cols-[1fr_360px]">
           <div>
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <h4 className="text-base font-semibold text-slate-950">{selectedDocument.title}</h4>
-                <p className="text-sm text-slate-600">{formatControlledValue(selectedDocument.document_type)}</p>
+                <h4 className="text-base font-semibold text-white">{selectedDocument.title}</h4>
+                <p className="text-sm text-[#B6C1CF]">{formatControlledValue(selectedDocument.document_type)}</p>
               </div>
-              <button type="button" onClick={() => setSelectedDocument(null)} className="text-sm font-semibold text-slate-700">
+              <button type="button" onClick={() => setSelectedDocument(null)} className="text-sm font-semibold text-[#B6C1CF]">
                 Close
               </button>
             </div>
@@ -244,45 +244,45 @@ export function BuildingDocumentsPanel({
                 ["Description", selectedDocument.description]
               ].map(([label, value]) => (
                 <div key={label}>
-                  <dt className="text-xs font-semibold uppercase text-slate-500">{label}</dt>
-                  <dd className="mt-1 text-sm text-slate-800">{value || "-"}</dd>
+                  <dt className="text-xs font-semibold uppercase text-[#7D8CA3]">{label}</dt>
+                  <dd className="mt-1 text-sm text-[#DCE5F2]">{value || "-"}</dd>
                 </div>
               ))}
             </dl>
             <a
               href={getDocumentDownloadUrl(selectedDocument.id)}
-              className="mt-5 inline-flex h-10 items-center gap-2 rounded-md border border-slate-300 px-4 text-sm font-semibold text-slate-800"
+              className="fop-button-secondary mt-5"
             >
               <Download size={16} />
               Download
             </a>
           </div>
-          <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-            <div className="flex items-center gap-2 text-sm font-semibold text-slate-950">
+          <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
+            <div className="flex items-center gap-2 text-sm font-semibold text-white">
               <History size={16} />
               Version History
             </div>
             <div className="mt-3 space-y-2">
               {versionHistory.map((document) => (
-                <div key={document.id} className="rounded-md border border-slate-200 bg-white p-3 text-sm">
-                  <div className="font-semibold text-slate-950">v{document.version_number}</div>
-                  <div className="text-slate-600">{new Date(document.created_at).toLocaleString()}</div>
+                <div key={document.id} className="rounded-md border border-white/10 bg-white/5 p-3 text-sm">
+                  <div className="font-semibold text-white">v{document.version_number}</div>
+                  <div className="text-[#B6C1CF]">{new Date(document.created_at).toLocaleString()}</div>
                 </div>
               ))}
             </div>
             <form onSubmit={handleVersionUpload} className="mt-4 space-y-3">
-              <label className="block text-sm font-medium text-slate-700">
+              <label className="block text-sm font-medium text-[#B6C1CF]">
                 Replacement File
                 <input
                   type="file"
                   onChange={(event) => setReplacementFile(event.target.files?.[0] ?? null)}
-                  className="mt-1 block w-full text-sm text-slate-700"
+                  className="mt-1 block w-full text-sm text-[#B6C1CF]"
                 />
               </label>
               <button
                 type="submit"
                 disabled={isSubmitting || !replacementFile}
-                className="flex h-10 w-full items-center justify-center gap-2 rounded-md bg-slate-950 px-4 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:bg-slate-300"
+                className="fop-button-primary w-full disabled:cursor-not-allowed disabled:bg-slate-300"
               >
                 <FileUp size={16} />
                 Upload New Version
@@ -294,3 +294,5 @@ export function BuildingDocumentsPanel({
     </section>
   );
 }
+
+

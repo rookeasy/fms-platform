@@ -1,22 +1,25 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Building2, ClipboardCheck, FileCheck2, ShieldCheck } from "lucide-react";
 
+import { fuzionBrand } from "@/lib/brand";
+
 const platformSignals = [
-  { label: "Building Registry", value: "Active", icon: Building2 },
-  { label: "Protection Passport", value: "Ready", icon: ShieldCheck },
-  { label: "Digital Closeout", value: "Scored", icon: FileCheck2 },
-  { label: "Property Operations", value: "Live", icon: ClipboardCheck }
+  { label: "Building Profiles", value: "Build", icon: Building2 },
+  { label: "Protection Passport", value: "Protect", icon: ShieldCheck },
+  { label: "Closeout Scoring", value: "Advise", icon: FileCheck2 },
+  { label: "Handover Operations", value: "Sustain", icon: ClipboardCheck }
 ];
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
+    <main className="fop-blueprint fop-fade-in min-h-screen bg-[#050A18] text-white">
       <header className="flex min-h-16 items-center justify-between border-b border-white/10 px-5 sm:px-8">
         <Link href="/" className="flex items-center gap-3">
-          <span className="flex h-9 w-9 items-center justify-center rounded-md bg-red-700 text-sm font-semibold">F</span>
+          <Image src="/brand/fuzion-tech-mark.svg" alt={`${fuzionBrand.companyName} logo`} width={40} height={40} priority />
           <span>
-            <span className="block text-sm font-semibold">FOP</span>
-            <span className="block text-xs text-slate-300">Fuzion Operations Platform</span>
+            <span className="block text-sm font-semibold tracking-[0.18em]">{fuzionBrand.shortName}</span>
+            <span className="block text-xs text-slate-400">{fuzionBrand.companyName}</span>
           </span>
         </Link>
         <nav className="flex items-center gap-3 text-sm">
@@ -29,53 +32,52 @@ export default function Home() {
           <Link href="/buildings" className="hidden text-slate-300 hover:text-white sm:inline">
             Buildings
           </Link>
-          <Link href="/login" className="inline-flex h-10 items-center gap-2 rounded-md bg-white px-4 font-semibold text-slate-950">
+          <Link href="/login" className="inline-flex h-10 items-center gap-2 rounded-xl bg-[#FF6B5F] px-4 font-semibold text-[#050A18]">
             Sign in
             <ArrowRight size={16} />
           </Link>
         </nav>
       </header>
 
-      <section className="mx-auto grid min-h-[calc(100vh-4rem)] w-full max-w-7xl items-center gap-10 px-5 py-10 sm:px-8 lg:grid-cols-[1fr_440px]">
+      <section className="mx-auto grid min-h-[calc(100vh-4rem)] w-full max-w-7xl items-center gap-10 px-5 py-10 sm:px-8 lg:grid-cols-[1fr_460px]">
         <div className="max-w-3xl">
-          <p className="text-sm font-semibold uppercase text-red-300">Fuzion Operations Platform</p>
-          <h1 className="mt-4 text-4xl font-semibold tracking-normal text-white sm:text-5xl lg:text-6xl">
-            Building Protection Passport&trade; & Digital Closeout
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#FFB4AD]">Fuzion Operating Platform</p>
+          <h1 className="mt-5 text-4xl font-semibold tracking-normal text-white sm:text-5xl lg:text-6xl">
+            {fuzionBrand.subtitle}
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-7 text-slate-300">
-            A single front door for building registry, property readiness, closeout evidence, and Fuzion handover operations.
+            {fuzionBrand.product} connects building profiles, closeout scoring, and handover operations for specialty contractors.
           </p>
+          <p className="mt-5 text-sm font-semibold tracking-[0.26em] text-[#FF6B5F]">{fuzionBrand.tagline}</p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link href="/login" className="inline-flex h-11 items-center gap-2 rounded-md bg-red-700 px-5 text-sm font-semibold text-white hover:bg-red-800">
+            <Link href="/login" className="inline-flex h-12 items-center gap-2 rounded-xl bg-[#FF6B5F] px-5 text-sm font-semibold text-[#050A18] hover:bg-[#FF857B]">
               Go to login
               <ArrowRight size={16} />
             </Link>
-            <Link href="/dashboard" className="inline-flex h-11 items-center rounded-md border border-white/20 px-5 text-sm font-semibold text-white hover:bg-white/10">
+            <Link href="/dashboard" className="inline-flex h-12 items-center rounded-xl border border-white/15 px-5 text-sm font-semibold text-white hover:bg-white/10">
               Continue to dashboard
             </Link>
           </div>
         </div>
 
-        <div className="rounded-lg border border-white/10 bg-white/5 p-5 shadow-2xl">
+        <div className="rounded-3xl border border-white/10 bg-white/[0.07] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.4)] backdrop-blur-xl">
           <div className="flex items-center justify-between border-b border-white/10 pb-4">
             <div>
-              <p className="text-sm font-semibold">Operations Snapshot</p>
-              <p className="mt-1 text-xs text-slate-300">Placeholder access enabled for MVP review</p>
+              <p className="text-sm font-semibold">Release 1.0 Entry</p>
+              <p className="mt-1 text-xs text-slate-400">{fuzionBrand.contractorSubtitle}</p>
             </div>
-            <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-200 ring-1 ring-emerald-400/30">
-              Demo
-            </span>
+            <Image src="/brand/fuzion-tech-mark.svg" alt="" width={42} height={42} />
           </div>
           <div className="mt-5 grid gap-3">
             {platformSignals.map((signal) => {
               const Icon = signal.icon;
               return (
-                <div key={signal.label} className="flex items-center justify-between rounded-md border border-white/10 bg-slate-900/80 p-4">
+                <div key={signal.label} className="flex items-center justify-between rounded-xl border border-white/10 bg-[#050A18]/70 p-4">
                   <div className="flex items-center gap-3">
-                    <Icon size={18} className="text-red-300" />
+                    <Icon size={18} className="text-[#FFB4AD]" />
                     <span className="text-sm font-medium">{signal.label}</span>
                   </div>
-                  <span className="text-xs font-semibold text-slate-300">{signal.value}</span>
+                  <span className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">{signal.value}</span>
                 </div>
               );
             })}
@@ -85,3 +87,4 @@ export default function Home() {
     </main>
   );
 }
+

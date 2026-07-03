@@ -22,11 +22,11 @@ function scoreColor(score: PropertyIntelligenceScore) {
 
 export function IntelligenceScoreCard({ score, icon: Icon }: IntelligenceScoreCardProps) {
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="fop-card p-5">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-sm font-medium text-slate-500">{score.label}</p>
-          <p className={`mt-3 text-3xl font-semibold ${scoreColor(score)}`}>{score.score}</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#7D8CA3]">{score.label}</p>
+          <p className={`mt-3 text-3xl font-semibold tracking-normal ${scoreColor(score)}`}>{score.score}</p>
         </div>
         <Icon className="text-slate-400" size={18} />
       </div>
@@ -36,3 +36,4 @@ export function IntelligenceScoreCard({ score, icon: Icon }: IntelligenceScoreCa
     </div>
   );
 }
+

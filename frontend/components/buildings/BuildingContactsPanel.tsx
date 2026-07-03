@@ -38,27 +38,27 @@ export function BuildingContactsPanel({ contacts, isSubmitting, onCreate, onDele
 
   return (
     <section className="space-y-4">
-      <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 className="text-lg font-semibold text-slate-950">Contacts</h2>
+      <div className="fop-card p-5">
+        <h2 className="text-lg font-semibold tracking-normal text-white">Contacts</h2>
         {contacts.length === 0 ? (
-          <p className="mt-2 text-sm text-slate-600">No building contacts have been added yet.</p>
+          <p className="mt-2 text-sm text-[#B6C1CF]">No building contacts have been added yet.</p>
         ) : (
           <div className="mt-4 divide-y divide-slate-100">
             {contacts.map((contact) => (
               <div key={contact.id} className="flex flex-wrap items-start justify-between gap-4 py-4">
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
-                    <p className="font-semibold text-slate-950">{contact.name}</p>
+                    <p className="font-semibold text-white">{contact.name}</p>
                     <StatusBadge status={formatControlledValue(contact.contact_type)} />
                     {contact.is_primary ? <StatusBadge status="Active" /> : null}
                   </div>
-                  <p className="mt-1 text-sm text-slate-600">{[contact.company, contact.job_title].filter(Boolean).join(" - ")}</p>
-                  <p className="mt-1 text-sm text-slate-600">{[contact.email, contact.phone, contact.mobile].filter(Boolean).join(" | ")}</p>
+                  <p className="mt-1 text-sm text-[#B6C1CF]">{[contact.company, contact.job_title].filter(Boolean).join(" - ")}</p>
+                  <p className="mt-1 text-sm text-[#B6C1CF]">{[contact.email, contact.phone, contact.mobile].filter(Boolean).join(" | ")}</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => onDelete(contact.id)}
-                  className="h-9 rounded-md border border-slate-300 px-3 text-sm font-semibold text-slate-700"
+                  className="fop-button-secondary h-9"
                 >
                   Remove
                 </button>
@@ -68,12 +68,12 @@ export function BuildingContactsPanel({ contacts, isSubmitting, onCreate, onDele
         )}
       </div>
 
-      <form onSubmit={handleSubmit} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-        <h3 className="text-base font-semibold text-slate-950">Add Contact</h3>
+      <form onSubmit={handleSubmit} className="fop-card p-5">
+        <h3 className="text-base font-semibold text-white">Add Contact</h3>
         <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           <label className="block">
-            <span className="text-sm font-medium text-slate-700">Contact Type</span>
-            <select name="contact_type" defaultValue="site_contact" className="mt-2 h-11 w-full rounded-md border border-slate-300 px-3 text-sm">
+            <span className="text-sm font-medium text-[#B6C1CF]">Contact Type</span>
+            <select name="contact_type" defaultValue="site_contact" className="mt-2 h-11 w-full rounded-md border border-white/15 px-3 text-sm">
               {buildingContactTypes.map((type) => (
                 <option key={type.key} value={type.key}>
                   {type.label}
@@ -82,44 +82,44 @@ export function BuildingContactsPanel({ contacts, isSubmitting, onCreate, onDele
             </select>
           </label>
           <label className="block">
-            <span className="text-sm font-medium text-slate-700">Name</span>
-            <input name="name" required className="mt-2 h-11 w-full rounded-md border border-slate-300 px-3 text-sm" />
+            <span className="text-sm font-medium text-[#B6C1CF]">Name</span>
+            <input name="name" required className="mt-2 h-11 w-full rounded-md border border-white/15 px-3 text-sm" />
           </label>
           <label className="block">
-            <span className="text-sm font-medium text-slate-700">Company</span>
-            <input name="company" className="mt-2 h-11 w-full rounded-md border border-slate-300 px-3 text-sm" />
+            <span className="text-sm font-medium text-[#B6C1CF]">Company</span>
+            <input name="company" className="mt-2 h-11 w-full rounded-md border border-white/15 px-3 text-sm" />
           </label>
           <label className="block">
-            <span className="text-sm font-medium text-slate-700">Job Title</span>
-            <input name="job_title" className="mt-2 h-11 w-full rounded-md border border-slate-300 px-3 text-sm" />
+            <span className="text-sm font-medium text-[#B6C1CF]">Job Title</span>
+            <input name="job_title" className="mt-2 h-11 w-full rounded-md border border-white/15 px-3 text-sm" />
           </label>
           <label className="block">
-            <span className="text-sm font-medium text-slate-700">Email</span>
-            <input name="email" type="email" className="mt-2 h-11 w-full rounded-md border border-slate-300 px-3 text-sm" />
+            <span className="text-sm font-medium text-[#B6C1CF]">Email</span>
+            <input name="email" type="email" className="mt-2 h-11 w-full rounded-md border border-white/15 px-3 text-sm" />
           </label>
           <label className="block">
-            <span className="text-sm font-medium text-slate-700">Phone</span>
-            <input name="phone" className="mt-2 h-11 w-full rounded-md border border-slate-300 px-3 text-sm" />
+            <span className="text-sm font-medium text-[#B6C1CF]">Phone</span>
+            <input name="phone" className="mt-2 h-11 w-full rounded-md border border-white/15 px-3 text-sm" />
           </label>
           <label className="block">
-            <span className="text-sm font-medium text-slate-700">Mobile</span>
-            <input name="mobile" className="mt-2 h-11 w-full rounded-md border border-slate-300 px-3 text-sm" />
+            <span className="text-sm font-medium text-[#B6C1CF]">Mobile</span>
+            <input name="mobile" className="mt-2 h-11 w-full rounded-md border border-white/15 px-3 text-sm" />
           </label>
-          <label className="flex items-center gap-2 pt-8 text-sm font-medium text-slate-700">
+          <label className="flex items-center gap-2 pt-8 text-sm font-medium text-[#B6C1CF]">
             <input name="is_primary" type="checkbox" className="h-4 w-4" />
             Primary
           </label>
-          <label className="flex items-center gap-2 pt-8 text-sm font-medium text-slate-700">
+          <label className="flex items-center gap-2 pt-8 text-sm font-medium text-[#B6C1CF]">
             <input name="is_emergency_contact" type="checkbox" className="h-4 w-4" />
             Emergency Contact
           </label>
           <label className="block md:col-span-2 xl:col-span-3">
-            <span className="text-sm font-medium text-slate-700">Notes</span>
-            <textarea name="notes" className="mt-2 min-h-20 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" />
+            <span className="text-sm font-medium text-[#B6C1CF]">Notes</span>
+            <textarea name="notes" className="mt-2 min-h-20 w-full rounded-md border border-white/15 px-3 py-2 text-sm" />
           </label>
         </div>
         <div className="mt-5 flex justify-end">
-          <button type="submit" disabled={isSubmitting} className="h-11 rounded-md bg-slate-950 px-5 text-sm font-semibold text-white disabled:bg-slate-400">
+          <button type="submit" disabled={isSubmitting} className="fop-button-primary disabled:bg-slate-400">
             {isSubmitting ? "Saving..." : "Add Contact"}
           </button>
         </div>
@@ -127,3 +127,4 @@ export function BuildingContactsPanel({ contacts, isSubmitting, onCreate, onDele
     </section>
   );
 }
+

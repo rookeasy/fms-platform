@@ -1,0 +1,93 @@
+{
+  "appName": "FOP Field Mobile",
+  "platform": "Base44",
+  "systemOfRecord": "Fuzion Operating Platform backend",
+  "brand": {
+    "companyName": "Fuzion Tech Inc.",
+    "productName": "Fuzion Operating Platform",
+    "shortName": "FOP",
+    "tagline": "BUILD \u2022 ADVISE \u2022 PROTECT",
+    "colors": {
+      "background": "#050A18",
+      "surface": "#0B1224",
+      "elevatedSurface": "#111827",
+      "primaryText": "#FFFFFF",
+      "secondaryText": "#B6C1CF",
+      "accent": "#FF6B5F",
+      "success": "#10B981",
+      "warning": "#F59E0B",
+      "error": "#EF4444"
+    }
+  },
+  "syncStatuses": ["Saved locally", "Syncing", "Synced", "Failed"],
+  "screens": [
+    {
+      "name": "Technician Login",
+      "route": "login",
+      "purpose": "Authenticate the field technician through the FOP identity flow or placeholder demo flow.",
+      "primaryAction": "Sign in to FOP"
+    },
+    {
+      "name": "Today's Assigned Work",
+      "route": "assigned-jobs",
+      "api": "GET /api/v1/mobile/assigned-jobs",
+      "offlineCache": true,
+      "primaryAction": "Open work order"
+    },
+    {
+      "name": "Service Work Order",
+      "route": "work-orders/:jobId",
+      "api": "GET /api/v1/mobile/work-orders/:jobId",
+      "primaryAction": "Start field workflow"
+    },
+    {
+      "name": "Inspection Checklist",
+      "route": "work-orders/:jobId/inspection",
+      "api": "GET /api/v1/mobile/work-orders/:jobId/inspection-forms",
+      "submitApi": "POST /api/v1/mobile/inspection-responses",
+      "draftable": true
+    },
+    {
+      "name": "Deficiency Capture",
+      "route": "work-orders/:jobId/deficiencies/new",
+      "submitApi": "POST /api/v1/mobile/deficiencies",
+      "draftable": true
+    },
+    {
+      "name": "Photo Upload",
+      "route": "work-orders/:jobId/photos",
+      "submitApi": "POST /api/v1/mobile/photos",
+      "draftable": true
+    },
+    {
+      "name": "Customer Signature",
+      "route": "work-orders/:jobId/signature",
+      "submitApi": "POST /api/v1/mobile/signatures",
+      "draftable": true
+    },
+    {
+      "name": "Site Notes",
+      "route": "work-orders/:jobId/notes",
+      "submitApi": "POST /api/v1/mobile/site-notes",
+      "draftable": true
+    },
+    {
+      "name": "Material Used",
+      "route": "work-orders/:jobId/materials",
+      "submitApi": "POST /api/v1/mobile/materials-used",
+      "draftable": true
+    },
+    {
+      "name": "Completion Status",
+      "route": "work-orders/:jobId/complete",
+      "submitApi": "POST /api/v1/mobile/completion-status",
+      "draftable": true
+    },
+    {
+      "name": "Sync to FOP",
+      "route": "sync",
+      "purpose": "Show queued drafts, failed submissions, and confirmed FOP receipts.",
+      "primaryAction": "Sync now"
+    }
+  ]
+}

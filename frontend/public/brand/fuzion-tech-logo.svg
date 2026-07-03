@@ -1,0 +1,16 @@
+<svg width="420" height="112" viewBox="0 0 420 112" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Fuzion Tech Inc.</title>
+  <desc id="desc">Fuzion Tech Inc. logo with coral mark and wordmark.</desc>
+  <rect width="112" height="112" rx="24" fill="#050A18"/>
+  <path d="M25 24H73C82.9411 24 91 32.0589 91 42V42C91 51.9411 82.9411 60 73 60H50V88H25V24Z" fill="#FF6B5F"/>
+  <path d="M50 43L72 56L50 69V43Z" fill="#050A18"/>
+  <path d="M27 90H87V69H50V60H27V90Z" fill="#FF6B5F"/>
+  <path d="M142 33H208V44H155V56H201V67H155V90H142V33Z" fill="#F8FAFC"/>
+  <path d="M220 33H233V68C233 76 238 80 246 80C254 80 259 76 259 68V33H272V69C272 83 262 91 246 91C230 91 220 83 220 69V33Z" fill="#F8FAFC"/>
+  <path d="M287 33H344V42L305 79H345V90H286V81L325 44H287V33Z" fill="#F8FAFC"/>
+  <path d="M359 33H372V90H359V33Z" fill="#F8FAFC"/>
+  <path d="M142 100H184V105H142V100Z" fill="#FF6B5F"/>
+  <path d="M194 100H229V105H194V100Z" fill="#FF6B5F"/>
+  <path d="M239 100H286V105H239V100Z" fill="#FF6B5F"/>
+  <text x="142" y="24" fill="#94A3B8" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="3">FUZION TECH INC.</text>
+</svg>

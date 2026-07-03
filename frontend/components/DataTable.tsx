@@ -13,23 +13,23 @@ type DataTableProps<T> = {
 
 export function DataTable<T>({ columns, rows }: DataTableProps<T>) {
   return (
-    <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+    <div className="fop-card overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-slate-200 text-sm">
-          <thead className="bg-slate-50">
+        <table className="min-w-full divide-y divide-white/10 text-sm">
+          <thead className="bg-white/[0.035]">
             <tr>
               {columns.map((column) => (
-                <th key={column.key} className="px-4 py-3 text-left font-semibold text-slate-600">
+                <th key={column.key} className="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7D8CA3]">
                   {column.header}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-white/10">
             {rows.map((row, index) => (
-              <tr key={index} className="bg-white">
+              <tr key={index} className="transition hover:bg-white/[0.045]">
                 {columns.map((column) => (
-                  <td key={column.key} className="px-4 py-3 text-slate-700">
+                  <td key={column.key} className="px-5 py-4 text-[#B6C1CF]">
                     {column.render(row)}
                   </td>
                 ))}

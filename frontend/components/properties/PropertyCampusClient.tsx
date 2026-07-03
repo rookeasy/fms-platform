@@ -113,7 +113,7 @@ export function PropertyCampusClient() {
         key: "name",
         header: "Property",
         render: (property) => (
-          <Link href={`/properties/${property.id}`} onClick={() => setSelectedPropertyId(property.id)} className="text-left font-semibold text-slate-950 underline">
+          <Link href={`/properties/${property.id}`} onClick={() => setSelectedPropertyId(property.id)} className="text-left font-semibold text-white underline">
             {property.name}
           </Link>
         )
@@ -128,7 +128,7 @@ export function PropertyCampusClient() {
 
   const campusColumns = useMemo<Array<DataTableColumn<Campus>>>(
     () => [
-      { key: "name", header: "Campus", render: (campus) => <span className="font-semibold text-slate-950">{campus.name}</span> },
+      { key: "name", header: "Campus", render: (campus) => <span className="font-semibold text-white">{campus.name}</span> },
       { key: "type", header: "Type", render: (campus) => optionLabel(campus.campus_type) },
       { key: "buildings", header: "Buildings", render: (campus) => campus.building_count },
       { key: "status", header: "Status", render: (campus) => <StatusBadge status={optionLabel(campus.status)} /> }
@@ -233,12 +233,12 @@ export function PropertyCampusClient() {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+      <section className="fop-card p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-sm font-medium text-slate-500">M6</p>
-            <h2 className="mt-2 text-2xl font-semibold text-slate-950">Property & Campus Management</h2>
-            <p className="mt-1 max-w-3xl text-sm text-slate-600">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#7D8CA3]">Property Operations</p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-normal text-white">Property & Campus Management</h2>
+            <p className="mt-1 max-w-3xl text-sm text-[#B6C1CF]">
               Organize buildings into properties, campuses, phases, and multi-building sites for portfolio operations.
             </p>
           </div>
@@ -259,12 +259,12 @@ export function PropertyCampusClient() {
         ).map((item) => {
           const Icon = item.icon;
           return (
-          <div key={item.label} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <div key={item.label} className="fop-card p-5">
             <div className="flex items-center justify-between gap-3">
-              <p className="text-sm font-medium text-slate-500">{item.label}</p>
+              <p className="text-sm font-medium text-[#7D8CA3]">{item.label}</p>
               <Icon className="text-slate-400" size={18} />
             </div>
-            <p className="mt-2 text-2xl font-semibold text-slate-950">{item.value}</p>
+            <p className="mt-2 text-2xl font-semibold text-white">{item.value}</p>
           </div>
           );
         })}
@@ -273,30 +273,30 @@ export function PropertyCampusClient() {
       {properties.length ? (
         <section className="space-y-4">
           <div>
-            <h3 className="text-lg font-semibold text-slate-950">Closeout Readiness</h3>
-            <p className="text-sm text-slate-600">Property-level handover status across assigned buildings.</p>
+            <h3 className="text-lg font-semibold text-white">Closeout Readiness</h3>
+            <p className="text-sm text-[#B6C1CF]">Property-level handover status across assigned buildings.</p>
           </div>
           <div className="grid gap-4 lg:grid-cols-3">
             {properties.map((property) => {
               const closeoutScore = closeoutScores[property.id];
               const completion = closeoutScore?.completion_percentage ?? 0;
               return (
-                <Link key={property.id} href={`/properties/${property.id}`} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+                <Link key={property.id} href={`/properties/${property.id}`} className="fop-card block p-5 transition hover:-translate-y-0.5 hover:shadow-xl">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-sm font-semibold text-slate-950">{property.name}</p>
-                      <p className="mt-1 text-xs text-slate-500">
+                      <p className="text-sm font-semibold text-white">{property.name}</p>
+                      <p className="mt-1 text-xs text-[#7D8CA3]">
                         {closeoutScore ? `${closeoutScore.ready_building_count}/${closeoutScore.building_count} buildings ready` : "No score available"}
                       </p>
                     </div>
                     <StatusBadge status={closeoutScore?.ready_for_handover ? "Ready" : "Missing Items"} />
                   </div>
                   <div className="mt-4 flex items-center justify-between text-sm">
-                    <span className="font-semibold text-slate-950">{completion}%</span>
-                    <span className="text-slate-500">{closeoutScore?.missing_items.length ?? 0} missing</span>
+                    <span className="font-semibold text-white">{completion}%</span>
+                    <span className="text-[#7D8CA3]">{closeoutScore?.missing_items.length ?? 0} missing</span>
                   </div>
                   <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
-                    <div className="h-full rounded-full bg-red-700" style={{ width: `${completion}%` }} />
+                    <div className="h-full rounded-full bg-[#FF6B5F]" style={{ width: `${completion}%` }} />
                   </div>
                 </Link>
               );
@@ -309,8 +309,8 @@ export function PropertyCampusClient() {
         <div className="space-y-6">
           <section className="space-y-4">
             <div>
-              <h3 className="text-lg font-semibold text-slate-950">Properties</h3>
-              <p className="text-sm text-slate-600">Top-level sites, portfolios, and managed properties.</p>
+              <h3 className="text-lg font-semibold text-white">Properties</h3>
+              <p className="text-sm text-[#B6C1CF]">Top-level sites, portfolios, and managed properties.</p>
             </div>
             {properties.length ? <DataTable columns={propertyColumns} rows={properties} /> : <EmptyState title="No properties." message="Create the first managed property." />}
           </section>
@@ -318,8 +318,8 @@ export function PropertyCampusClient() {
           <section className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h3 className="text-lg font-semibold text-slate-950">Campuses</h3>
-                <p className="text-sm text-slate-600">
+                <h3 className="text-lg font-semibold text-white">Campuses</h3>
+                <p className="text-sm text-[#B6C1CF]">
                   {selectedProperty ? `Showing campuses for ${selectedProperty.name}.` : "Campuses and phases across all properties."}
                 </p>
               </div>
@@ -330,42 +330,42 @@ export function PropertyCampusClient() {
         </div>
 
         <aside className="space-y-6">
-          <form onSubmit={handleCreateProperty} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="flex items-center gap-2 text-sm font-semibold text-slate-950">
+          <form onSubmit={handleCreateProperty} className="fop-card p-5">
+            <div className="flex items-center gap-2 text-sm font-semibold text-white">
               <Plus size={16} />
               Add Property
             </div>
             <div className="mt-4 grid gap-3">
-              <input name="name" required placeholder="Property name" className="h-10 rounded-md border border-slate-300 px-3 text-sm" />
-              <select name="property_type" className="h-10 rounded-md border border-slate-300 px-3 text-sm">
+              <input name="name" required placeholder="Property name" className="h-10 rounded-md border border-white/15 px-3 text-sm" />
+              <select name="property_type" className="h-10 rounded-md border border-white/15 px-3 text-sm">
                 {propertyTypes.map((type) => (
                   <option key={type} value={type}>
                     {optionLabel(type)}
                   </option>
                 ))}
               </select>
-              <input name="address_line_1" placeholder="Address" className="h-10 rounded-md border border-slate-300 px-3 text-sm" />
+              <input name="address_line_1" placeholder="Address" className="h-10 rounded-md border border-white/15 px-3 text-sm" />
               <div className="grid gap-3 sm:grid-cols-2">
-                <input name="city" placeholder="City" className="h-10 rounded-md border border-slate-300 px-3 text-sm" />
-                <input name="province_state" placeholder="Province/State" className="h-10 rounded-md border border-slate-300 px-3 text-sm" />
+                <input name="city" placeholder="City" className="h-10 rounded-md border border-white/15 px-3 text-sm" />
+                <input name="province_state" placeholder="Province/State" className="h-10 rounded-md border border-white/15 px-3 text-sm" />
               </div>
-              <input name="postal_code" placeholder="Postal code" className="h-10 rounded-md border border-slate-300 px-3 text-sm" />
-              <input name="owner_name" placeholder="Owner" className="h-10 rounded-md border border-slate-300 px-3 text-sm" />
-              <input name="property_manager_name" placeholder="Property manager" className="h-10 rounded-md border border-slate-300 px-3 text-sm" />
-              <textarea name="notes" placeholder="Notes" className="min-h-20 rounded-md border border-slate-300 px-3 py-2 text-sm" />
+              <input name="postal_code" placeholder="Postal code" className="h-10 rounded-md border border-white/15 px-3 text-sm" />
+              <input name="owner_name" placeholder="Owner" className="h-10 rounded-md border border-white/15 px-3 text-sm" />
+              <input name="property_manager_name" placeholder="Property manager" className="h-10 rounded-md border border-white/15 px-3 text-sm" />
+              <textarea name="notes" placeholder="Notes" className="min-h-20 rounded-md border border-white/15 px-3 py-2 text-sm" />
             </div>
-            <button type="submit" disabled={isSubmitting} className="mt-4 h-10 w-full rounded-md bg-slate-950 px-4 text-sm font-semibold text-white disabled:bg-slate-300">
+            <button type="submit" disabled={isSubmitting} className="fop-button-primary mt-4 w-full disabled:bg-slate-300">
               Create Property
             </button>
           </form>
 
-          <form onSubmit={handleCreateCampus} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="flex items-center gap-2 text-sm font-semibold text-slate-950">
+          <form onSubmit={handleCreateCampus} className="fop-card p-5">
+            <div className="flex items-center gap-2 text-sm font-semibold text-white">
               <Plus size={16} />
               Add Campus
             </div>
             <div className="mt-4 grid gap-3">
-              <select name="property_id" defaultValue={selectedProperty?.id ?? ""} className="h-10 rounded-md border border-slate-300 px-3 text-sm">
+              <select name="property_id" defaultValue={selectedProperty?.id ?? ""} className="h-10 rounded-md border border-white/15 px-3 text-sm">
                 <option value="">No property</option>
                 {properties.map((property) => (
                   <option key={property.id} value={property.id}>
@@ -373,31 +373,31 @@ export function PropertyCampusClient() {
                   </option>
                 ))}
               </select>
-              <input name="name" required placeholder="Campus or phase name" className="h-10 rounded-md border border-slate-300 px-3 text-sm" />
-              <select name="campus_type" className="h-10 rounded-md border border-slate-300 px-3 text-sm">
+              <input name="name" required placeholder="Campus or phase name" className="h-10 rounded-md border border-white/15 px-3 text-sm" />
+              <select name="campus_type" className="h-10 rounded-md border border-white/15 px-3 text-sm">
                 {["campus", "phase", "complex", "site", "zone", "other"].map((type) => (
                   <option key={type} value={type}>
                     {optionLabel(type)}
                   </option>
                 ))}
               </select>
-              <input name="address_line_1" placeholder="Address" className="h-10 rounded-md border border-slate-300 px-3 text-sm" />
+              <input name="address_line_1" placeholder="Address" className="h-10 rounded-md border border-white/15 px-3 text-sm" />
               <div className="grid gap-3 sm:grid-cols-2">
-                <input name="city" placeholder="City" className="h-10 rounded-md border border-slate-300 px-3 text-sm" />
-                <input name="province_state" placeholder="Province/State" className="h-10 rounded-md border border-slate-300 px-3 text-sm" />
+                <input name="city" placeholder="City" className="h-10 rounded-md border border-white/15 px-3 text-sm" />
+                <input name="province_state" placeholder="Province/State" className="h-10 rounded-md border border-white/15 px-3 text-sm" />
               </div>
-              <input name="postal_code" placeholder="Postal code" className="h-10 rounded-md border border-slate-300 px-3 text-sm" />
-              <textarea name="notes" placeholder="Notes" className="min-h-20 rounded-md border border-slate-300 px-3 py-2 text-sm" />
+              <input name="postal_code" placeholder="Postal code" className="h-10 rounded-md border border-white/15 px-3 text-sm" />
+              <textarea name="notes" placeholder="Notes" className="min-h-20 rounded-md border border-white/15 px-3 py-2 text-sm" />
             </div>
-            <button type="submit" disabled={isSubmitting} className="mt-4 h-10 w-full rounded-md bg-slate-950 px-4 text-sm font-semibold text-white disabled:bg-slate-300">
+            <button type="submit" disabled={isSubmitting} className="fop-button-primary mt-4 w-full disabled:bg-slate-300">
               Create Campus
             </button>
           </form>
 
-          <form onSubmit={handleAssignBuilding} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="text-sm font-semibold text-slate-950">Assign Building</div>
+          <form onSubmit={handleAssignBuilding} className="fop-card p-5">
+            <div className="text-sm font-semibold text-white">Assign Building</div>
             <div className="mt-4 grid gap-3">
-              <select name="building_id" required className="h-10 rounded-md border border-slate-300 px-3 text-sm">
+              <select name="building_id" required className="h-10 rounded-md border border-white/15 px-3 text-sm">
                 <option value="">Select building</option>
                 {unassignedBuildings.map((building) => (
                   <option key={building.id} value={building.id}>
@@ -405,7 +405,7 @@ export function PropertyCampusClient() {
                   </option>
                 ))}
               </select>
-              <select name="property_id" defaultValue={selectedProperty?.id ?? ""} className="h-10 rounded-md border border-slate-300 px-3 text-sm">
+              <select name="property_id" defaultValue={selectedProperty?.id ?? ""} className="h-10 rounded-md border border-white/15 px-3 text-sm">
                 <option value="">No property</option>
                 {properties.map((property) => (
                   <option key={property.id} value={property.id}>
@@ -413,7 +413,7 @@ export function PropertyCampusClient() {
                   </option>
                 ))}
               </select>
-              <select name="campus_id" className="h-10 rounded-md border border-slate-300 px-3 text-sm">
+              <select name="campus_id" className="h-10 rounded-md border border-white/15 px-3 text-sm">
                 <option value="">No campus</option>
                 {campuses.map((campus) => (
                   <option key={campus.id} value={campus.id}>
@@ -422,7 +422,7 @@ export function PropertyCampusClient() {
                 ))}
               </select>
             </div>
-            <button type="submit" disabled={isSubmitting || !unassignedBuildings.length} className="mt-4 h-10 w-full rounded-md bg-red-700 px-4 text-sm font-semibold text-white disabled:bg-slate-300">
+            <button type="submit" disabled={isSubmitting || !unassignedBuildings.length} className="fop-button-primary mt-4 w-full disabled:bg-slate-300">
               Assign Building
             </button>
           </form>
@@ -431,3 +431,4 @@ export function PropertyCampusClient() {
     </div>
   );
 }
+
