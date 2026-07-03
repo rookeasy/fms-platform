@@ -10,6 +10,7 @@ import {
   Map,
   FileText,
   Gauge,
+  LogIn,
   LayoutDashboard,
   Settings,
   ShieldCheck,
@@ -31,7 +32,8 @@ const navigation = [
   { href: "/certificates", label: "Certificates", icon: BadgeCheck },
   { href: "/memberships", label: "Memberships", icon: ShieldCheck },
   { href: "/users", label: "Users", icon: Users },
-  { href: "/settings", label: "Settings", icon: Settings }
+  { href: "/settings", label: "Settings", icon: Settings },
+  { href: "/login", label: "Login", icon: LogIn }
 ];
 
 export function SidebarNavigation() {
@@ -40,7 +42,10 @@ export function SidebarNavigation() {
   return (
     <aside className="hidden w-72 shrink-0 border-r border-slate-200 bg-slate-950 text-white lg:block">
       <div className="flex h-16 items-center border-b border-white/10 px-5">
-        <p className="text-lg font-semibold">FMS</p>
+        <div>
+          <p className="text-lg font-semibold">FOP</p>
+          <p className="text-xs text-slate-400">Fuzion Operations Platform</p>
+        </div>
       </div>
       <nav className="flex flex-col gap-1 p-3">
         {navigation.map((item) => {
