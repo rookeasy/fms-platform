@@ -14,11 +14,13 @@ import { formatControlledValue } from "@/lib/controlled-values";
 import {
   type Building,
   type Campus,
+  type PropertyCloseoutScore,
   type PropertyCampusSummary,
   type PropertyRecord,
   assignBuildingToPropertyCampus,
   createCampus,
   createProperty,
+  getPropertyCloseoutScore,
   getPropertyCampusSummary,
   listBuildings,
   listCampuses,
@@ -55,6 +57,7 @@ export function PropertyCampusClient() {
   const [campuses, setCampuses] = useState<Campus[]>([]);
   const [buildings, setBuildings] = useState<Building[]>([]);
   const [summary, setSummary] = useState<PropertyCampusSummary | null>(null);
+  const [closeoutScores, setCloseoutScores] = useState<Record<string, PropertyCloseoutScore>>({});
   const [selectedPropertyId, setSelectedPropertyId] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -73,10 +76,22 @@ export function PropertyCampusClient() {
         listCampuses({ organizationId: nextOrganizationId || undefined }),
         listBuildings(nextOrganizationId || undefined)
       ]);
+      const loadedCloseoutScores = await Promise.all(
+        loadedProperties.map(async (property) => {
+          try {
+            return [property.id, await getPropertyCloseoutScore(property.id)] as const;
+          } catch {
+            return [property.id, null] as const;
+          }
+        })
+      );
       setSummary(loadedSummary);
       setProperties(loadedProperties);
       setCampuses(loadedCampuses);
       setBuildings(loadedBuildings);
+      setCloseoutScores(
+        Object.fromEntries(loadedCloseoutScores.filter((entry): entry is readonly [string, PropertyCloseoutScore] => entry[1] !== null))
+      );
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : "Unable to load Property & Campus Management.");
     } finally {
@@ -254,6 +269,41 @@ export function PropertyCampusClient() {
           );
         })}
       </div>
+
+      {properties.length ? (
+        <section className="space-y-4">
+          <div>
+            <h3 className="text-lg font-semibold text-slate-950">Closeout Readiness</h3>
+            <p className="text-sm text-slate-600">Property-level handover status across assigned buildings.</p>
+          </div>
+          <div className="grid gap-4 lg:grid-cols-3">
+            {properties.map((property) => {
+              const closeoutScore = closeoutScores[property.id];
+              const completion = closeoutScore?.completion_percentage ?? 0;
+              return (
+                <Link key={property.id} href={`/properties/${property.id}`} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-semibold text-slate-950">{property.name}</p>
+                      <p className="mt-1 text-xs text-slate-500">
+                        {closeoutScore ? `${closeoutScore.ready_building_count}/${closeoutScore.building_count} buildings ready` : "No score available"}
+                      </p>
+                    </div>
+                    <StatusBadge status={closeoutScore?.ready_for_handover ? "Ready" : "Missing Items"} />
+                  </div>
+                  <div className="mt-4 flex items-center justify-between text-sm">
+                    <span className="font-semibold text-slate-950">{completion}%</span>
+                    <span className="text-slate-500">{closeoutScore?.missing_items.length ?? 0} missing</span>
+                  </div>
+                  <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
+                    <div className="h-full rounded-full bg-red-700" style={{ width: `${completion}%` }} />
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      ) : null}
 
       <div className="grid gap-6 xl:grid-cols-[1fr_420px]">
         <div className="space-y-6">

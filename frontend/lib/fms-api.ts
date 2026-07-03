@@ -209,6 +209,45 @@ export type PassportSummary = {
   };
 };
 
+export type CloseoutSectionStatus = {
+  key: string;
+  label: string;
+  status: string;
+  completed: boolean;
+  required: boolean;
+  evidence_count: number;
+  evidence_labels: string[];
+  missing_reason?: string | null;
+};
+
+export type CloseoutScore = {
+  completion_percentage: number;
+  total_required_items: number;
+  completed_items: number;
+  missing_items: string[];
+  ready_for_handover: boolean;
+  warnings: string[];
+  sections: CloseoutSectionStatus[];
+};
+
+export type PropertyCloseoutBuildingScore = {
+  building_id: string;
+  building_name: string;
+  completion_percentage: number;
+  completed_items: number;
+  total_required_items: number;
+  ready_for_handover: boolean;
+  missing_items: string[];
+};
+
+export type PropertyCloseoutScore = CloseoutScore & {
+  property_id: string;
+  property_name: string;
+  building_count: number;
+  ready_building_count: number;
+  buildings: PropertyCloseoutBuildingScore[];
+};
+
 export type PropertyIntelligenceScore = {
   score: number;
   label: string;
@@ -605,5 +644,15 @@ export function getDocumentDownloadUrl(documentId: string): string {
 
 export async function getPassport(buildingId: string): Promise<PassportSummary> {
   const response = await request<ApiEnvelope<PassportSummary>>(`/buildings/${buildingId}/passport`);
+  return response.data;
+}
+
+export async function getBuildingCloseoutScore(buildingId: string): Promise<CloseoutScore> {
+  const response = await request<ApiEnvelope<CloseoutScore>>(`/buildings/${buildingId}/closeout/score`);
+  return response.data;
+}
+
+export async function getPropertyCloseoutScore(propertyId: string): Promise<PropertyCloseoutScore> {
+  const response = await request<ApiEnvelope<PropertyCloseoutScore>>(`/properties/${propertyId}/closeout/score`);
   return response.data;
 }

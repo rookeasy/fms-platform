@@ -11,10 +11,12 @@ from app.schemas.core import (
     CampusRead,
     CampusUpdate,
     PropertyCampusSummary,
+    PropertyCloseoutScore,
     PropertyCreate,
     PropertyRead,
     PropertyUpdate,
 )
+from app.services.closeout_score_service import closeout_score_service
 from app.services.property_service import property_service
 
 router = APIRouter(tags=["properties"])
@@ -62,6 +64,17 @@ def get_property(
 ) -> dict:
     property_record = property_service.get_property(db, property_id, current_user)
     return {"data": PropertyRead.model_validate(property_record)}
+
+
+@router.get("/properties/{property_id}/closeout/score")
+def get_property_closeout_score(
+    property_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: CurrentUser = Depends(get_current_user),
+    _: object = Depends(require_roles("platform_admin", "organization_admin", "property_manager", "building_owner", "readonly_viewer")),
+) -> dict:
+    score = closeout_score_service.get_property_score(db, property_id, current_user)
+    return {"data": PropertyCloseoutScore.model_validate(score)}
 
 
 @router.patch("/properties/{property_id}")

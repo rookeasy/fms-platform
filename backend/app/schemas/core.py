@@ -625,3 +625,42 @@ class PassportSummary(BaseModel):
     timeline: list[PassportTimelineItem]
     health_score: dict
     membership: dict
+
+
+class CloseoutSectionStatus(BaseModel):
+    key: str
+    label: str
+    status: str
+    completed: bool
+    required: bool = True
+    evidence_count: int = 0
+    evidence_labels: list[str] = Field(default_factory=list)
+    missing_reason: str | None = None
+
+
+class CloseoutScore(BaseModel):
+    completion_percentage: int
+    total_required_items: int
+    completed_items: int
+    missing_items: list[str]
+    ready_for_handover: bool
+    warnings: list[str] = Field(default_factory=list)
+    sections: list[CloseoutSectionStatus]
+
+
+class PropertyCloseoutBuildingScore(BaseModel):
+    building_id: UUID
+    building_name: str
+    completion_percentage: int
+    completed_items: int
+    total_required_items: int
+    ready_for_handover: bool
+    missing_items: list[str] = Field(default_factory=list)
+
+
+class PropertyCloseoutScore(CloseoutScore):
+    property_id: UUID
+    property_name: str
+    building_count: int
+    ready_building_count: int
+    buildings: list[PropertyCloseoutBuildingScore] = Field(default_factory=list)

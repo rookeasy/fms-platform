@@ -13,8 +13,10 @@ import { formatControlledValue } from "@/lib/controlled-values";
 import {
   type Asset,
   type Building,
+  type CloseoutScore,
   type DocumentRecord,
   getBuilding,
+  getBuildingCloseoutScore,
   listBuildingAssets,
   listBuildingDocuments,
   listBuildings
@@ -78,6 +80,7 @@ export function BuildingCloseoutClient({ buildingId }: BuildingCloseoutClientPro
   const [building, setBuilding] = useState<Building | null>(null);
   const [assets, setAssets] = useState<Asset[]>([]);
   const [documents, setDocuments] = useState<DocumentRecord[]>([]);
+  const [score, setScore] = useState<CloseoutScore | null>(null);
   const [resolvedBuildingId, setResolvedBuildingId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -87,15 +90,17 @@ export function BuildingCloseoutClient({ buildingId }: BuildingCloseoutClientPro
     setError(null);
     try {
       const nextBuildingId = await resolveBuildingId(buildingId);
-      const [loadedBuilding, loadedAssets, loadedDocuments] = await Promise.all([
+      const [loadedBuilding, loadedAssets, loadedDocuments, loadedScore] = await Promise.all([
         getBuilding(nextBuildingId),
         listBuildingAssets(nextBuildingId),
-        listBuildingDocuments(nextBuildingId)
+        listBuildingDocuments(nextBuildingId),
+        getBuildingCloseoutScore(nextBuildingId)
       ]);
       setResolvedBuildingId(nextBuildingId);
       setBuilding(loadedBuilding);
       setAssets(loadedAssets);
       setDocuments(loadedDocuments);
+      setScore(loadedScore);
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : "Unable to load digital closeout package.");
     } finally {
@@ -108,17 +113,19 @@ export function BuildingCloseoutClient({ buildingId }: BuildingCloseoutClientPro
   }, [loadCloseout]);
 
   const groupedDocuments = useMemo(() => {
-    return CLOSEOUT_SECTIONS.map((section) => ({
+    const sections = score?.sections.map((section) => section.label) ?? CLOSEOUT_SECTIONS;
+    return sections.map((section) => ({
       section,
       documents: documents.filter((document) => extractSection(document) === section)
     }));
-  }, [documents]);
+  }, [documents, score]);
 
-  const completedSections = groupedDocuments.filter((group) => group.documents.length > 0).length;
-  const missingSections = groupedDocuments.filter((group) => group.documents.length === 0);
-  const clientVisibleCount = documents.filter((document) => document.is_public_to_client).length;
+  const completedSections = score?.completed_items ?? groupedDocuments.filter((group) => group.documents.length > 0).length;
   const passportRecordCount = documents.filter((document) => document.is_passport_record).length;
-  const isReadyForHandover = missingSections.length === 0 && documents.length > 0 && assets.length > 0;
+  const totalRequiredItems = score?.total_required_items ?? CLOSEOUT_SECTIONS.length;
+  const missingItemCount = score?.missing_items.length ?? totalRequiredItems - completedSections;
+  const completionPercentage = score?.completion_percentage ?? Math.round((completedSections / totalRequiredItems) * 100);
+  const isReadyForHandover = score?.ready_for_handover ?? false;
   const primaryEvidence = documents[0] ?? null;
 
   if (isLoading) {
@@ -155,11 +162,29 @@ export function BuildingCloseoutClient({ buildingId }: BuildingCloseoutClientPro
         </div>
       </section>
 
+      <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <p className="text-sm font-medium text-slate-500">Closeout Completion</p>
+            <p className="mt-1 text-3xl font-semibold text-slate-950">{completionPercentage}%</p>
+          </div>
+          <StatusBadge status={isReadyForHandover ? "Ready for Handover" : "Missing Items"} />
+        </div>
+        <div className="mt-4 h-3 overflow-hidden rounded-full bg-slate-100">
+          <div className="h-full rounded-full bg-red-700" style={{ width: `${completionPercentage}%` }} />
+        </div>
+        <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate-600">
+          <span>{completedSections} completed</span>
+          <span>{missingItemCount} missing</span>
+          <span>{totalRequiredItems} required</span>
+        </div>
+      </section>
+
       <div className="grid gap-4 md:grid-cols-4">
         {[
-          ["Sections Complete", `${completedSections}/${CLOSEOUT_SECTIONS.length}`],
+          ["Sections Complete", `${completedSections}/${totalRequiredItems}`],
+          ["Missing Items", `${missingItemCount}`],
           ["Evidence Records", `${documents.length}`],
-          ["Client Visible", `${clientVisibleCount}`],
           ["Passport Records", `${passportRecordCount}`]
         ].map(([title, value]) => (
           <div key={title} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
@@ -171,16 +196,34 @@ export function BuildingCloseoutClient({ buildingId }: BuildingCloseoutClientPro
 
       <div className="grid gap-6 xl:grid-cols-[360px_1fr]">
         <div className="space-y-6">
+          {score?.warnings.length ? (
+            <PassportSection title="Warnings">
+              <div className="space-y-2">
+                {score.warnings.map((warning) => (
+                  <div key={warning} className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+                    {warning}
+                  </div>
+                ))}
+              </div>
+            </PassportSection>
+          ) : null}
+
           <PassportSection title="Closeout Checklist">
             <div className="space-y-3">
-              {groupedDocuments.map((group) => {
-                const complete = group.documents.length > 0;
+              {(score?.sections ?? groupedDocuments.map((group) => ({
+                key: slugify(group.section),
+                label: group.section,
+                completed: group.documents.length > 0,
+                evidence_count: group.documents.length,
+                missing_reason: "Missing evidence"
+              }))).map((section) => {
+                const complete = section.completed;
                 return (
-                  <div key={group.section} className="flex items-start gap-3 rounded-md border border-slate-200 p-3">
+                  <div key={section.key} className="flex items-start gap-3 rounded-md border border-slate-200 p-3">
                     {complete ? <CheckCircle2 className="mt-0.5 text-emerald-600" size={18} /> : <CircleAlert className="mt-0.5 text-amber-600" size={18} />}
                     <div>
-                      <div className="text-sm font-semibold text-slate-950">{group.section}</div>
-                      <div className="text-xs text-slate-600">{complete ? `${group.documents.length} evidence record(s)` : "Missing evidence"}</div>
+                      <div className="text-sm font-semibold text-slate-950">{section.label}</div>
+                      <div className="text-xs text-slate-600">{complete ? `${section.evidence_count} evidence record(s)` : section.missing_reason || "Missing evidence"}</div>
                     </div>
                   </div>
                 );
@@ -195,6 +238,7 @@ export function BuildingCloseoutClient({ buildingId }: BuildingCloseoutClientPro
                 ["Contractor", fieldFromDescription(primaryEvidence, "Contractor") ?? "Fuzion Fire Inc."],
                 ["Approving Authority", fieldFromDescription(primaryEvidence, "Approving authority") ?? building.ahj_name],
                 ["Asset Register", `${assets.length} asset(s)`],
+                ["Missing Items", score?.missing_items.join(", ") || "None"],
                 ["Status", isReadyForHandover ? "Ready for Handover" : "Missing Items"]
               ].map(([label, value]) => (
                 <div key={label}>
