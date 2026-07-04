@@ -4,11 +4,15 @@ import Link from "next/link";
 import { RefreshCcw } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
+import { BuildingHealthIndex } from "@/components/BuildingHealthIndex";
 import { DashboardCard } from "@/components/DashboardCard";
 import { EmptyState } from "@/components/EmptyState";
 import { ErrorState } from "@/components/ErrorState";
 import { LoadingState } from "@/components/LoadingState";
+import { PassportSection } from "@/components/PassportSection";
+import { ProgressIndex } from "@/components/ProgressIndex";
 import { StatusBadge } from "@/components/StatusBadge";
+import { Timeline } from "@/components/Timeline";
 import { BuildingAssetsPanel } from "@/components/buildings/BuildingAssetsPanel";
 import { BuildingContactsPanel } from "@/components/buildings/BuildingContactsPanel";
 import { BuildingDocumentsPanel } from "@/components/buildings/BuildingDocumentsPanel";
@@ -24,12 +28,14 @@ import {
   type BuildingPayload,
   type Campus,
   type DocumentRecord,
+  type FppScores,
   type PropertyRecord,
   createAsset,
   createBuildingContact,
   deleteAsset,
   deleteBuildingContact,
   getBuilding,
+  getBuildingScores,
   getProperty,
   listAssetTypes,
   listBuildingAssets,
@@ -41,6 +47,8 @@ import {
   uploadDocumentVersion,
   updateBuilding
 } from "@/lib/fms-api";
+import { getApiBuildingLifecycle, getLifecycleScore, getOccupancyStatus, lifecycleDescriptions, lifecycleLabels } from "@/lib/lifecycle";
+import { getMockBuildingScores } from "@/lib/progress-index";
 
 type BuildingProfileClientProps = {
   buildingId: string;
@@ -59,6 +67,7 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fppScores, setFppScores] = useState<FppScores | null>(null);
 
   const loadBuilding = useCallback(async () => {
     setIsLoading(true);
@@ -82,6 +91,7 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
       setAssetTypes(loadedAssetTypes);
       setAssets(loadedAssets);
       setDocuments(loadedDocuments);
+      setFppScores(await getBuildingScores(buildingId).catch(() => null));
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : "Unable to load building profile.");
     } finally {
@@ -209,13 +219,44 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
   if (!building) {
     return <EmptyState title="Building not found." message="The requested building could not be loaded." />;
   }
+  const buildingScores = fppScores ?? getMockBuildingScores(building.id, {
+    protectionScore: Math.min(100, 72 + assets.length * 3),
+    complianceScore: Math.min(100, 70 + documents.filter((document) => document.is_passport_record).length * 4),
+    readinessScore: Math.min(100, 74 + contacts.length * 5),
+    intelligenceScore: Math.min(100, 68 + Math.min(documents.length, 8) * 3)
+  });
+  const lifecycleStage = getApiBuildingLifecycle(building);
+  const lifecycleScore = getLifecycleScore(lifecycleStage);
+  const activeProjectLabel = building.code ? `Job ${building.code} - ${building.name}` : building.name;
+  const commandTimeline = [
+    {
+      title: `${lifecycleLabels[lifecycleStage]} lifecycle stage`,
+      date: formatControlledValue(building.status),
+      description: lifecycleDescriptions[lifecycleStage],
+      tone: lifecycleStage === "protect" ? "success" as const : "warning" as const
+    },
+    {
+      title: "Passport record established",
+      date: building.bpid,
+      description: "Building Protection Passport is the permanent lifecycle record.",
+      tone: "success" as const
+    },
+    {
+      title: "Project event linked",
+      date: building.code || "No job number",
+      description: "Project activity is attached to this building/passport record."
+    }
+  ];
 
   return (
     <div className="space-y-6">
       <section className="fop-card p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#7D8CA3]">{building.bpid}</p>
+            <div className="flex flex-wrap gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-[#7D8CA3]">
+              <span>Job No. {building.code || "-"}</span>
+              <span>Passport No. {building.bpid}</span>
+            </div>
             <h2 className="mt-2 text-2xl font-semibold tracking-normal text-white">{building.name}</h2>
             <p className="mt-1 text-[#B6C1CF]">
               {[building.address_line_1, building.city, building.province_state, building.postal_code]
@@ -224,7 +265,7 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <StatusBadge status={formatControlledValue(building.status)} />
+            <StatusBadge status={lifecycleLabels[lifecycleStage]} />
             <button
               type="button"
               onClick={() => void loadBuilding()}
@@ -265,10 +306,76 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
         <BuildingForm building={building} submitLabel="Update Building" isSubmitting={isSubmitting} onSubmit={handleUpdate} />
       ) : null}
 
+      <BuildingHealthIndex
+        scores={buildingScores}
+        missionBriefing={
+          fppScores
+            ? `Mission Briefing: ${fppScores.scoreDrivers.join(" ")}`
+            : "Mission Briefing: backend FPP scoring was unavailable, so this view is using a local fallback estimate."
+        }
+      />
+
+      <section className="fop-card p-6">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <p className="fop-label">Permanent Digital Identity</p>
+            <h3 className="mt-2 text-xl font-semibold text-white">Lifecycle Stage: {lifecycleLabels[lifecycleStage]}</h3>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-[#B6C1CF]">{lifecycleDescriptions[lifecycleStage]}</p>
+          </div>
+          <StatusBadge status={getOccupancyStatus(building.status)} />
+        </div>
+        <div className="mt-5">
+          <ProgressIndex score={lifecycleScore} size="lg" showDescriptions variant="dashboard" />
+        </div>
+      </section>
+
       <div className="grid gap-4 md:grid-cols-3">
-        <DashboardCard title="Building Type" value={formatControlledValue(building.building_type)} detail="Controlled by FMS-0010" />
-        <DashboardCard title="Contacts" value={`${contacts.length}`} detail="Building-specific contacts" />
-        <DashboardCard title="Assets" value={`${assets.length}`} detail="Building-owned records" />
+        <DashboardCard title="Job No." value={building.code || "-"} detail="Accounting reference" />
+        <DashboardCard title="Passport No." value={building.bpid} detail="FPP lifecycle record" />
+        <DashboardCard title="Lifecycle Stage" value={lifecycleLabels[lifecycleStage]} detail={getOccupancyStatus(building.status)} />
+      </div>
+
+      <div className="grid gap-6 xl:grid-cols-3">
+        <PassportSection title="Active Project(s)">
+          <div className="rounded-xl border border-white/10 bg-white/[0.035] p-4">
+            <p className="text-sm font-semibold text-white">{activeProjectLabel}</p>
+            <p className="mt-1 text-xs text-[#B6C1CF]">Project event attached to {building.bpid}</p>
+          </div>
+        </PassportSection>
+        <PassportSection title="Documents / Drawings">
+          <p className="text-3xl font-semibold text-white">{documents.length}</p>
+          <p className="mt-1 text-sm text-[#B6C1CF]">Records attached directly to the building Passport.</p>
+        </PassportSection>
+        <PassportSection title="Inspections">
+          <p className="text-3xl font-semibold text-white">{building.status === "completed_occupied" ? "Historical" : "Pending"}</p>
+          <p className="mt-1 text-sm text-[#B6C1CF]">Inspection records attach to this building/passport.</p>
+        </PassportSection>
+        <PassportSection title="Deficiencies">
+          <p className="text-3xl font-semibold text-white">{building.status === "completed_occupied" ? "Managed" : "Open"}</p>
+          <p className="mt-1 text-sm text-[#B6C1CF]">Deficiency management belongs to the building record.</p>
+        </PassportSection>
+        <PassportSection title="Service History">
+          <p className="text-3xl font-semibold text-white">{building.status === "completed_occupied" ? "Operating" : "Pre-service"}</p>
+          <p className="mt-1 text-sm text-[#B6C1CF]">Service events persist beyond individual projects.</p>
+        </PassportSection>
+        <PassportSection title="Closeout">
+          <Link href={`/buildings/${building.id}/closeout`} className="text-sm font-semibold text-white underline decoration-white/25 underline-offset-4 hover:decoration-[#FF6B5F]">
+            Open building closeout
+          </Link>
+          <p className="mt-2 text-sm text-[#B6C1CF]">Closeout is a lifecycle transition into occupancy and protection.</p>
+        </PassportSection>
+      </div>
+
+      <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
+        <PassportSection title="Mission Briefing">
+          <p className="text-sm leading-6 text-[#B6C1CF]">
+            {fppScores?.scoreDrivers.join(" ") ||
+              "Mission Briefing will use documents, inspections, deficiencies, closeout evidence, and service history to recommend the next lifecycle action toward PROTECT."}
+          </p>
+        </PassportSection>
+        <PassportSection title="Timeline">
+          <Timeline items={commandTimeline} />
+        </PassportSection>
       </div>
 
       <nav className="fop-card flex flex-wrap gap-2 p-2" aria-label="Building sections">
@@ -297,6 +404,7 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
           <dl className="mt-4 grid gap-4 md:grid-cols-2">
             {[
               ["Occupancy Classification", building.occupancy_classification],
+              ["Building Type", formatControlledValue(building.building_type)],
               ["Construction Year", building.construction_year],
               ["Storeys", building.number_of_storeys],
               ["Total Area Sq Ft", building.total_area_sq_ft],

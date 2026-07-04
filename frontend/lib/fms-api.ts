@@ -24,6 +24,7 @@ export type Building = {
   property_id?: string | null;
   campus_id?: string | null;
   bpid: string;
+  code?: string | null;
   name: string;
   address_line_1: string;
   address_line_2?: string | null;
@@ -246,6 +247,35 @@ export type PropertyCloseoutScore = CloseoutScore & {
   building_count: number;
   ready_building_count: number;
   buildings: PropertyCloseoutBuildingScore[];
+};
+
+export type FppScores = {
+  protectionScore: number;
+  complianceScore: number;
+  readinessScore: number;
+  intelligenceScore: number;
+  buildingHealthIndex: number;
+  scoreDrivers: string[];
+  lastCalculatedAt: string;
+  targetType: string;
+  targetId?: string | null;
+  buildingId?: string | null;
+};
+
+export type PortfolioBuildingScores = FppScores & {
+  buildingName: string;
+};
+
+export type PortfolioScores = {
+  protectionScore: number;
+  complianceScore: number;
+  readinessScore: number;
+  intelligenceScore: number;
+  buildingHealthIndex: number;
+  scoreDrivers: string[];
+  lastCalculatedAt: string;
+  buildingCount: number;
+  buildings: PortfolioBuildingScores[];
 };
 
 export type PropertyIntelligenceScore = {
@@ -649,6 +679,37 @@ export async function getPassport(buildingId: string): Promise<PassportSummary> 
 
 export async function getBuildingCloseoutScore(buildingId: string): Promise<CloseoutScore> {
   const response = await request<ApiEnvelope<CloseoutScore>>(`/buildings/${buildingId}/closeout/score`);
+  return response.data;
+}
+
+export async function getBuildingScores(buildingId: string): Promise<FppScores> {
+  const response = await request<ApiEnvelope<FppScores>>(`/buildings/${buildingId}/scores`);
+  return response.data;
+}
+
+export async function getBuildingHealthIndex(buildingId: string): Promise<FppScores> {
+  const response = await request<ApiEnvelope<FppScores>>(`/buildings/${buildingId}/health-index`);
+  return response.data;
+}
+
+export async function getPortfolioScores(organizationId?: string): Promise<PortfolioScores> {
+  const suffix = organizationId ? `?organization_id=${organizationId}` : "";
+  const response = await request<ApiEnvelope<PortfolioScores>>(`/portfolio/scores${suffix}`);
+  return response.data;
+}
+
+export async function getProjectScores(projectId: string): Promise<FppScores> {
+  const response = await request<ApiEnvelope<FppScores>>(`/projects/${projectId}/scores`);
+  return response.data;
+}
+
+export async function getInspectionScores(inspectionId: string): Promise<FppScores> {
+  const response = await request<ApiEnvelope<FppScores>>(`/inspections/${inspectionId}/scores`);
+  return response.data;
+}
+
+export async function getCloseoutScores(closeoutId: string): Promise<FppScores> {
+  const response = await request<ApiEnvelope<FppScores>>(`/closeout/${closeoutId}/scores`);
   return response.data;
 }
 

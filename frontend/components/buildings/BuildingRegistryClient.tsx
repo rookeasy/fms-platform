@@ -8,6 +8,7 @@ import { DataTable } from "@/components/DataTable";
 import { EmptyState } from "@/components/EmptyState";
 import { ErrorState } from "@/components/ErrorState";
 import { LoadingState } from "@/components/LoadingState";
+import { ProgressIndex } from "@/components/ProgressIndex";
 import { StatusBadge } from "@/components/StatusBadge";
 import { BuildingForm } from "@/components/buildings/BuildingForm";
 import { formatControlledValue } from "@/lib/controlled-values";
@@ -19,6 +20,8 @@ import {
   listBuildings,
   listOrganizations
 } from "@/lib/fms-api";
+import { getApiBuildingLifecycle, lifecycleLabels } from "@/lib/lifecycle";
+import { fppKpiTerms, getMockBuildingScores } from "@/lib/progress-index";
 
 export function BuildingRegistryClient() {
   const [organizations, setOrganizations] = useState<Organization[]>([]);
@@ -34,7 +37,8 @@ export function BuildingRegistryClient() {
     setError(null);
     try {
       const loadedOrganizations = await listOrganizations();
-      const nextOrganizationId = organizationId || loadedOrganizations[0]?.id || "";
+      const fuzionOrganization = loadedOrganizations.find((organization) => organization.name === "Fuzion Tech Inc.");
+      const nextOrganizationId = organizationId || fuzionOrganization?.id || loadedOrganizations[0]?.id || "";
       const loadedBuildings = await listBuildings(nextOrganizationId || undefined);
       setOrganizations(loadedOrganizations);
       setSelectedOrganizationId(nextOrganizationId);
@@ -157,6 +161,11 @@ export function BuildingRegistryClient() {
           rows={buildings}
           columns={[
             {
+              key: "job",
+              header: "Job No.",
+              render: (building) => <span className="font-semibold text-white">{building.code || "-"}</span>
+            },
+            {
               key: "name",
               header: "Building Name",
               render: (building) => (
@@ -164,7 +173,7 @@ export function BuildingRegistryClient() {
                   <Link href={`/buildings/${building.id}`} className="font-semibold text-white underline decoration-white/25 underline-offset-4 hover:decoration-[#FF6B5F]">
                     {building.name}
                   </Link>
-                  <p className="mt-1 text-xs text-[#7D8CA3]">{building.bpid}</p>
+                  <p className="mt-1 text-xs text-[#7D8CA3]">Passport No. {building.bpid}</p>
                 </div>
               )
             },
@@ -186,8 +195,24 @@ export function BuildingRegistryClient() {
             },
             {
               key: "status",
-              header: "Status",
-              render: (building) => <StatusBadge status={formatControlledValue(building.status)} />
+              header: "Lifecycle Stage",
+              render: (building) => <StatusBadge status={lifecycleLabels[getApiBuildingLifecycle(building)]} />
+            },
+            {
+              key: "fpp_index",
+              header: fppKpiTerms.buildingHealthIndex,
+              render: (building) => {
+                const scores = getMockBuildingScores(building.id);
+                return (
+                  <div className="min-w-44">
+                    <div className="mb-1 flex items-center justify-between gap-2 text-xs">
+                      <span className="text-[#B6C1CF]">{fppKpiTerms.protectionScore}</span>
+                      <span className="font-semibold text-white">{scores.protectionScore}%</span>
+                    </div>
+                    <ProgressIndex score={scores.buildingHealthIndex} size="sm" variant="compact" showScore={false} />
+                  </div>
+                );
+              }
             },
             {
               key: "actions",

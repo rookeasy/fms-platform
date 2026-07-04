@@ -176,7 +176,7 @@ export function PropertyDetailClient({ propertyId }: PropertyDetailClientProps) 
       </div>
 
       <section className="space-y-3">
-        <h3 className="text-lg font-semibold text-white">SOHO Phase I Structure</h3>
+        <h3 className="text-lg font-semibold text-white">Project / Building Structure</h3>
         <div className="grid gap-4 lg:grid-cols-3">
           {buildingEvidence.map(({ building, assets: buildingAssets, documents: buildingDocuments }) => (
             <Link key={building.id} href={`/buildings/${building.id}`} className="fop-card p-5 hover:border-white/30">

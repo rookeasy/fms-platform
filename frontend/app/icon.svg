@@ -1,6 +1,15 @@
 <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
   <rect width="64" height="64" rx="14" fill="#050A18"/>
-  <path d="M14 14H42C48.6274 14 54 19.3726 54 26C54 32.6274 48.6274 38 42 38H28V50H14V14Z" fill="#FF6B5F"/>
-  <path d="M28 24L42 32L28 40V24Z" fill="#050A18"/>
-  <path d="M15 51H50V40H28V38H15V51Z" fill="#FF6B5F"/>
+  <path d="M15 14H49" stroke="url(#fppLine)" stroke-width="7" stroke-linecap="round"/>
+  <path d="M15 31H40" stroke="url(#fppLine)" stroke-width="7" stroke-linecap="round"/>
+  <path d="M15 14V50" stroke="#FF6B5F" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="49" cy="14" r="2.5" fill="#FFB4AD"/>
+  <circle cx="40" cy="31" r="2" fill="#FFB4AD"/>
+  <defs>
+    <linearGradient id="fppLine" x1="15" y1="14" x2="53" y2="14" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF6B5F"/>
+      <stop offset="0.62" stop-color="#FF8A7F" stop-opacity="0.72"/>
+      <stop offset="1" stop-color="#FFB4AD" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
 </svg>

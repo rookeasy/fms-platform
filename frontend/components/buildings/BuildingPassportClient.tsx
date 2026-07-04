@@ -5,12 +5,15 @@ import { useCallback, useEffect, useState } from "react";
 
 import { EmptyState } from "@/components/EmptyState";
 import { ErrorState } from "@/components/ErrorState";
+import { ProgressIndex } from "@/components/ProgressIndex";
 import { LoadingState } from "@/components/LoadingState";
 import { PassportSection } from "@/components/PassportSection";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Timeline } from "@/components/Timeline";
 import { formatControlledValue } from "@/lib/controlled-values";
-import { getDocumentDownloadUrl, getPassport, type PassportSummary } from "@/lib/fms-api";
+import { getBuildingScores, getDocumentDownloadUrl, getPassport, type FppScores, type PassportSummary } from "@/lib/fms-api";
+import { getApiBuildingLifecycle, lifecycleLabels } from "@/lib/lifecycle";
+import { fppKpiTerms, getMockBuildingScores } from "@/lib/progress-index";
 
 type BuildingPassportClientProps = {
   buildingId: string;
@@ -20,12 +23,14 @@ export function BuildingPassportClient({ buildingId }: BuildingPassportClientPro
   const [passport, setPassport] = useState<PassportSummary | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [fppScores, setFppScores] = useState<FppScores | null>(null);
 
   const loadPassport = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
       setPassport(await getPassport(buildingId));
+      setFppScores(await getBuildingScores(buildingId).catch(() => null));
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : "Unable to load Building Protection Passport.");
     } finally {
@@ -54,13 +59,24 @@ export function BuildingPassportClient({ buildingId }: BuildingPassportClientPro
     date: new Date(item.occurred_at).toLocaleString(),
     description: formatControlledValue(item.event_type)
   }));
+  const healthScore = passport.health_score.score ?? 82;
+  const buildingScores = fppScores ?? getMockBuildingScores(passport.building.id, {
+    protectionScore: healthScore,
+    complianceScore: Math.max(0, Math.min(100, healthScore + 4)),
+    readinessScore: Math.max(0, Math.min(100, healthScore - 2)),
+    intelligenceScore: Math.max(0, Math.min(100, healthScore - 7))
+  });
+  const lifecycleStage = getApiBuildingLifecycle(passport.building);
 
   return (
     <div className="space-y-6">
       <section className="fop-card p-6">
-        <p className="text-sm font-medium text-[#7D8CA3]">{passport.building.bpid}</p>
-        <div className="mt-2 flex flex-wrap items-start justify-between gap-4">
+        <div className="grid gap-6 xl:grid-cols-[1fr_520px]">
           <div>
+            <div className="flex flex-wrap gap-3 text-sm font-medium text-[#7D8CA3]">
+              <span>Passport No. {passport.building.bpid}</span>
+              <span>Job No. {passport.building.code || "-"}</span>
+            </div>
             <h2 className="text-2xl font-semibold text-white">{passport.building.name}</h2>
             <p className="mt-1 text-[#B6C1CF]">
               {[
@@ -73,6 +89,23 @@ export function BuildingPassportClient({ buildingId }: BuildingPassportClientPro
                 .join(", ")}
             </p>
           </div>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <div className="rounded-xl border border-white/10 bg-white/[0.035] p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#7D8CA3]">Lifecycle Stage</p>
+              <p className="mt-2 text-xl font-semibold text-white">{lifecycleLabels[lifecycleStage]}</p>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/[0.035] p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#7D8CA3]">{fppKpiTerms.protectionScore}</p>
+              <p className="mt-2 text-xl font-semibold text-white">{buildingScores.protectionScore}%</p>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/[0.035] p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#7D8CA3]">{fppKpiTerms.buildingHealthIndex}</p>
+              <p className="mt-2 text-xl font-semibold text-white">{buildingScores.buildingHealthIndex}%</p>
+            </div>
+          </div>
+        </div>
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-5">
+          <ProgressIndex score={buildingScores.buildingHealthIndex} size="sm" variant="compact" showScore={false} />
           <Link href={`/buildings/${passport.building.id}`} className="h-10 rounded-md border border-white/15 px-4 py-2 text-sm font-semibold text-[#DCE5F2]">
             Building Profile
           </Link>
@@ -81,24 +114,6 @@ export function BuildingPassportClient({ buildingId }: BuildingPassportClientPro
 
       <div className="grid gap-6 xl:grid-cols-[1fr_380px]">
         <div className="space-y-6">
-          <PassportSection title="Building Profile">
-            <dl className="grid gap-4 sm:grid-cols-2">
-              {[
-                ["Building Type", formatControlledValue(passport.building.building_type)],
-                ["Status", formatControlledValue(passport.building.status)],
-                ["Owner", passport.building.owner_name],
-                ["Property Manager", passport.building.property_manager_name],
-                ["AHJ", passport.building.ahj_name],
-                ["Fire Department", passport.building.fire_department]
-              ].map(([label, value]) => (
-                <div key={label}>
-                  <dt className="text-sm font-medium text-[#7D8CA3]">{label}</dt>
-                  <dd className="mt-1 text-sm text-white">{value || "-"}</dd>
-                </div>
-              ))}
-            </dl>
-          </PassportSection>
-
           <PassportSection title="Contacts">
             {passport.contacts.length ? (
               <div className="grid gap-3 md:grid-cols-2">
@@ -160,10 +175,6 @@ export function BuildingPassportClient({ buildingId }: BuildingPassportClientPro
         <div className="space-y-6">
           <PassportSection title="Timeline">
             {timelineItems.length ? <Timeline items={timelineItems} /> : <EmptyState title="No timeline records." message="Asset and document activity will appear here." />}
-          </PassportSection>
-          <PassportSection title="Health Score">
-            <div className="text-3xl font-semibold text-white">{passport.health_score.score ?? "-"}</div>
-            <p className="mt-1 text-sm text-[#B6C1CF]">{formatControlledValue(passport.health_score.status)}</p>
           </PassportSection>
           <PassportSection title="Membership">
             <div className="text-lg font-semibold text-white">{passport.membership.plan ?? "No active plan"}</div>

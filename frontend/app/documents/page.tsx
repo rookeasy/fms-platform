@@ -1,11 +1,14 @@
 import { AppShell } from "@/components/AppShell";
 import { DataTable } from "@/components/DataTable";
+import { buildings } from "@/lib/mock-data";
 
-const documents = [
-  { name: "Fire Safety Plan", building: "Harbour Tower", updated: "2026-06-12" },
-  { name: "Insurance Binder", building: "King Station Offices", updated: "2026-06-08" },
-  { name: "Reserve Study", building: "Lakeside Residence", updated: "2026-05-29" }
-];
+const documents = buildings.slice(0, 8).map((building) => ({
+  name: "FPP Passport Evidence Record",
+  jobNo: building.jobNo,
+  passportNo: building.passportNo,
+  building: building.projectName,
+  updated: building.status === "completed_occupied" ? "Historical" : "In Progress"
+}));
 
 export default function DocumentsPage() {
   return (
@@ -14,6 +17,8 @@ export default function DocumentsPage() {
         rows={documents}
         columns={[
           { key: "name", header: "Document", render: (row) => row.name },
+          { key: "jobNo", header: "Job No.", render: (row) => row.jobNo },
+          { key: "passportNo", header: "Passport No.", render: (row) => row.passportNo },
           { key: "building", header: "Building", render: (row) => row.building },
           { key: "updated", header: "Updated", render: (row) => row.updated }
         ]}

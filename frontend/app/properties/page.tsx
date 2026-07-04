@@ -3,7 +3,7 @@ import { PropertyCampusClient } from "@/components/properties/PropertyCampusClie
 
 export default function PropertiesPage() {
   return (
-    <AppShell title="Properties">
+    <AppShell title="Portfolios">
       <PropertyCampusClient />
     </AppShell>
   );

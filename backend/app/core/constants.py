@@ -13,7 +13,7 @@ ORGANIZATION_TYPES = {
 }
 
 USER_STATUSES = {"invited", "active", "suspended", "disabled", "deleted"}
-BUILDING_STATUSES = {"active", "inactive", "archived"}
+BUILDING_STATUSES = {"active", "completed_occupied", "inactive", "archived"}
 ORGANIZATION_USER_STATUSES = {"invited", "active", "suspended", "disabled", "deleted"}
 
 USER_ROLES = {

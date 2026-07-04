@@ -7,8 +7,8 @@ export default function Loading() {
     <main className="flex min-h-screen items-center justify-center bg-[#050A18] px-6 text-white">
       <div className="text-center">
         <Image
-          src="/brand/fuzion-tech-logo.svg"
-          alt={`${fuzionBrand.companyName} logo`}
+          src="/brand/fpp-logo.svg"
+          alt={`${fuzionBrand.productName} logo`}
           width={240}
           height={64}
           priority

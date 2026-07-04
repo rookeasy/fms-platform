@@ -395,6 +395,7 @@ class PropertyIntelligenceRead(BaseModel):
 class BuildingBase(BaseModel):
     organization_id: UUID
     name: str
+    code: str | None = None
     address_line_1: str
     address_line_2: str | None = None
     city: str
@@ -423,6 +424,7 @@ class BuildingCreate(BuildingBase):
 
 class BuildingUpdate(BaseModel):
     name: str | None = None
+    code: str | None = None
     address_line_1: str | None = None
     address_line_2: str | None = None
     city: str | None = None

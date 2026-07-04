@@ -5,7 +5,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: fuzionBrand.product,
+    default: "FPP | Fuzion Protection Platform",
     template: `%s | ${fuzionBrand.shortName}`
   },
   description: `${fuzionBrand.product} - ${fuzionBrand.tagline}`,

@@ -1,8 +1,0 @@
-<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
-  <title id="title">Fuzion Tech Mark</title>
-  <desc id="desc">Coral Fuzion Tech mark with a play-button core.</desc>
-  <rect width="128" height="128" rx="28" fill="#050A18"/>
-  <path d="M29 30H83C93.4934 30 102 38.5066 102 49V49C102 59.4934 93.4934 68 83 68H56V96H29V30Z" fill="#FF6B5F"/>
-  <path d="M56 50L80 64L56 78V50Z" fill="#050A18"/>
-  <path d="M31 98H96V75H56V68H31V98Z" fill="#FF6B5F"/>
-</svg>

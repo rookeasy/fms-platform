@@ -8,6 +8,8 @@ import { EmptyState } from "@/components/EmptyState";
 import { ErrorState } from "@/components/ErrorState";
 import { LoadingState } from "@/components/LoadingState";
 import { PassportSection } from "@/components/PassportSection";
+import { ProgressIndex } from "@/components/ProgressIndex";
+import { ScoreCard } from "@/components/ScoreCard";
 import { StatusBadge } from "@/components/StatusBadge";
 import { formatControlledValue } from "@/lib/controlled-values";
 import {
@@ -15,12 +17,15 @@ import {
   type Building,
   type CloseoutScore,
   type DocumentRecord,
+  type FppScores,
+  getCloseoutScores,
   getBuilding,
   getBuildingCloseoutScore,
   listBuildingAssets,
   listBuildingDocuments,
   listBuildings
 } from "@/lib/fms-api";
+import { fppKpiTerms, getMockBuildingScores } from "@/lib/progress-index";
 
 type BuildingCloseoutClientProps = {
   buildingId: string;
@@ -89,6 +94,7 @@ export function BuildingCloseoutClient({ buildingId }: BuildingCloseoutClientPro
   const [resolvedBuildingId, setResolvedBuildingId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [fppScores, setFppScores] = useState<FppScores | null>(null);
 
   const loadCloseout = useCallback(async () => {
     setIsLoading(true);
@@ -106,6 +112,7 @@ export function BuildingCloseoutClient({ buildingId }: BuildingCloseoutClientPro
       setAssets(loadedAssets);
       setDocuments(loadedDocuments);
       setScore(loadedScore);
+      setFppScores(await getCloseoutScores(nextBuildingId).catch(() => null));
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : "Unable to load digital closeout package.");
     } finally {
@@ -132,6 +139,12 @@ export function BuildingCloseoutClient({ buildingId }: BuildingCloseoutClientPro
   const completionPercentage = score?.completion_percentage ?? Math.round((completedSections / totalRequiredItems) * 100);
   const isReadyForHandover = score?.ready_for_handover ?? false;
   const primaryEvidence = documents[0] ?? null;
+  const closeoutScores = fppScores ?? getMockBuildingScores(building?.id ?? buildingId, {
+    protectionScore: Math.min(100, 70 + passportRecordCount * 4),
+    complianceScore: Math.min(100, 65 + completedSections * 3),
+    readinessScore: completionPercentage,
+    intelligenceScore: Math.min(100, 68 + documents.length * 2)
+  });
 
   if (isLoading) {
     return <LoadingState label="Loading digital closeout package" />;
@@ -150,7 +163,10 @@ export function BuildingCloseoutClient({ buildingId }: BuildingCloseoutClientPro
       <section className="fop-card p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-sm font-medium text-[#7D8CA3]">{building.bpid}</p>
+            <div className="flex flex-wrap gap-3 text-sm font-medium text-[#7D8CA3]">
+              <span>Job No. {building.code || "-"}</span>
+              <span>Passport No. {building.bpid}</span>
+            </div>
             <h2 className="mt-2 text-2xl font-semibold text-white">{building.name}</h2>
             <p className="mt-1 text-[#B6C1CF]">
               {[building.address_line_1, building.city, building.province_state, building.postal_code].filter(Boolean).join(", ")}
@@ -176,12 +192,31 @@ export function BuildingCloseoutClient({ buildingId }: BuildingCloseoutClientPro
           <StatusBadge status={isReadyForHandover ? "Ready for Handover" : "Missing Items"} />
         </div>
         <div className="mt-4 h-3 overflow-hidden rounded-full bg-slate-100">
-          <div className="h-full rounded-full bg-[#FF6B5F]" style={{ width: `${completionPercentage}%` }} />
+          <div className="h-full rounded-full bg-[linear-gradient(90deg,#FF6B5F,#2DD4BF,#60A5FA)]" style={{ width: `${completionPercentage}%` }} />
         </div>
         <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-sm text-[#B6C1CF]">
           <span>{completedSections} completed</span>
           <span>{missingItemCount} missing</span>
           <span>{totalRequiredItems} required</span>
+        </div>
+      </section>
+
+      <section className="fop-card p-6">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <p className="fop-label">{fppKpiTerms.progressIndex}</p>
+            <h3 className="mt-2 text-xl font-semibold text-white">Closeout Readiness Along BUILD to ADVISE to PROTECT</h3>
+          </div>
+          <span className="text-3xl font-semibold text-white">{closeoutScores.buildingHealthIndex}%</span>
+        </div>
+        <div className="mt-5">
+          <ProgressIndex score={closeoutScores.buildingHealthIndex} size="lg" showDescriptions variant="dashboard" />
+        </div>
+        <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <ScoreCard title={fppKpiTerms.protectionScore} score={closeoutScores.protectionScore} />
+          <ScoreCard title={fppKpiTerms.complianceScore} score={closeoutScores.complianceScore} />
+          <ScoreCard title={fppKpiTerms.readinessScore} score={closeoutScores.readinessScore} />
+          <ScoreCard title={fppKpiTerms.intelligenceScore} score={closeoutScores.intelligenceScore} />
         </div>
       </section>
 
@@ -240,6 +275,8 @@ export function BuildingCloseoutClient({ buildingId }: BuildingCloseoutClientPro
             <dl className="space-y-3">
               {[
                 ["Property", fieldFromDescription(primaryEvidence, "Property name") ?? "SOHO"],
+                ["Job No.", building.code],
+                ["Passport No.", building.bpid],
                 ["Contractor", normalizeCompanyBrand(fieldFromDescription(primaryEvidence, "Contractor")) ?? "Fuzion Tech Inc."],
                 ["Approving Authority", fieldFromDescription(primaryEvidence, "Approving authority") ?? building.ahj_name],
                 ["Asset Register", `${assets.length} asset(s)`],

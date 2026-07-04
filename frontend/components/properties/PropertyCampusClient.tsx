@@ -9,6 +9,7 @@ import { DataTable, type DataTableColumn } from "@/components/DataTable";
 import { EmptyState } from "@/components/EmptyState";
 import { ErrorState } from "@/components/ErrorState";
 import { LoadingState } from "@/components/LoadingState";
+import { ProgressIndex } from "@/components/ProgressIndex";
 import { StatusBadge } from "@/components/StatusBadge";
 import { formatControlledValue } from "@/lib/controlled-values";
 import {
@@ -17,6 +18,7 @@ import {
   type PropertyCloseoutScore,
   type PropertyCampusSummary,
   type PropertyRecord,
+  type PortfolioScores,
   assignBuildingToPropertyCampus,
   createCampus,
   createProperty,
@@ -24,9 +26,11 @@ import {
   getPropertyCampusSummary,
   listBuildings,
   listCampuses,
+  getPortfolioScores,
   listOrganizations,
   listProperties
 } from "@/lib/fms-api";
+import { fppKpiTerms, getMockBuildingScores } from "@/lib/progress-index";
 
 const propertyTypes = [
   "single_site",
@@ -59,6 +63,7 @@ export function PropertyCampusClient() {
   const [summary, setSummary] = useState<PropertyCampusSummary | null>(null);
   const [closeoutScores, setCloseoutScores] = useState<Record<string, PropertyCloseoutScore>>({});
   const [selectedPropertyId, setSelectedPropertyId] = useState<string>("");
+  const [portfolioScores, setPortfolioScores] = useState<PortfolioScores | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -68,7 +73,8 @@ export function PropertyCampusClient() {
     setError(null);
     try {
       const organizations = await listOrganizations();
-      const nextOrganizationId = organizationId || organizations[0]?.id || "";
+      const fuzionOrganization = organizations.find((organization) => organization.name === "Fuzion Tech Inc.");
+      const nextOrganizationId = organizationId || fuzionOrganization?.id || organizations[0]?.id || "";
       setOrganizationId(nextOrganizationId);
       const [loadedSummary, loadedProperties, loadedCampuses, loadedBuildings] = await Promise.all([
         getPropertyCampusSummary(nextOrganizationId || undefined),
@@ -92,6 +98,7 @@ export function PropertyCampusClient() {
       setCloseoutScores(
         Object.fromEntries(loadedCloseoutScores.filter((entry): entry is readonly [string, PropertyCloseoutScore] => entry[1] !== null))
       );
+      setPortfolioScores(await getPortfolioScores(nextOrganizationId || undefined).catch(() => null));
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : "Unable to load Property & Campus Management.");
     } finally {
@@ -106,6 +113,17 @@ export function PropertyCampusClient() {
   const selectedProperty = properties.find((property) => property.id === selectedPropertyId) ?? properties[0] ?? null;
   const visibleCampuses = selectedProperty ? campuses.filter((campus) => campus.property_id === selectedProperty.id) : campuses;
   const unassignedBuildings = buildings.filter((building) => !building.property_id);
+  const portfolioScoreRows = buildings
+    .map((building) => {
+      const apiScore = portfolioScores?.buildings.find((item) => item.buildingId === building.id);
+      const closeoutCompletion = closeoutScores[building.property_id ?? ""]?.completion_percentage;
+      const scores = apiScore ?? getMockBuildingScores(
+        building.id,
+        typeof closeoutCompletion === "number" ? { readinessScore: closeoutCompletion } : {}
+      );
+      return { building, scores };
+    })
+    .sort((a, b) => b.scores.buildingHealthIndex - a.scores.buildingHealthIndex);
 
   const propertyColumns = useMemo<Array<DataTableColumn<PropertyRecord>>>(
     () => [
@@ -296,11 +314,55 @@ export function PropertyCampusClient() {
                     <span className="text-[#7D8CA3]">{closeoutScore?.missing_items.length ?? 0} missing</span>
                   </div>
                   <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
-                    <div className="h-full rounded-full bg-[#FF6B5F]" style={{ width: `${completion}%` }} />
+                    <div className="h-full rounded-full bg-[linear-gradient(90deg,#FF6B5F,#2DD4BF,#60A5FA)]" style={{ width: `${completion}%` }} />
                   </div>
                 </Link>
               );
             })}
+          </div>
+        </section>
+      ) : null}
+
+      {portfolioScoreRows.length ? (
+        <section className="space-y-4">
+          <div>
+            <h3 className="text-lg font-semibold text-white">Portfolio FPP Index</h3>
+            <p className="text-sm text-[#B6C1CF]">Buildings sorted by {fppKpiTerms.buildingHealthIndex} and {fppKpiTerms.protectionScore}.</p>
+          </div>
+          <div className="grid gap-4 xl:grid-cols-2">
+            {portfolioScoreRows.map(({ building, scores }) => (
+              <Link key={building.id} href={`/buildings/${building.id}`} className="fop-card block p-5 transition hover:-translate-y-0.5 hover:border-white/15">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <h4 className="text-base font-semibold text-white">{building.name}</h4>
+                    <p className="mt-1 text-sm text-[#B6C1CF]">{[building.city, building.province_state].filter(Boolean).join(", ") || "Building location"}</p>
+                    <div className="mt-2 flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-[#7D8CA3]">
+                      <span>Job No. {building.code || "-"}</span>
+                      <span>Passport No. {building.bpid}</span>
+                    </div>
+                  </div>
+                  <span className="text-2xl font-semibold text-white">{scores.buildingHealthIndex}%</span>
+                </div>
+                <div className="mt-4">
+                  <ProgressIndex score={scores.buildingHealthIndex} size="sm" variant="compact" showScore={false} />
+                </div>
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  {[
+                    [fppKpiTerms.protectionScore, scores.protectionScore],
+                    [fppKpiTerms.complianceScore, scores.complianceScore],
+                    [fppKpiTerms.readinessScore, scores.readinessScore],
+                    [fppKpiTerms.intelligenceScore, scores.intelligenceScore]
+                  ].map(([label, value]) => (
+                    <div key={label} className="rounded-lg border border-white/10 bg-[#050A18]/60 px-3 py-2">
+                      <div className="flex items-center justify-between gap-3 text-xs">
+                        <span className="text-[#B6C1CF]">{label}</span>
+                        <span className="font-semibold text-white">{value}%</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Link>
+            ))}
           </div>
         </section>
       ) : null}

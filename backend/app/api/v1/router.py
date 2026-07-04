@@ -20,6 +20,7 @@ from app.api.v1.routes import (
     roles,
     search,
     settings,
+    scores,
     users,
     work_orders,
 )
@@ -46,3 +47,4 @@ api_router.include_router(organization_users.router)
 api_router.include_router(users.router)
 api_router.include_router(settings.router)
 api_router.include_router(search.router)
+api_router.include_router(scores.router)

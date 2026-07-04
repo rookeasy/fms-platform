@@ -98,7 +98,7 @@ export function GlobalSearch() {
           }}
           onFocus={() => setIsOpen(true)}
           onKeyDown={handleKeyDown}
-          placeholder="Search FOP"
+          placeholder="Search FPP"
           className="min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-[#7D8CA3]"
           aria-label="Global search"
         />
