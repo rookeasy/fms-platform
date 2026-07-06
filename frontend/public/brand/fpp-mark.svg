@@ -1,17 +1,17 @@
 <svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
-  <title id="title">FPP App Icon</title>
-  <desc id="desc">Coral fading-line F mark for Fuzion Protection Platform.</desc>
-  <rect width="128" height="128" rx="28" fill="#050A18"/>
-  <path d="M30 28H96" stroke="url(#fppLine)" stroke-width="14" stroke-linecap="round"/>
-  <path d="M30 62H78" stroke="url(#fppLine)" stroke-width="14" stroke-linecap="round"/>
-  <path d="M30 28V100" stroke="#FF6B5F" stroke-width="14" stroke-linecap="round"/>
-  <circle cx="96" cy="28" r="5" fill="#FFB4AD"/>
-  <circle cx="78" cy="62" r="4" fill="#FFB4AD"/>
+  <title id="title">FOP App Icon</title>
+  <desc id="desc">Soft coral fading-line F mark for Fuzion Operating Platform.</desc>
+  <rect width="128" height="128" rx="26" fill="#0F172A"/>
+  <path d="M30 28H94" stroke="url(#fppLine)" stroke-width="13" stroke-linecap="round"/>
+  <path d="M30 62H76" stroke="url(#fppLine)" stroke-width="13" stroke-linecap="round"/>
+  <path d="M30 28V100" stroke="#D95A4E" stroke-width="13" stroke-linecap="round"/>
+  <circle cx="94" cy="28" r="4.5" fill="#E9A099"/>
+  <circle cx="76" cy="62" r="3.5" fill="#E9A099"/>
   <defs>
     <linearGradient id="fppLine" x1="30" y1="28" x2="104" y2="28" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#FF6B5F"/>
-      <stop offset="0.62" stop-color="#FF8A7F" stop-opacity="0.72"/>
-      <stop offset="1" stop-color="#FFB4AD" stop-opacity="0"/>
+      <stop stop-color="#D95A4E"/>
+      <stop offset="0.7" stop-color="#E9A099" stop-opacity="0.58"/>
+      <stop offset="1" stop-color="#F8CBC6" stop-opacity="0"/>
     </linearGradient>
   </defs>
 </svg>

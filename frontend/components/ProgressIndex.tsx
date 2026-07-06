@@ -49,28 +49,28 @@ export function ProgressIndex({
 
   return (
     <div
-      className={variant === "card" || variant === "dashboard" ? "rounded-xl border border-white/10 bg-white/[0.035] p-4" : ""}
+      className={variant === "card" || variant === "dashboard" ? "rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-4" : ""}
       aria-label={`${label ?? "FPP Progress Index"}: ${normalizedScore}% ${statusLabel[resolvedStatus]}`}
     >
       {(label || showScore) && !isCompact ? (
         <div className="mb-3 flex items-center justify-between gap-3">
           <div>
-            {label ? <p className="text-sm font-semibold text-white">{label}</p> : null}
-            <p className="text-xs text-[#7D8CA3]">{statusLabel[resolvedStatus]}</p>
+            {label ? <p className="text-sm font-semibold text-[#0F172A]">{label}</p> : null}
+            <p className="text-xs text-[#64748B]">{statusLabel[resolvedStatus]}</p>
           </div>
-          {showScore ? <span className="text-sm font-semibold text-white">{normalizedScore}%</span> : null}
+          {showScore ? <span className="text-sm font-semibold text-[#0F172A]">{normalizedScore}%</span> : null}
         </div>
       ) : null}
 
       <div className="relative py-4">
-        <div className={`relative ${styles.track} overflow-hidden rounded-full bg-[rgba(125,140,163,0.28)]`}>
+        <div className={`relative ${styles.track} overflow-hidden rounded-full bg-[#CBD5E1]`}>
           <div
-            className={`${styles.track} rounded-full bg-[linear-gradient(90deg,#FF6B5F_0%,#2DD4BF_52%,#60A5FA_100%)] transition-[width] duration-700 ease-out`}
+            className={`${styles.track} rounded-full bg-[linear-gradient(90deg,#0F172A_0%,#2563EB_52%,#D95A4E_100%)] transition-[width] duration-700 ease-out`}
             style={{ width: `${displayScore}%` }}
           />
         </div>
         <div
-          className={`absolute top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/70 bg-white shadow-[0_0_24px_rgba(96,165,250,0.5)] transition-[left] duration-700 ease-out motion-safe:animate-[fpp-score-pulse_700ms_ease-out_1] ${styles.dot}`}
+          className={`absolute top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#D95A4E]/30 bg-white shadow-[0_0_0_4px_rgba(217,90,78,0.12)] transition-[left] duration-700 ease-out motion-safe:animate-[fpp-score-pulse_700ms_ease-out_1] ${styles.dot}`}
           style={{ left: `${displayScore}%` }}
         >
           <span className="sr-only">{normalizedScore}%</span>
@@ -83,7 +83,7 @@ export function ProgressIndex({
             <p className={`${styles.label} font-semibold tracking-[0.16em]`} style={{ color: stage.color }}>
               {stage.label}
             </p>
-            {showDescriptions && !isCompact ? <p className="mt-1 text-xs leading-5 text-[#B6C1CF]">{stage.description}</p> : null}
+            {showDescriptions && !isCompact ? <p className="mt-1 text-xs leading-5 text-[#64748B]">{stage.description}</p> : null}
           </div>
         ))}
       </div>

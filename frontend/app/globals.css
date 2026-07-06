@@ -4,37 +4,37 @@
 
 @keyframes fpp-score-pulse {
   0% {
-    box-shadow: 0 0 0 rgba(96, 165, 250, 0);
+    box-shadow: 0 0 0 rgba(217, 90, 78, 0);
     transform: translate(-50%, -50%) scale(0.92);
   }
   58% {
-    box-shadow: 0 0 28px rgba(96, 165, 250, 0.62), 0 0 18px rgba(45, 212, 191, 0.38);
-    transform: translate(-50%, -50%) scale(1.08);
+    box-shadow: 0 0 0 5px rgba(217, 90, 78, 0.14);
+    transform: translate(-50%, -50%) scale(1.04);
   }
   100% {
-    box-shadow: 0 0 24px rgba(96, 165, 250, 0.5);
+    box-shadow: 0 0 0 rgba(217, 90, 78, 0);
     transform: translate(-50%, -50%) scale(1);
   }
 }
 
 :root {
-  color-scheme: dark;
-  --background: #050a18;
-  --surface: #0b1224;
-  --surface-elevated: #111827;
-  --text-primary: #ffffff;
-  --text-secondary: #b6c1cf;
-  --text-muted: #7d8ca3;
-  --accent: #ff6b5f;
-  --accent-soft: #ffb4ad;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --error: #ef4444;
-  --border: rgba(255, 255, 255, 0.1);
-  --border-strong: rgba(255, 255, 255, 0.18);
+  color-scheme: light;
+  --background: #fafaf8;
+  --surface: #ffffff;
+  --surface-elevated: #f8fafc;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --accent: #d95a4e;
+  --accent-soft: #fff1ee;
+  --success: #16a34a;
+  --warning: #d97706;
+  --error: #dc2626;
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
   --radius-card: 1rem;
-  --shadow-card: 0 18px 60px rgba(0, 0, 0, 0.24);
-  --shadow-panel: 0 24px 80px rgba(0, 0, 0, 0.38);
+  --shadow-card: 0 12px 32px rgba(15, 23, 42, 0.06);
+  --shadow-panel: 0 20px 48px rgba(15, 23, 42, 0.1);
 }
 
 * {
@@ -55,7 +55,7 @@ body {
 }
 
 ::selection {
-  background: rgba(255, 107, 95, 0.28);
+  background: rgba(217, 90, 78, 0.22);
 }
 
 :focus-visible {
@@ -73,8 +73,8 @@ select,
 textarea {
   min-height: 2.75rem;
   border-radius: 0.75rem;
-  border-color: rgba(255, 255, 255, 0.16);
-  background-color: rgba(5, 10, 24, 0.72);
+  border-color: var(--border-strong);
+  background-color: var(--surface);
   color: var(--text-primary);
 }
 
@@ -84,18 +84,30 @@ textarea::placeholder {
 }
 
 select option {
-  background: var(--surface-elevated);
+  background: var(--surface);
   color: var(--text-primary);
 }
 
-.fop-app-bg,
+.fop-app-bg {
+  background:
+    radial-gradient(circle at 16% 8%, rgba(217, 90, 78, 0.05), transparent 24rem),
+    linear-gradient(rgba(15, 23, 42, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, 0.025) 1px, transparent 1px),
+    var(--background);
+  background-size:
+    auto,
+    44px 44px,
+    44px 44px,
+    auto;
+}
+
 .fop-blueprint {
   background:
-    radial-gradient(circle at 18% 8%, rgba(255, 107, 95, 0.16), transparent 24rem),
-    radial-gradient(circle at 82% 18%, rgba(59, 130, 246, 0.1), transparent 28rem),
-    linear-gradient(rgba(182, 193, 207, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(182, 193, 207, 0.05) 1px, transparent 1px),
-    var(--background);
+    radial-gradient(circle at 18% 8%, rgba(217, 90, 78, 0.13), transparent 24rem),
+    radial-gradient(circle at 82% 18%, rgba(37, 99, 235, 0.1), transparent 28rem),
+    linear-gradient(rgba(226, 232, 240, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(226, 232, 240, 0.045) 1px, transparent 1px),
+    #0f172a;
   background-size:
     auto,
     auto,
@@ -111,14 +123,14 @@ select option {
 .fop-card {
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
-  background: linear-gradient(180deg, rgba(17, 24, 39, 0.96), rgba(11, 18, 36, 0.94));
+  background: var(--surface);
   box-shadow: var(--shadow-card);
 }
 
 .fop-card-muted {
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
   border-radius: var(--radius-card);
-  background: rgba(11, 18, 36, 0.72);
+  background: var(--surface-elevated);
 }
 
 .fop-button-primary {
@@ -130,15 +142,15 @@ select option {
   border-radius: 0.75rem;
   background: var(--accent);
   padding: 0 1rem;
-  color: var(--background);
+  color: #ffffff;
   font-size: 0.875rem;
   font-weight: 750;
   transition: background-color 220ms ease, transform 220ms ease, box-shadow 220ms ease;
-  box-shadow: 0 14px 34px rgba(255, 107, 95, 0.18);
+  box-shadow: 0 12px 28px rgba(217, 90, 78, 0.16);
 }
 
 .fop-button-primary:hover {
-  background: #ff857b;
+  background: #c94f44;
   transform: translateY(-1px);
 }
 
@@ -150,7 +162,7 @@ select option {
   gap: 0.5rem;
   border: 1px solid var(--border-strong);
   border-radius: 0.75rem;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--surface);
   padding: 0 1rem;
   color: var(--text-secondary);
   font-size: 0.875rem;
@@ -159,8 +171,8 @@ select option {
 }
 
 .fop-button-secondary:hover {
-  border-color: rgba(255, 107, 95, 0.45);
-  background: rgba(255, 107, 95, 0.08);
+  border-color: rgba(217, 90, 78, 0.42);
+  background: var(--accent-soft);
   color: var(--text-primary);
 }
 
@@ -168,7 +180,7 @@ select option {
   min-height: 2.75rem;
   border-radius: 0.75rem;
   border: 1px solid var(--border-strong);
-  background: rgba(5, 10, 24, 0.72);
+  background: var(--surface);
   padding: 0 0.75rem;
   color: var(--text-primary);
   font-size: 0.875rem;
@@ -176,8 +188,8 @@ select option {
 }
 
 .fop-field:focus {
-  border-color: rgba(255, 107, 95, 0.78);
-  box-shadow: 0 0 0 3px rgba(255, 107, 95, 0.14);
+  border-color: rgba(217, 90, 78, 0.72);
+  box-shadow: 0 0 0 3px rgba(217, 90, 78, 0.14);
   outline: none;
 }
 
@@ -194,6 +206,51 @@ select option {
   text-decoration: underline;
   text-decoration-color: rgba(255, 255, 255, 0.24);
   text-underline-offset: 4px;
+}
+
+.fop-app-bg main {
+  color: var(--text-secondary);
+}
+
+.fop-app-bg main .text-white,
+.fop-app-bg main [class*="text-white"] {
+  color: var(--text-primary);
+}
+
+.fop-app-bg main [class*="text-[#B6C1CF]"],
+.fop-app-bg main [class*="text-[#DCE5F2]"],
+.fop-app-bg main [class*="text-slate-300"] {
+  color: var(--text-secondary);
+}
+
+.fop-app-bg main [class*="text-[#7D8CA3]"],
+.fop-app-bg main [class*="text-slate-400"] {
+  color: var(--text-muted);
+}
+
+.fop-app-bg main [class*="border-white/10"],
+.fop-app-bg main [class*="border-white/15"],
+.fop-app-bg main [class*="border-white/20"] {
+  border-color: var(--border);
+}
+
+.fop-app-bg main [class*="bg-white/"],
+.fop-app-bg main [class*="bg-white\\["] {
+  background-color: var(--surface-elevated);
+}
+
+.fop-app-bg main [class*="bg-[#050A18]"],
+.fop-app-bg main [class*="bg-[#0B1224]"],
+.fop-app-bg main [class*="bg-[#111827]"] {
+  background-color: var(--surface-elevated);
+}
+
+.fop-app-bg table {
+  background: var(--surface);
+}
+
+.fop-app-bg thead {
+  background: var(--surface-elevated);
 }
 
 .fop-link:hover {

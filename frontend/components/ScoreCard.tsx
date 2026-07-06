@@ -12,10 +12,10 @@ export function ScoreCard({ title, score, detail, variant = "default" }: ScoreCa
     <section className="fop-card p-5">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-sm font-semibold text-white">{title}</p>
-          {detail ? <p className="mt-1 text-xs leading-5 text-[#7D8CA3]">{detail}</p> : null}
+          <p className="text-sm font-semibold text-[#0F172A]">{title}</p>
+          {detail ? <p className="mt-1 text-xs leading-5 text-[#64748B]">{detail}</p> : null}
         </div>
-        <span className="text-2xl font-semibold text-white">{score}%</span>
+        <span className="text-2xl font-semibold text-[#0F172A]">{score}%</span>
       </div>
       <div className="mt-4">
         <ProgressIndex score={score} size={variant === "dashboard" ? "md" : "sm"} variant="compact" showScore={false} />

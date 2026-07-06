@@ -5,9 +5,9 @@ type ErrorStateProps = {
 
 export function ErrorState({ message, onRetry }: ErrorStateProps) {
   return (
-    <section className="rounded-2xl border border-red-400/25 bg-red-500/10 p-5">
-      <h2 className="text-sm font-semibold text-red-200">Unable to load this workspace.</h2>
-      <p className="mt-1 text-sm text-red-100/80">{message}</p>
+    <section className="rounded-2xl border border-red-200 bg-red-50 p-5">
+      <h2 className="text-sm font-semibold text-red-700">Unable to load this workspace.</h2>
+      <p className="mt-1 text-sm text-red-600">{message}</p>
       {onRetry ? (
         <button
           type="button"

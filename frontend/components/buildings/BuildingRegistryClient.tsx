@@ -170,7 +170,7 @@ export function BuildingRegistryClient() {
               header: "Building Name",
               render: (building) => (
                 <div>
-                  <Link href={`/buildings/${building.id}`} className="font-semibold text-white underline decoration-white/25 underline-offset-4 hover:decoration-[#FF6B5F]">
+                  <Link href={`/buildings/${building.id}`} className="font-semibold text-[#0F172A] underline decoration-[#CBD5E1] underline-offset-4 hover:decoration-[#D95A4E]">
                     {building.name}
                   </Link>
                   <p className="mt-1 text-xs text-[#7D8CA3]">Passport No. {building.bpid}</p>
@@ -218,7 +218,7 @@ export function BuildingRegistryClient() {
               key: "actions",
               header: "Actions",
               render: (building) => (
-                <Link href={`/buildings/${building.id}`} className="text-sm font-semibold text-white underline decoration-white/25 underline-offset-4 hover:decoration-[#FF6B5F]">
+                <Link href={`/buildings/${building.id}`} className="text-sm font-semibold text-[#0F172A] underline decoration-[#CBD5E1] underline-offset-4 hover:decoration-[#D95A4E]">
                   View Building
                 </Link>
               )

@@ -181,10 +181,12 @@ class DocumentService:
         db.refresh(document)
         return document
 
-    def soft_delete_document(self, db: Session, document_id: UUID, current_user: CurrentUser) -> None:
+    def soft_delete_document(self, db: Session, document_id: UUID, current_user: CurrentUser) -> Document:
         document = self.get_document(db, document_id, current_user)
         document.deleted_at = datetime.now(timezone.utc)
         db.commit()
+        db.refresh(document)
+        return document
 
     def get_download_path(self, db: Session, document_id: UUID, current_user: CurrentUser) -> Path:
         document = self.get_document(db, document_id, current_user)

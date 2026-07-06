@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "dev:clean": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"$procIds = Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique; foreach ($procId in $procIds) { Stop-Process -Id $procId -Force }\" && next dev",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

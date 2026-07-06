@@ -189,6 +189,11 @@ export type DocumentRecord = {
   updated_at: string;
 };
 
+export type DocumentMetadataPayload = Pick<
+  DocumentRecord,
+  "document_type" | "title" | "description" | "asset_id" | "effective_date" | "expiry_date" | "is_public_to_client" | "is_passport_record"
+>;
+
 export type PassportSummary = {
   building: Building;
   contacts: BuildingContact[];
@@ -660,10 +665,17 @@ export async function uploadDocumentVersion(documentId: string, formData: FormDa
   return response.data;
 }
 
-export async function updateDocument(documentId: string, payload: Partial<DocumentRecord>): Promise<DocumentRecord> {
+export async function updateDocument(documentId: string, payload: Partial<DocumentMetadataPayload>): Promise<DocumentRecord> {
   const response = await request<ApiEnvelope<DocumentRecord>>(`/documents/${documentId}`, {
     method: "PATCH",
     body: JSON.stringify(payload)
+  });
+  return response.data;
+}
+
+export async function archiveDocument(documentId: string): Promise<DocumentRecord> {
+  const response = await request<ApiEnvelope<DocumentRecord>>(`/documents/${documentId}/archive`, {
+    method: "POST"
   });
   return response.data;
 }

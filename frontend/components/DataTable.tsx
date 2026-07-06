@@ -15,21 +15,21 @@ export function DataTable<T>({ columns, rows }: DataTableProps<T>) {
   return (
     <div className="fop-card overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-white/10 text-sm">
-          <thead className="bg-white/[0.035]">
+        <table className="min-w-full divide-y divide-[#E2E8F0] text-sm">
+          <thead className="bg-[#F8FAFC]">
             <tr>
               {columns.map((column) => (
-                <th key={column.key} className="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-[0.16em] text-[#7D8CA3]">
+                <th key={column.key} className="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-[0.16em] text-[#64748B]">
                   {column.header}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/10">
+          <tbody className="divide-y divide-[#E2E8F0] bg-white">
             {rows.map((row, index) => (
-              <tr key={index} className="transition hover:bg-white/[0.045]">
+              <tr key={index} className="transition hover:bg-[#FFF1EE]">
                 {columns.map((column) => (
-                  <td key={column.key} className="px-5 py-4 text-[#B6C1CF]">
+                  <td key={column.key} className="px-5 py-4 text-[#334155]">
                     {column.render(row)}
                   </td>
                 ))}

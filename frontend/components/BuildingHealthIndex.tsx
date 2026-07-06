@@ -20,14 +20,14 @@ export function BuildingHealthIndex({ scores, missionBriefing }: BuildingHealthI
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="fop-label">{fppKpiTerms.progressIndex}</p>
-          <h3 className="mt-2 text-xl font-semibold tracking-normal text-white">{fppKpiTerms.buildingHealthIndex}</h3>
-          <p className="mt-1 max-w-2xl text-sm leading-6 text-[#B6C1CF]">
+          <h3 className="mt-2 text-xl font-semibold tracking-normal text-[#0F172A]">{fppKpiTerms.buildingHealthIndex}</h3>
+          <p className="mt-1 max-w-2xl text-sm leading-6 text-[#64748B]">
             A unified BUILD to ADVISE to PROTECT view of building readiness, compliance, and operational resilience.
           </p>
         </div>
         <div className="text-right">
-          <p className="text-4xl font-semibold text-white">{scores.buildingHealthIndex}%</p>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#7D8CA3]">Overall</p>
+          <p className="text-4xl font-semibold text-[#0F172A]">{scores.buildingHealthIndex}%</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#64748B]">Overall</p>
         </div>
       </div>
       <div className="mt-6">
@@ -39,9 +39,9 @@ export function BuildingHealthIndex({ scores, missionBriefing }: BuildingHealthI
         ))}
       </div>
       {missionBriefing ? (
-        <div className="mt-5 rounded-xl border border-white/10 bg-[#050A18]/70 p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#2DD4BF]">Mission Briefing</p>
-          <p className="mt-2 text-sm leading-6 text-[#DCE5F2]">{missionBriefing}</p>
+        <div className="mt-5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#2563EB]">Mission Briefing</p>
+          <p className="mt-2 text-sm leading-6 text-[#334155]">{missionBriefing}</p>
         </div>
       ) : null}
     </section>

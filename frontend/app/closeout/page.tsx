@@ -13,7 +13,7 @@ export default function CloseoutRegistryPage() {
         columns={[
           { key: "jobNo", header: "Job No.", render: (row) => row.jobNo },
           { key: "passportNo", header: "Passport No.", render: (row) => row.passportNo },
-          { key: "building", header: "Building", render: (row) => <Link href={`/buildings/${row.id}/closeout`} className="font-semibold text-white underline decoration-white/25 underline-offset-4 hover:decoration-[#FF6B5F]">{row.projectName}</Link> },
+          { key: "building", header: "Building", render: (row) => <Link href={`/buildings/${row.id}/closeout`} className="font-semibold text-[#0F172A] underline decoration-[#CBD5E1] underline-offset-4 hover:decoration-[#D95A4E]">{row.projectName}</Link> },
           { key: "city", header: "City", render: (row) => row.city },
           { key: "closeoutStatus", header: "Closeout Status", render: (row) => <StatusBadge status={row.closeoutStatus} /> },
           { key: "occupancyStatus", header: "Occupancy", render: (row) => row.occupancyStatus }

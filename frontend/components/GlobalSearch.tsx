@@ -87,7 +87,7 @@ export function GlobalSearch() {
 
   return (
     <div ref={containerRef} className="relative w-full max-w-xl">
-      <div className="flex h-10 items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 text-[#B6C1CF] shadow-sm transition focus-within:border-[#FF6B5F]/70 focus-within:shadow-md">
+      <div className="flex h-10 items-center gap-2 rounded-xl border border-[#E2E8F0] bg-white px-3 text-[#64748B] shadow-sm transition focus-within:border-[#D95A4E]/70 focus-within:shadow-md">
         <Search size={18} />
         <input
           ref={inputRef}
@@ -98,8 +98,8 @@ export function GlobalSearch() {
           }}
           onFocus={() => setIsOpen(true)}
           onKeyDown={handleKeyDown}
-          placeholder="Search FPP"
-          className="min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-[#7D8CA3]"
+          placeholder="Search FOP"
+          className="min-w-0 flex-1 bg-transparent text-sm text-[#0F172A] outline-none placeholder:text-[#94A3B8]"
           aria-label="Global search"
         />
         {query ? (
@@ -110,7 +110,7 @@ export function GlobalSearch() {
               setResults([]);
               setIsOpen(false);
             }}
-            className="flex h-6 w-6 items-center justify-center rounded-lg text-[#7D8CA3] hover:bg-white/10 hover:text-white"
+            className="flex h-6 w-6 items-center justify-center rounded-lg text-[#64748B] hover:bg-[#FFF1EE] hover:text-[#0F172A]"
             aria-label="Clear search"
             title="Clear search"
           >
@@ -120,26 +120,26 @@ export function GlobalSearch() {
       </div>
 
       {isOpen && query.trim() ? (
-        <div className="absolute right-0 z-50 mt-2 max-h-[70vh] w-full min-w-[320px] overflow-auto rounded-2xl border border-white/10 bg-[#111827] shadow-2xl">
-          {isLoading ? <div className="p-4 text-sm text-[#B6C1CF]">Searching...</div> : null}
+        <div className="absolute right-0 z-50 mt-2 max-h-[70vh] w-full min-w-[320px] overflow-auto rounded-2xl border border-[#E2E8F0] bg-white shadow-2xl">
+          {isLoading ? <div className="p-4 text-sm text-[#64748B]">Searching...</div> : null}
           {error ? <div className="p-4 text-sm text-red-700">{error}</div> : null}
-          {!isLoading && !error && !results.length ? <div className="p-4 text-sm text-[#B6C1CF]">No results found.</div> : null}
+          {!isLoading && !error && !results.length ? <div className="p-4 text-sm text-[#64748B]">No results found.</div> : null}
           {!isLoading && !error && groupedResults.length ? (
             <div className="py-2">
               {groupedResults.map((group) => (
-                <div key={group.type} className="border-b border-white/10 py-2 last:border-b-0">
-                  <p className="px-3 pb-1 text-xs font-semibold uppercase text-[#7D8CA3]">{formatControlledValue(group.type)}</p>
+                <div key={group.type} className="border-b border-[#E2E8F0] py-2 last:border-b-0">
+                  <p className="px-3 pb-1 text-xs font-semibold uppercase text-[#64748B]">{formatControlledValue(group.type)}</p>
                   <div className="space-y-1">
                     {group.results.map((result) => (
                       <button
                         key={`${result.type}-${result.id}-${result.url}`}
                         type="button"
                         onClick={() => openResult(result)}
-                        className="flex w-full items-start justify-between gap-3 px-3 py-2 text-left transition hover:bg-white/[0.045]"
+                        className="flex w-full items-start justify-between gap-3 px-3 py-2 text-left transition hover:bg-[#FFF1EE]"
                       >
                         <span className="min-w-0">
-                          <span className="block truncate text-sm font-semibold text-white">{result.title}</span>
-                          <span className="block truncate text-xs text-[#7D8CA3]">{result.subtitle || result.matched_field}</span>
+                          <span className="block truncate text-sm font-semibold text-[#0F172A]">{result.title}</span>
+                          <span className="block truncate text-xs text-[#64748B]">{result.subtitle || result.matched_field}</span>
                         </span>
                         <StatusBadge status={formatControlledValue(result.type)} />
                       </button>

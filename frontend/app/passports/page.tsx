@@ -13,7 +13,7 @@ export default function PassportsPage() {
       <DataTable
         rows={buildings}
         columns={[
-          { key: "passportNo", header: "Passport No.", render: (row) => <Link href={`/buildings/${row.id}/passport`} className="font-semibold text-white underline decoration-white/25 underline-offset-4 hover:decoration-[#FF6B5F]">{row.passportNo}</Link> },
+          { key: "passportNo", header: "Passport No.", render: (row) => <Link href={`/buildings/${row.id}/passport`} className="font-semibold text-[#0F172A] underline decoration-[#CBD5E1] underline-offset-4 hover:decoration-[#D95A4E]">{row.passportNo}</Link> },
           { key: "jobNo", header: "Job No.", render: (row) => row.jobNo },
           { key: "buildingName", header: "Building", render: (row) => row.projectName },
           { key: "city", header: "City", render: (row) => row.city },

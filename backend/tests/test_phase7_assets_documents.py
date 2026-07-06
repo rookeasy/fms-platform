@@ -128,6 +128,7 @@ def test_document_metadata_crud_routes_delegate_to_document_service(monkeypatch)
 
         def soft_delete_document(self, db, document_id, current_user):
             calls.append(("delete", document_id))
+            return document
 
     from app.api.v1.routes import documents
 
@@ -142,11 +143,15 @@ def test_document_metadata_crud_routes_delegate_to_document_service(monkeypatch)
         json={"document_type": "drawing", "title": "Riser drawing", "is_passport_record": True},
     ).status_code == 200
     assert client.patch(f"/api/v1/documents/{document_id}", json={"title": "Updated drawing"}).status_code == 200
+    archive_response = client.post(f"/api/v1/documents/{document_id}/archive")
     assert client.delete(f"/api/v1/documents/{document_id}").status_code == 204
+    assert archive_response.status_code == 200
+    assert archive_response.json()["data"]["id"] == str(document_id)
     assert calls[0] == ("list", building_id, True)
     assert calls[1] == ("create", building_id, "Riser drawing")
     assert calls[2] == ("update", document_id, "Updated drawing")
     assert calls[3] == ("delete", document_id)
+    assert calls[4] == ("delete", document_id)
 
 
 def test_passport_endpoint_includes_passport_documents(monkeypatch) -> None:

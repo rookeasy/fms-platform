@@ -1,4 +1,4 @@
-from seed_fuzion_projects import seed_fuzion_projects
+from scripts.seed_fuzion_projects import seed_fuzion_projects
 
 
 if __name__ == "__main__":

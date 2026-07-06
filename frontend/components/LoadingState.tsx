@@ -5,7 +5,7 @@ type LoadingStateProps = {
 export function LoadingState({ label }: LoadingStateProps) {
   return (
     <div className="space-y-3" aria-live="polite" aria-busy="true">
-      <p className="text-sm font-semibold text-[#B6C1CF]">{label}</p>
+      <p className="text-sm font-semibold text-[#64748B]">{label}</p>
       <div className="grid gap-3 md:grid-cols-3">
         {[0, 1, 2].map((item) => (
           <div key={item} className="fop-card h-28 animate-pulse p-4">

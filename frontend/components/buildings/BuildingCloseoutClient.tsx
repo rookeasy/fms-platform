@@ -192,7 +192,7 @@ export function BuildingCloseoutClient({ buildingId }: BuildingCloseoutClientPro
           <StatusBadge status={isReadyForHandover ? "Ready for Handover" : "Missing Items"} />
         </div>
         <div className="mt-4 h-3 overflow-hidden rounded-full bg-slate-100">
-          <div className="h-full rounded-full bg-[linear-gradient(90deg,#FF6B5F,#2DD4BF,#60A5FA)]" style={{ width: `${completionPercentage}%` }} />
+          <div className="h-full rounded-full bg-[linear-gradient(90deg,#0F172A,#2563EB,#D95A4E)]" style={{ width: `${completionPercentage}%` }} />
         </div>
         <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-sm text-[#B6C1CF]">
           <span>{completedSections} completed</span>

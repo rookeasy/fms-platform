@@ -30,6 +30,7 @@ import {
   type DocumentRecord,
   type FppScores,
   type PropertyRecord,
+  archiveDocument,
   createAsset,
   createBuildingContact,
   deleteAsset,
@@ -43,6 +44,7 @@ import {
   listBuildingDocuments,
   listCampuses,
   updateAsset,
+  updateDocument,
   uploadDocument,
   uploadDocumentVersion,
   updateBuilding
@@ -208,6 +210,35 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
     }
   }
 
+  async function handleUpdateDocument(documentId: string, payload: Parameters<typeof updateDocument>[1]) {
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      const document = await updateDocument(documentId, payload);
+      setDocuments((value) => value.map((item) => (item.id === document.id ? document : item)));
+      return document;
+    } catch (documentError) {
+      setError(documentError instanceof Error ? documentError.message : "Unable to update document.");
+      throw documentError;
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  async function handleArchiveDocument(documentId: string) {
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      await archiveDocument(documentId);
+      setDocuments((value) => value.filter((document) => document.id !== documentId));
+    } catch (documentError) {
+      setError(documentError instanceof Error ? documentError.message : "Unable to archive document.");
+      throw documentError;
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   if (isLoading) {
     return <LoadingState label="Loading building profile" />;
   }
@@ -289,12 +320,12 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
           {building.owner_name ? <span>Owner: {building.owner_name}</span> : null}
           {building.property_manager_name ? <span>Manager: {building.property_manager_name}</span> : null}
           {property ? (
-            <Link href={`/properties/${property.id}`} className="font-semibold text-white underline decoration-white/25 underline-offset-4 hover:decoration-[#FF6B5F]">
+            <Link href={`/properties/${property.id}`} className="font-semibold text-[#0F172A] underline decoration-[#CBD5E1] underline-offset-4 hover:decoration-[#D95A4E]">
               Property: {property.name}
             </Link>
           ) : null}
           {campus ? <span>Campus: {campus.name}</span> : null}
-          <Link href={`/buildings/${building.id}/passport`} className="font-semibold text-white underline decoration-white/25 underline-offset-4 hover:decoration-[#FF6B5F]">
+          <Link href={`/buildings/${building.id}/passport`} className="font-semibold text-[#0F172A] underline decoration-[#CBD5E1] underline-offset-4 hover:decoration-[#D95A4E]">
             View Passport
           </Link>
         </div>
@@ -359,7 +390,7 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
           <p className="mt-1 text-sm text-[#B6C1CF]">Service events persist beyond individual projects.</p>
         </PassportSection>
         <PassportSection title="Closeout">
-          <Link href={`/buildings/${building.id}/closeout`} className="text-sm font-semibold text-white underline decoration-white/25 underline-offset-4 hover:decoration-[#FF6B5F]">
+          <Link href={`/buildings/${building.id}/closeout`} className="text-sm font-semibold text-[#0F172A] underline decoration-[#CBD5E1] underline-offset-4 hover:decoration-[#D95A4E]">
             Open building closeout
           </Link>
           <p className="mt-2 text-sm text-[#B6C1CF]">Closeout is a lifecycle transition into occupancy and protection.</p>
@@ -390,7 +421,7 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
             type="button"
             onClick={() => setActiveTab(key as typeof activeTab)}
             className={`h-10 rounded-xl px-4 text-sm font-semibold transition ${
-              activeTab === key ? "bg-[#050A18] text-white shadow-md" : "text-[#B6C1CF] hover:bg-white/10"
+              activeTab === key ? "bg-[#D95A4E] text-white shadow-sm" : "text-[#475569] hover:bg-[#FFF1EE]"
             }`}
           >
             {label}
@@ -442,6 +473,8 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
           isSubmitting={isSubmitting}
           onUpload={handleUploadDocument}
           onUploadVersion={handleUploadDocumentVersion}
+          onUpdate={handleUpdateDocument}
+          onArchive={handleArchiveDocument}
         />
       ) : null}
 

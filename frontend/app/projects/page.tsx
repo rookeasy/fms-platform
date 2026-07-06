@@ -32,7 +32,7 @@ export default function ProjectsPage() {
               render: (row) => (
                 <div className="space-y-1">
                   {row.linkedPassports.map((passportNo, index) => (
-                    <Link key={passportNo} href={`/buildings/${row.buildingIds[index]}`} className="block font-semibold text-white underline decoration-white/25 underline-offset-4 hover:decoration-[#FF6B5F]">
+                    <Link key={passportNo} href={`/buildings/${row.buildingIds[index]}`} className="block font-semibold text-[#0F172A] underline decoration-[#CBD5E1] underline-offset-4 hover:decoration-[#D95A4E]">
                       {passportNo}
                     </Link>
                   ))}

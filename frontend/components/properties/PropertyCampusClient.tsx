@@ -314,7 +314,7 @@ export function PropertyCampusClient() {
                     <span className="text-[#7D8CA3]">{closeoutScore?.missing_items.length ?? 0} missing</span>
                   </div>
                   <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
-                    <div className="h-full rounded-full bg-[linear-gradient(90deg,#FF6B5F,#2DD4BF,#60A5FA)]" style={{ width: `${completion}%` }} />
+                    <div className="h-full rounded-full bg-[linear-gradient(90deg,#0F172A,#2563EB,#D95A4E)]" style={{ width: `${completion}%` }} />
                   </div>
                 </Link>
               );
@@ -353,7 +353,7 @@ export function PropertyCampusClient() {
                     [fppKpiTerms.readinessScore, scores.readinessScore],
                     [fppKpiTerms.intelligenceScore, scores.intelligenceScore]
                   ].map(([label, value]) => (
-                    <div key={label} className="rounded-lg border border-white/10 bg-[#050A18]/60 px-3 py-2">
+                    <div key={label} className="rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] px-3 py-2">
                       <div className="flex items-center justify-between gap-3 text-xs">
                         <span className="text-[#B6C1CF]">{label}</span>
                         <span className="font-semibold text-white">{value}%</span>

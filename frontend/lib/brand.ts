@@ -1,15 +1,16 @@
 export const fuzionBrand = {
   companyName: "Fuzion Tech Inc.",
-  productName: "Fuzion Protection Platform",
-  shortName: "FPP",
-  product: "FPP | Fuzion Protection Platform",
-  tagline: "BUILD · ADVISE · PROTECT",
+  productName: "Fuzion Operating Platform",
+  shortName: "FOP",
+  product: "FOP | Fuzion Operating Platform",
+  tagline: "BUILD • ADVISE • PROTECT",
+  protectedMetric: "Buildings Under Protection™",
   brandPromise: [
     { label: "BUILD", description: "Create systems." },
     { label: "ADVISE", description: "Deliver intelligence." },
     { label: "PROTECT", description: "Sustain operations." }
   ],
   subtitle: "Building Protection Passport™ & Digital Closeout.",
-  contractorSubtitle: "The building protection platform for owners, contractors, and property teams.",
+  contractorSubtitle: "The operating system for buildings under protection.",
   version: "Version 1.0"
 } as const;

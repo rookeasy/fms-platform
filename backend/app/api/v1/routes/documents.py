@@ -154,6 +154,17 @@ def update_document(
     return {"data": DocumentRead.model_validate(document)}
 
 
+@router.post("/documents/{document_id}/archive")
+def archive_document(
+    document_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: CurrentUser = Depends(get_current_user),
+    _: object = Depends(require_roles("platform_admin", "organization_admin", "property_manager", "engineer")),
+) -> dict:
+    document = document_service.soft_delete_document(db, document_id, current_user)
+    return {"data": DocumentRead.model_validate(document)}
+
+
 @router.post("/documents/{document_id}/new-version")
 async def upload_document_version(
     document_id: UUID,

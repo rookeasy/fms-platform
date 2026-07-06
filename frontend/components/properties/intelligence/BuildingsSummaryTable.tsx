@@ -29,7 +29,7 @@ export function BuildingsSummaryTable({ buildings }: BuildingsSummaryTableProps)
             {buildings.map((building) => (
               <tr key={building.id} className="border-b border-slate-100 transition last:border-b-0 hover:bg-[#fff7f6]">
                 <td className="py-3 pr-4">
-                  <Link href={`/buildings/${building.id}`} className="font-semibold text-white underline decoration-white/25 underline-offset-4 hover:decoration-[#FF6B5F]">
+                  <Link href={`/buildings/${building.id}`} className="font-semibold text-[#0F172A] underline decoration-[#CBD5E1] underline-offset-4 hover:decoration-[#D95A4E]">
                     {building.name}
                   </Link>
                   <p className="text-xs text-[#7D8CA3]">{building.bpid ?? formatControlledValue(building.building_type ?? "")}</p>
