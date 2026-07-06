@@ -11,6 +11,10 @@ __pycache__/
 .mypy_cache/
 .ruff_cache/
 
+# Pytest temporary folders
+backend/.pytest-tmp/
+backend/.tmp/
+
 # Node
 node_modules/
 .next/
@@ -21,6 +25,9 @@ yarn-error.log*
 pnpm-debug.log*
 *.log
 *.err
+
+# TypeScript
+*.tsbuildinfo
 
 # OS/editor
 .DS_Store
