@@ -475,6 +475,7 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
           onUploadVersion={handleUploadDocumentVersion}
           onUpdate={handleUpdateDocument}
           onArchive={handleArchiveDocument}
+          onAssetsChanged={loadBuilding}
         />
       ) : null}
 

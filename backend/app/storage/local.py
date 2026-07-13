@@ -28,4 +28,4 @@ class LocalStorageAdapter:
         return path
 
 
-local_storage = LocalStorageAdapter(root=settings.local_storage_root, bucket=settings.storage_bucket)
+local_storage = LocalStorageAdapter(root=settings.upload_root, bucket=settings.storage_bucket)

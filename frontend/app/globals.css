@@ -27,6 +27,12 @@
   --text-muted: #64748b;
   --accent: #d95a4e;
   --accent-soft: #fff1ee;
+  --fop-build: #0f172a;
+  --fop-advise: #d95a4e;
+  --fop-protect: #047857;
+  --fop-build-soft: #e2e8f0;
+  --fop-advise-soft: #fff1ee;
+  --fop-protect-soft: #ecfdf5;
   --success: #16a34a;
   --warning: #d97706;
   --error: #dc2626;

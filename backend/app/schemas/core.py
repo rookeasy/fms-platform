@@ -590,6 +590,7 @@ class AssetRead(AssetBase):
     id: UUID
     organization_id: UUID
     building_id: UUID
+    source_document_id: UUID | None = None
     created_at: datetime
     updated_at: datetime
     asset_type: AssetTypeRead | None = None
@@ -601,11 +602,19 @@ class DocumentBase(BaseModel):
     document_type: str
     title: str
     description: str | None = None
+    property_id: UUID | None = None
     asset_id: UUID | None = None
+    evidence_category: str | None = None
+    drawing_number: str | None = None
+    revision: str | None = None
+    issue_date: date | None = None
+    status: str = "draft"
     effective_date: date | None = None
     expiry_date: date | None = None
     is_public_to_client: bool = False
     is_passport_record: bool = False
+    internal_only: bool = True
+    notes: str | None = None
 
 
 class DocumentCreate(DocumentBase):
@@ -620,17 +629,26 @@ class DocumentUpdate(BaseModel):
     document_type: str | None = None
     title: str | None = None
     description: str | None = None
+    property_id: UUID | None = None
+    building_id: UUID | None = None
     asset_id: UUID | None = None
+    evidence_category: str | None = None
+    drawing_number: str | None = None
+    revision: str | None = None
+    issue_date: date | None = None
+    status: str | None = None
     effective_date: date | None = None
     expiry_date: date | None = None
     is_public_to_client: bool | None = None
     is_passport_record: bool | None = None
+    internal_only: bool | None = None
+    notes: str | None = None
 
 
 class DocumentRead(DocumentBase):
     id: UUID
     organization_id: UUID
-    building_id: UUID
+    building_id: UUID | None = None
     original_filename: str | None = None
     storage_bucket: str | None = None
     storage_key: str | None = None
@@ -639,6 +657,43 @@ class DocumentRead(DocumentBase):
     version_number: int
     parent_document_id: UUID | None = None
     generated_by_system: bool
+    extraction_status: str = "pending"
+    extraction_source: str | None = None
+    extraction_summary: dict | None = None
+    archived_at: datetime | None = None
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class DocumentAssetSuggestionUpdate(BaseModel):
+    suggested_asset_type: str | None = None
+    suggested_name: str | None = None
+    location_description: str | None = None
+    manufacturer: str | None = None
+    model: str | None = None
+    notes: str | None = None
+
+
+class DocumentAssetSuggestionRead(BaseModel):
+    id: UUID
+    organization_id: UUID
+    document_id: UUID
+    building_id: UUID | None = None
+    asset_type_id: UUID | None = None
+    approved_asset_id: UUID | None = None
+    suggested_asset_type: str
+    suggested_name: str
+    location_description: str | None = None
+    manufacturer: str | None = None
+    model: str | None = None
+    confidence: int
+    evidence_snippet: str | None = None
+    extraction_source: str = "rule_based"
+    review_status: str
+    reviewed_at: datetime | None = None
+    notes: str | None = None
     created_at: datetime
     updated_at: datetime
 

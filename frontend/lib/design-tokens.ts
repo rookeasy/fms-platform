@@ -11,8 +11,11 @@ export const fuzionTokens = {
     primaryNavy: "#0F172A",
     secondaryNavy: "#1E293B",
     build: "#0F172A",
-    advise: "#2563EB",
-    protect: "#D95A4E",
+    advise: "#D95A4E",
+    protect: "#047857",
+    buildSoft: "#E2E8F0",
+    adviseSoft: "#FFF1EE",
+    protectSoft: "#ECFDF5",
     lifecycleBase: "#CBD5E1",
     success: "#16A34A",
     warning: "#D97706",
@@ -60,5 +63,23 @@ export const fuzionTokens = {
     lg: "1024px",
     xl: "1280px",
     "2xl": "1536px"
+  }
+} as const;
+
+export const fopLifecycleTokens = {
+  build: {
+    cssVariable: "--fop-build",
+    value: fuzionTokens.colors.build,
+    label: "BUILD"
+  },
+  advise: {
+    cssVariable: "--fop-advise",
+    value: fuzionTokens.colors.advise,
+    label: "ADVISE"
+  },
+  protect: {
+    cssVariable: "--fop-protect",
+    value: fuzionTokens.colors.protect,
+    label: "PROTECT"
   }
 } as const;

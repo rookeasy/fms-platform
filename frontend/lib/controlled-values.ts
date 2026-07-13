@@ -86,6 +86,29 @@ export const documentTypes = [
   { key: "other", label: "Other" }
 ];
 
+export const evidenceCategories = [
+  "Building Protection Passport",
+  "Drawing Register",
+  "As-Built Drawings",
+  "P.Eng. Compliance Package",
+  "NFPA Contractor Compliance Package",
+  "Material & Test Certificates",
+  "Asset Register",
+  "Warranty Package",
+  "Product Data / O&M Manuals",
+  "Owner / Property Manager Handover",
+  "Fuzion Fire Service ITM Transition",
+  "FMS Membership Invitation"
+];
+
+export const documentStatuses = [
+  { key: "draft", label: "Draft" },
+  { key: "accepted", label: "Accepted" },
+  { key: "as-built", label: "As-Built" },
+  { key: "superseded", label: "Superseded" },
+  { key: "archived", label: "Archived" }
+];
+
 export function formatControlledValue(value?: string | null) {
   if (!value) {
     return "";

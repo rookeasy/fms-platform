@@ -298,6 +298,7 @@ class Asset(Base, TimestampMixin, SoftDeleteMixin):
     organization_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("organizations.id"), nullable=False)
     building_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("buildings.id"), nullable=False)
     asset_type_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("asset_types.id"), nullable=False)
+    source_document_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("documents.id"), nullable=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     tag: Mapped[str | None] = mapped_column(String(120), nullable=True)
     asset_tag: Mapped[str | None] = mapped_column(String(120), nullable=True)
@@ -319,7 +320,7 @@ class Asset(Base, TimestampMixin, SoftDeleteMixin):
 
     building: Mapped["Building"] = relationship(back_populates="assets")
     asset_type: Mapped["AssetType"] = relationship(back_populates="assets")
-    documents: Mapped[list["Document"]] = relationship(back_populates="asset")
+    documents: Mapped[list["Document"]] = relationship(back_populates="asset", foreign_keys="Document.asset_id")
     work_orders: Mapped[list["WorkOrder"]] = relationship(back_populates="asset")
 
     __table_args__ = (
@@ -327,6 +328,7 @@ class Asset(Base, TimestampMixin, SoftDeleteMixin):
         Index("ix_assets_organization_id", "organization_id"),
         Index("ix_assets_building_id", "building_id"),
         Index("ix_assets_asset_type_id", "asset_type_id"),
+        Index("ix_assets_source_document_id", "source_document_id"),
         Index("ix_assets_org_status", "organization_id", "status"),
     )
 
@@ -336,13 +338,19 @@ class Document(Base, TimestampMixin, SoftDeleteMixin):
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     organization_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("organizations.id"), nullable=False)
-    building_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("buildings.id"), nullable=False)
+    property_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("properties.id"), nullable=True)
+    building_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("buildings.id"), nullable=True)
     asset_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("assets.id"), nullable=True)
     uploaded_by_user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"), nullable=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     title: Mapped[str | None] = mapped_column(String(255), nullable=True)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     document_type: Mapped[str] = mapped_column(String(80), nullable=False)
+    evidence_category: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    drawing_number: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    revision: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    issue_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    status: Mapped[str] = mapped_column(String(50), nullable=False, default="draft")
     storage_uri: Mapped[str] = mapped_column(Text, nullable=False)
     storage_bucket: Mapped[str | None] = mapped_column(String(255), nullable=True)
     storage_key: Mapped[str | None] = mapped_column(Text, nullable=True)
@@ -357,20 +365,65 @@ class Document(Base, TimestampMixin, SoftDeleteMixin):
     expiry_date: Mapped[date | None] = mapped_column(Date, nullable=True)
     is_public_to_client: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     is_passport_record: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    internal_only: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    extraction_status: Mapped[str] = mapped_column(String(50), nullable=False, default="pending")
+    extraction_source: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    extraction_summary: Mapped[dict[str, Any] | None] = mapped_column(JSONB, nullable=True)
+    archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     building: Mapped["Building"] = relationship(back_populates="documents")
-    asset: Mapped["Asset | None"] = relationship(back_populates="documents")
+    property: Mapped["Property | None"] = relationship()
+    asset: Mapped["Asset | None"] = relationship(back_populates="documents", foreign_keys=[asset_id])
     parent_document: Mapped["Document | None"] = relationship(remote_side=[id], back_populates="versions")
     versions: Mapped[list["Document"]] = relationship(back_populates="parent_document")
+    asset_suggestions: Mapped[list["DocumentAssetSuggestion"]] = relationship(back_populates="document", cascade="all, delete-orphan")
 
     __table_args__ = (
         Index("ix_documents_organization_id", "organization_id"),
+        Index("ix_documents_property_id", "property_id"),
         Index("ix_documents_building_id", "building_id"),
         Index("ix_documents_asset_id", "asset_id"),
         Index("ix_documents_org_type", "organization_id", "document_type"),
+        Index("ix_documents_extraction_status", "extraction_status"),
+        Index("ix_documents_evidence_category", "evidence_category"),
         Index("ix_documents_org_building_type", "organization_id", "building_id", "document_type"),
         Index("ix_documents_passport_record", "building_id", "is_passport_record"),
         Index("ix_documents_parent_document_id", "parent_document_id"),
+    )
+
+
+class DocumentAssetSuggestion(Base, TimestampMixin):
+    __tablename__ = "document_asset_suggestions"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    organization_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("organizations.id"), nullable=False)
+    document_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("documents.id"), nullable=False)
+    building_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("buildings.id"), nullable=True)
+    asset_type_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("asset_types.id"), nullable=True)
+    approved_asset_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("assets.id"), nullable=True)
+    suggested_asset_type: Mapped[str] = mapped_column(String(120), nullable=False)
+    suggested_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    location_description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    manufacturer: Mapped[str | None] = mapped_column(Text, nullable=True)
+    model: Mapped[str | None] = mapped_column(Text, nullable=True)
+    confidence: Mapped[int] = mapped_column(Integer, nullable=False, default=50)
+    evidence_snippet: Mapped[str | None] = mapped_column(Text, nullable=True)
+    extraction_source: Mapped[str] = mapped_column(String(80), nullable=False, default="rule_based")
+    review_status: Mapped[str] = mapped_column(String(50), nullable=False, default="review_required")
+    reviewed_by_user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    document: Mapped["Document"] = relationship(back_populates="asset_suggestions")
+    asset_type: Mapped["AssetType | None"] = relationship()
+    approved_asset: Mapped["Asset | None"] = relationship(foreign_keys=[approved_asset_id])
+
+    __table_args__ = (
+        Index("ix_document_asset_suggestions_organization_id", "organization_id"),
+        Index("ix_document_asset_suggestions_document_id", "document_id"),
+        Index("ix_document_asset_suggestions_building_id", "building_id"),
+        Index("ix_document_asset_suggestions_review_status", "review_status"),
     )
 
 

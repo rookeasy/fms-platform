@@ -175,9 +175,14 @@ export function BuildingCloseoutClient({ buildingId }: BuildingCloseoutClientPro
           <div className="flex flex-wrap items-center gap-3">
             <StatusBadge status={isReadyForHandover ? "Ready for Handover" : "Missing Items"} />
             {resolvedBuildingId ? (
-              <Link href={`/buildings/${resolvedBuildingId}`} className="h-10 rounded-md border border-white/15 px-4 py-2 text-sm font-semibold text-[#DCE5F2]">
-                Building Profile
-              </Link>
+              <>
+                <Link href={`/buildings/${resolvedBuildingId}`} className="h-10 rounded-md border border-white/15 px-4 py-2 text-sm font-semibold text-[#DCE5F2]">
+                  Building Profile
+                </Link>
+                <Link href={`/buildings/${resolvedBuildingId}`} className="fop-button-primary h-10">
+                  Upload / Manage Documents
+                </Link>
+              </>
             ) : null}
           </div>
         </div>

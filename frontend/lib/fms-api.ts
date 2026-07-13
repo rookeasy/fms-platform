@@ -147,6 +147,7 @@ export type Asset = {
   id: string;
   organization_id: string;
   building_id: string;
+  source_document_id?: string | null;
   asset_type_id: string;
   asset_type?: AssetType | null;
   name: string;
@@ -174,11 +175,17 @@ export type AssetPayload = Omit<Asset, "id" | "organization_id" | "building_id" 
 export type DocumentRecord = {
   id: string;
   organization_id: string;
-  building_id: string;
+  property_id?: string | null;
+  building_id?: string | null;
   asset_id?: string | null;
   document_type: string;
   title: string;
   description?: string | null;
+  evidence_category?: string | null;
+  drawing_number?: string | null;
+  revision?: string | null;
+  issue_date?: string | null;
+  status: string;
   original_filename?: string | null;
   storage_bucket?: string | null;
   storage_key?: string | null;
@@ -191,13 +198,61 @@ export type DocumentRecord = {
   expiry_date?: string | null;
   is_public_to_client: boolean;
   is_passport_record: boolean;
+  internal_only: boolean;
+  extraction_status: "pending" | "processing" | "review_required" | "approved" | "rejected" | "failed" | string;
+  extraction_source?: string | null;
+  extraction_summary?: Record<string, unknown> | null;
+  archived_at?: string | null;
+  notes?: string | null;
   created_at: string;
   updated_at: string;
 };
 
 export type DocumentMetadataPayload = Pick<
   DocumentRecord,
-  "document_type" | "title" | "description" | "asset_id" | "effective_date" | "expiry_date" | "is_public_to_client" | "is_passport_record"
+  | "document_type"
+  | "title"
+  | "description"
+  | "property_id"
+  | "building_id"
+  | "asset_id"
+  | "evidence_category"
+  | "drawing_number"
+  | "revision"
+  | "issue_date"
+  | "status"
+  | "effective_date"
+  | "expiry_date"
+  | "is_public_to_client"
+  | "is_passport_record"
+  | "internal_only"
+  | "notes"
+>;
+
+export type DocumentAssetSuggestion = {
+  id: string;
+  organization_id: string;
+  document_id: string;
+  building_id?: string | null;
+  asset_type_id?: string | null;
+  approved_asset_id?: string | null;
+  suggested_asset_type: string;
+  suggested_name: string;
+  location_description?: string | null;
+  manufacturer?: string | null;
+  model?: string | null;
+  confidence: number;
+  evidence_snippet?: string | null;
+  extraction_source: string;
+  review_status: "review_required" | "approved" | "rejected" | string;
+  reviewed_at?: string | null;
+  notes?: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type DocumentAssetSuggestionPayload = Partial<
+  Pick<DocumentAssetSuggestion, "suggested_asset_type" | "suggested_name" | "location_description" | "manufacturer" | "model" | "notes">
 >;
 
 export type PassportSummary = {
@@ -696,6 +751,37 @@ export async function updateDocument(documentId: string, payload: Partial<Docume
   const response = await request<ApiEnvelope<DocumentRecord>>(`/documents/${documentId}`, {
     method: "PATCH",
     body: JSON.stringify(payload)
+  });
+  return response.data;
+}
+
+export async function listDocumentAssetSuggestions(documentId: string): Promise<DocumentAssetSuggestion[]> {
+  const response = await request<ApiEnvelope<DocumentAssetSuggestion[]>>(`/documents/${documentId}/asset-suggestions`);
+  return response.data;
+}
+
+export async function approveDocumentAssetSuggestion(
+  documentId: string,
+  suggestionId: string,
+  payload?: DocumentAssetSuggestionPayload
+): Promise<DocumentAssetSuggestion> {
+  const response = await request<ApiEnvelope<DocumentAssetSuggestion>>(`/documents/${documentId}/asset-suggestions/${suggestionId}/approve`, {
+    method: "POST",
+    body: JSON.stringify(payload ?? {})
+  });
+  return response.data;
+}
+
+export async function rejectDocumentAssetSuggestion(documentId: string, suggestionId: string): Promise<DocumentAssetSuggestion> {
+  const response = await request<ApiEnvelope<DocumentAssetSuggestion>>(`/documents/${documentId}/asset-suggestions/${suggestionId}/reject`, {
+    method: "POST"
+  });
+  return response.data;
+}
+
+export async function approveAllDocumentAssetSuggestions(documentId: string): Promise<DocumentAssetSuggestion[]> {
+  const response = await request<ApiEnvelope<DocumentAssetSuggestion[]>>(`/documents/${documentId}/asset-suggestions/approve-all`, {
+    method: "POST"
   });
   return response.data;
 }

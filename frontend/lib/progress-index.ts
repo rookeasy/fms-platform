@@ -1,3 +1,5 @@
+import { fopLifecycleTokens } from "@/lib/design-tokens";
+
 export type FppScoreSet = {
   protectionScore: number;
   complianceScore: number;
@@ -19,9 +21,9 @@ export const fppKpiTerms = {
 } as const;
 
 export const lifecycleStages = [
-  { key: "build", label: "BUILD", description: "Create systems.", color: "#0F172A" },
-  { key: "advise", label: "ADVISE", description: "Deliver intelligence.", color: "#2563EB" },
-  { key: "protect", label: "PROTECT", description: "Sustain operations.", color: "#D95A4E" }
+  { key: "build", label: fopLifecycleTokens.build.label, description: "Create systems.", color: fopLifecycleTokens.build.value },
+  { key: "advise", label: fopLifecycleTokens.advise.label, description: "Deliver intelligence.", color: fopLifecycleTokens.advise.value },
+  { key: "protect", label: fopLifecycleTokens.protect.label, description: "Sustain operations.", color: fopLifecycleTokens.protect.value }
 ] as const;
 
 export function clampScore(score: number) {

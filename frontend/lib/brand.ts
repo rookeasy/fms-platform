@@ -12,5 +12,13 @@ export const fuzionBrand = {
   ],
   subtitle: "Building Protection Passport™ & Digital Closeout.",
   contractorSubtitle: "The operating system for buildings under protection.",
-  version: "Version 1.0"
+  version: "Version 1.0",
+  fMarkGuidance: {
+    meaning: "The F Mark represents BUILD • ADVISE • PROTECT.",
+    buildArm: "Top arm: BUILD navy.",
+    adviseArm: "Middle arm: ADVISE coral.",
+    protectArm: "Lower arm: PROTECT emerald.",
+    letterformRule: "The F is expressive and structural; O and P remain clean, neutral, and timeless.",
+    restraintRule: "Use three disciplined FOP colours with minimal, wide, smooth motion treatment. Avoid rainbow gradients, BMW-like blue/red styling, and overdecorated mark effects."
+  }
 } as const;
