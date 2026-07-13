@@ -14,6 +14,7 @@ from app.api.v1.routes import (
     organization_users,
     organizations,
     passport,
+    passport_onboarding,
     property_intelligence,
     properties,
     reports,
@@ -36,6 +37,7 @@ api_router.include_router(inspections.router)
 api_router.include_router(deficiencies.router)
 api_router.include_router(documents.router)
 api_router.include_router(passport.router)
+api_router.include_router(passport_onboarding.router)
 api_router.include_router(property_intelligence.router)
 api_router.include_router(properties.router)
 api_router.include_router(reports.router)

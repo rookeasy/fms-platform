@@ -39,6 +39,7 @@ export const navigation = [
   { href: "/certificates", label: "Finance", icon: BadgeCheck },
   { href: "/advisor", label: "Mission Briefing", icon: Cpu },
   { href: "/passports", label: "Building Passports", icon: ShieldCheck },
+  { href: "/passports/onboarding", label: "Passport Queue", icon: ClipboardCheck },
   { href: "/deficiencies", label: "Deficiencies", icon: Gauge },
   { href: "/closeout", label: "Closeout", icon: ClipboardCheck },
   { href: "/users", label: "Administration", icon: Users },

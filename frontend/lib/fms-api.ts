@@ -45,6 +45,12 @@ export type Building = {
   ahj_name?: string | null;
   insurance_provider?: string | null;
   status: string;
+  project_classification?: string | null;
+  passport_eligible?: boolean;
+  passport_status?: string;
+  passport_issue_date?: string | null;
+  passport_version?: string | null;
+  client_handover_status?: string | null;
   notes?: string | null;
 };
 
@@ -213,6 +219,27 @@ export type PassportSummary = {
     status: string;
     plan: string | null;
   };
+};
+
+export type PassportOnboardingQueueItem = {
+  project: string;
+  property?: string | null;
+  building_id: string;
+  building: string;
+  job_no?: string | null;
+  passport_no?: string | null;
+  project_classification: "active" | "completed" | "service-only" | "design-only" | "archived" | string;
+  completion_status: string;
+  closeout_score: number;
+  missing_items: string[];
+  passport_eligible: boolean;
+  passport_status: string;
+  passport_issue_date?: string | null;
+  passport_version?: string | null;
+  client_handover_status?: string | null;
+  next_action: string;
+  closeout_url: string;
+  passport_url: string;
 };
 
 export type CloseoutSectionStatus = {
@@ -686,6 +713,12 @@ export function getDocumentDownloadUrl(documentId: string): string {
 
 export async function getPassport(buildingId: string): Promise<PassportSummary> {
   const response = await request<ApiEnvelope<PassportSummary>>(`/buildings/${buildingId}/passport`);
+  return response.data;
+}
+
+export async function listPassportOnboardingQueue(organizationId?: string): Promise<PassportOnboardingQueueItem[]> {
+  const suffix = organizationId ? `?organization_id=${organizationId}` : "";
+  const response = await request<ApiEnvelope<PassportOnboardingQueueItem[]>>(`/passports/onboarding${suffix}`);
   return response.data;
 }
 

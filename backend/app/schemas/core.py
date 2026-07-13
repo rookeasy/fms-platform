@@ -415,6 +415,12 @@ class BuildingBase(BaseModel):
     ahj_name: str | None = None
     insurance_provider: str | None = None
     status: str = "active"
+    project_classification: str | None = None
+    passport_eligible: bool = False
+    passport_status: str = "Not Started"
+    passport_issue_date: date | None = None
+    passport_version: str | None = None
+    client_handover_status: str | None = None
     notes: str | None = None
 
 
@@ -444,6 +450,12 @@ class BuildingUpdate(BaseModel):
     ahj_name: str | None = None
     insurance_provider: str | None = None
     status: str | None = None
+    project_classification: str | None = None
+    passport_eligible: bool | None = None
+    passport_status: str | None = None
+    passport_issue_date: date | None = None
+    passport_version: str | None = None
+    client_handover_status: str | None = None
     notes: str | None = None
 
 
@@ -456,6 +468,27 @@ class BuildingRead(BuildingBase):
     updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class PassportOnboardingQueueItem(BaseModel):
+    project: str
+    property: str | None = None
+    building_id: UUID
+    building: str
+    job_no: str | None = None
+    passport_no: str | None = None
+    project_classification: str
+    completion_status: str
+    closeout_score: int
+    missing_items: list[str] = Field(default_factory=list)
+    passport_eligible: bool
+    passport_status: str
+    passport_issue_date: date | None = None
+    passport_version: str | None = None
+    client_handover_status: str | None = None
+    next_action: str
+    closeout_url: str
+    passport_url: str
 
 
 class BuildingContactBase(BaseModel):

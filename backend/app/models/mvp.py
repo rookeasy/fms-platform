@@ -217,6 +217,12 @@ class Building(Base, TimestampMixin, SoftDeleteMixin):
     ahj_name: Mapped[str | None] = mapped_column(Text, nullable=True)
     insurance_provider: Mapped[str | None] = mapped_column(Text, nullable=True)
     status: Mapped[str] = mapped_column(String(50), nullable=False, default="active")
+    project_classification: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    passport_eligible: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    passport_status: Mapped[str] = mapped_column(String(80), nullable=False, default="Not Started")
+    passport_issue_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    passport_version: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    client_handover_status: Mapped[str | None] = mapped_column(String(80), nullable=True)
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     organization: Mapped["Organization"] = relationship(back_populates="buildings")

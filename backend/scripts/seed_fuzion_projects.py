@@ -41,6 +41,24 @@ class FuzionProject:
     def inspection_status(self) -> str:
         return "Current / Historical" if self.status == "completed_occupied" else "Pending / In Progress"
 
+    @property
+    def project_classification(self) -> str:
+        if self.status == "completed_occupied":
+            return "completed"
+        return self.status.replace("_", "-")
+
+    @property
+    def passport_eligible(self) -> bool:
+        return self.project_classification == "completed"
+
+    @property
+    def onboarding_passport_status(self) -> str:
+        return "Building Registered" if self.passport_eligible else "Not Started"
+
+    @property
+    def client_handover_status(self) -> str:
+        return "Closeout Incomplete" if self.passport_eligible else "Not Started"
+
 
 COMPLETED_OCCUPIED_PROJECTS = [
     FuzionProject("5000", "Parkway Lofts Bldgs A-B-C", "St. Catharines", "completed_occupied"),
@@ -108,6 +126,10 @@ def project_notes(project: FuzionProject) -> str:
             f"passportStatus={project.passport_status}",
             f"closeoutStatus={project.closeout_status}",
             f"inspectionStatus={project.inspection_status}",
+            f"projectClassification={project.project_classification}",
+            f"passportEligible={str(project.passport_eligible).lower()}",
+            f"passportLifecycleStatus={project.onboarding_passport_status}",
+            f"clientHandoverStatus={project.client_handover_status}",
         ]
     )
 
@@ -136,6 +158,12 @@ def upsert_project(db: Session, organization: Organization, project: FuzionProje
         "building_type": "fuzion_project",
         "occupancy_classification": "operational_placeholder",
         "status": project.status,
+        "project_classification": project.project_classification,
+        "passport_eligible": project.passport_eligible,
+        "passport_status": project.onboarding_passport_status,
+        "passport_issue_date": None,
+        "passport_version": "v0.1" if project.passport_eligible else None,
+        "client_handover_status": project.client_handover_status,
         "owner_name": None,
         "property_manager_name": None,
         "notes": project_notes(project),
