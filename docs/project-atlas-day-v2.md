@@ -17,10 +17,14 @@ This is a presentation layer refresh only. Routes, API calls, authentication beh
 - Slate text: `#475569`
 - Muted text: `#64748B`
 - Soft coral: `#D95A4E`
+- BUILD electric royal blue: `#1769FF`
+- ADVISE platinum: `#DDE2EA`
+- PROTECT highlighter green: `#A8E96A`
+- Protected halo coral: `#E97872`
+- Deep emerald: `#047857`
 - Success: `#16A34A`
 - Warning: `#D97706`
 - Critical: `#DC2626`
-- Advise blue: `#2563EB`
 
 ## Typography Guidance
 
@@ -34,24 +38,28 @@ Atlas Day v2 favors generous spacing, clear groupings, and fewer competing panel
 
 Coral is reserved for:
 
-- protected state
-- active state
 - primary action
-- current lifecycle state
+- current application state where already established
+- the completed protected-state halo in the living F mark
 
-Coral should not be used as random decoration. If a visual element does not communicate action, protected status, or current state, use navy, blue, slate, white, or grey instead.
+Coral should not be used as random decoration. In the living F mark system, coral is not a lifecycle segment colour. It is the protected-state halo and must not appear on incomplete buildings.
 
 ## BUILD / ADVISE / PROTECT Colour System
 
-- BUILD: navy `#0F172A`
-- ADVISE: professional blue `#2563EB`
-- PROTECT: soft coral `#D95A4E`
+- BUILD: electric royal blue `#1769FF`
+- ADVISE: soft platinum silver `#DDE2EA`
+- PROTECT: pastel highlighter green `#A8E96A`
+- HALO: soft Fuzion coral `#E97872`
 
 The same mapping should be used for lifecycle badges, progress indicators, dashboard charts, passport sections, property views, building views, and closeout readiness visuals.
 
+BUILD • ADVISE • PROTECT is the external lifecycle framework. Colour names are implementation details only and must not replace those words in customer-facing UI. Do not use replacement lifecycle names such as Foundation, Insight, or Protection for the external stages.
+
 ## Logo / Mark Guidance
 
-The FOP mark should remain simple and timeless. Only the F carries the motion or fading-line language. The O and P remain clean type. Streaks should be fewer, wider, smoother, and quieter. Avoid harsh glow effects, bright orange, or noisy technical decoration.
+The F Mark represents BUILD • ADVISE • PROTECT. The F is the expressive and structural lifecycle element: top arm ADVISE platinum, middle arm BUILD electric royal blue, and vertical stem PROTECT pastel highlighter green. The O and P remain clean, neutral, static, and timeless.
+
+The mark should remain simple and disciplined. The coral halo is reserved for completed protected states only. It must not appear as decoration, on buttons, on warnings, or on incomplete buildings. Avoid rainbow gradients, harsh glow effects, bright orange, or noisy technical decoration. If motion or progress treatment is used, it should be minimal, smooth, and structurally consistent.
 
 ## Atlas Day vs Atlas Night
 

@@ -10,12 +10,17 @@ export const fuzionTokens = {
     accentSoft: "#FFF1EE",
     primaryNavy: "#0F172A",
     secondaryNavy: "#1E293B",
-    build: "#0F172A",
-    advise: "#D95A4E",
-    protect: "#047857",
-    buildSoft: "#E2E8F0",
-    adviseSoft: "#FFF1EE",
-    protectSoft: "#ECFDF5",
+    build: "#1769FF",
+    advise: "#DDE2EA",
+    protect: "#A8E96A",
+    buildText: "#0B55D9",
+    adviseText: "#334155",
+    protectText: "#3F7A1D",
+    buildSoft: "#EAF2FF",
+    adviseSoft: "#F7F8FA",
+    protectSoft: "#F1FBE8",
+    halo: "#E97872",
+    haloSoft: "#FDEDEC",
     lifecycleBase: "#CBD5E1",
     success: "#16A34A",
     warning: "#D97706",
@@ -70,16 +75,19 @@ export const fopLifecycleTokens = {
   build: {
     cssVariable: "--fop-build",
     value: fuzionTokens.colors.build,
+    textValue: fuzionTokens.colors.buildText,
     label: "BUILD"
   },
   advise: {
     cssVariable: "--fop-advise",
     value: fuzionTokens.colors.advise,
+    textValue: fuzionTokens.colors.adviseText,
     label: "ADVISE"
   },
   protect: {
     cssVariable: "--fop-protect",
     value: fuzionTokens.colors.protect,
+    textValue: fuzionTokens.colors.protectText,
     label: "PROTECT"
   }
 } as const;

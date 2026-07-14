@@ -4,15 +4,15 @@
 
 @keyframes fpp-score-pulse {
   0% {
-    box-shadow: 0 0 0 rgba(217, 90, 78, 0);
+    box-shadow: 0 0 0 rgba(23, 105, 255, 0);
     transform: translate(-50%, -50%) scale(0.92);
   }
   58% {
-    box-shadow: 0 0 0 5px rgba(217, 90, 78, 0.14);
+    box-shadow: 0 0 0 5px rgba(23, 105, 255, 0.14);
     transform: translate(-50%, -50%) scale(1.04);
   }
   100% {
-    box-shadow: 0 0 0 rgba(217, 90, 78, 0);
+    box-shadow: 0 0 0 rgba(23, 105, 255, 0);
     transform: translate(-50%, -50%) scale(1);
   }
 }
@@ -27,12 +27,17 @@
   --text-muted: #64748b;
   --accent: #d95a4e;
   --accent-soft: #fff1ee;
-  --fop-build: #0f172a;
-  --fop-advise: #d95a4e;
-  --fop-protect: #047857;
-  --fop-build-soft: #e2e8f0;
-  --fop-advise-soft: #fff1ee;
-  --fop-protect-soft: #ecfdf5;
+  --fop-build: #1769ff;
+  --fop-advise: #dde2ea;
+  --fop-protect: #a8e96a;
+  --fop-build-text: #0b55d9;
+  --fop-advise-text: #334155;
+  --fop-protect-text: #3f7a1d;
+  --fop-build-soft: #eaf2ff;
+  --fop-advise-soft: #f7f8fa;
+  --fop-protect-soft: #f1fbe8;
+  --fop-halo: #e97872;
+  --fop-halo-soft: #fdedec;
   --success: #16a34a;
   --warning: #d97706;
   --error: #dc2626;

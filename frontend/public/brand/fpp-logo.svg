@@ -1,25 +1,21 @@
-<svg width="520" height="128" viewBox="0 0 520 128" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
-  <title id="title">FOP | Fuzion Operating Platform</title>
-  <desc id="desc">Refined FOP mark with Fuzion Tech Inc. signature.</desc>
-  <rect width="128" height="128" rx="26" fill="#0F172A"/>
-  <path d="M31 29H95" stroke="url(#fppLine)" stroke-width="13" stroke-linecap="round"/>
-  <path d="M31 63H77" stroke="url(#fppLine)" stroke-width="13" stroke-linecap="round"/>
-  <path d="M31 29V101" stroke="#D95A4E" stroke-width="13" stroke-linecap="round"/>
-  <circle cx="95" cy="29" r="4.5" fill="#E9A099"/>
-  <circle cx="77" cy="63" r="3.5" fill="#E9A099"/>
-  <text x="158" y="58" fill="#F8FAFC" font-family="Inter, Arial, sans-serif" font-size="36" font-weight="760" letter-spacing="6">FOP</text>
-  <text x="158" y="88" fill="#CBD5E1" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="650" letter-spacing="2">FUZION OPERATING PLATFORM</text>
-  <text x="158" y="110" fill="#94A3B8" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="650" letter-spacing="3">FUZION TECH INC.</text>
-  <path d="M158 22H306" stroke="url(#wordLine)" stroke-width="3" stroke-linecap="round"/>
+<svg width="244" height="88" viewBox="0 0 244 88" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Fuzion Operating Platform logo</title>
+  <desc id="desc">FOP lifecycle F mark with neutral OP wordmark.</desc>
   <defs>
-    <linearGradient id="fppLine" x1="31" y1="29" x2="105" y2="29" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#D95A4E"/>
-      <stop offset="0.7" stop-color="#E9A099" stop-opacity="0.58"/>
-      <stop offset="1" stop-color="#F8CBC6" stop-opacity="0"/>
-    </linearGradient>
-    <linearGradient id="wordLine" x1="158" y1="22" x2="324" y2="22" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#D95A4E"/>
-      <stop offset="1" stop-color="#F8CBC6" stop-opacity="0"/>
-    </linearGradient>
+    <filter id="halo" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="4"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0.91 0 1 0 0 0.47 0 0 1 0 0.45 0 0 0 0.28 0"/>
+      <feBlend in="SourceGraphic" mode="screen"/>
+    </filter>
   </defs>
+  <rect x="1" y="1" width="86" height="86" rx="20" fill="#FFFFFF" stroke="#E2E8F0"/>
+  <path d="M20 17H67V31H35V39H59V53H35V72H20V17Z" fill="none" stroke="#E97872" stroke-width="7" stroke-linejoin="round" opacity="0.46" filter="url(#halo)"/>
+  <path d="M20 17H35V72H20V17Z" fill="#A8E96A"/>
+  <path d="M20 17H67V31H20V17Z" fill="#DDE2EA"/>
+  <path d="M20 39H59V53H20V39Z" fill="#1769FF"/>
+  <path d="M20 17H67V31H35V39H59V53H35V72H20V17Z" fill="none" stroke="#0F172A" stroke-opacity="0.16"/>
+  <g fill="#0F172A" font-family="Inter, Arial, sans-serif" font-weight="760">
+    <text x="104" y="48" font-size="34" letter-spacing="1.5">OP</text>
+    <text x="105" y="66" font-size="9" letter-spacing="2.4" fill="#64748B">BUILD • ADVISE • PROTECT</text>
+  </g>
 </svg>

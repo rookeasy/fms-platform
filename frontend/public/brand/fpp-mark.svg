@@ -1,17 +1,17 @@
-<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
-  <title id="title">FOP App Icon</title>
-  <desc id="desc">Soft coral fading-line F mark for Fuzion Operating Platform.</desc>
-  <rect width="128" height="128" rx="26" fill="#0F172A"/>
-  <path d="M30 28H94" stroke="url(#fppLine)" stroke-width="13" stroke-linecap="round"/>
-  <path d="M30 62H76" stroke="url(#fppLine)" stroke-width="13" stroke-linecap="round"/>
-  <path d="M30 28V100" stroke="#D95A4E" stroke-width="13" stroke-linecap="round"/>
-  <circle cx="94" cy="28" r="4.5" fill="#E9A099"/>
-  <circle cx="76" cy="62" r="3.5" fill="#E9A099"/>
+<svg width="88" height="88" viewBox="0 0 88 88" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">FOP lifecycle F mark</title>
+  <desc id="desc">Static complete F mark representing BUILD, ADVISE, and PROTECT with a subtle protected-state coral halo.</desc>
   <defs>
-    <linearGradient id="fppLine" x1="30" y1="28" x2="104" y2="28" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#D95A4E"/>
-      <stop offset="0.7" stop-color="#E9A099" stop-opacity="0.58"/>
-      <stop offset="1" stop-color="#F8CBC6" stop-opacity="0"/>
-    </linearGradient>
+    <filter id="halo" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="4"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0.91 0 1 0 0 0.47 0 0 1 0 0.45 0 0 0 0.32 0"/>
+      <feBlend in="SourceGraphic" mode="screen"/>
+    </filter>
   </defs>
+  <rect x="1" y="1" width="86" height="86" rx="20" fill="#FFFFFF" stroke="#E2E8F0"/>
+  <path d="M20 17H67V31H35V39H59V53H35V72H20V17Z" fill="none" stroke="#E97872" stroke-width="7" stroke-linejoin="round" opacity="0.5" filter="url(#halo)"/>
+  <path d="M20 17H35V72H20V17Z" fill="#A8E96A"/>
+  <path d="M20 17H67V31H20V17Z" fill="#DDE2EA"/>
+  <path d="M20 39H59V53H20V39Z" fill="#1769FF"/>
+  <path d="M20 17H67V31H35V39H59V53H35V72H20V17Z" fill="none" stroke="#0F172A" stroke-opacity="0.16"/>
 </svg>

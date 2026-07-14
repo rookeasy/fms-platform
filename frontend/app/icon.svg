@@ -1,15 +1,7 @@
-<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="64" height="64" rx="14" fill="#0F172A"/>
-  <path d="M15 14H49" stroke="url(#fppLine)" stroke-width="7" stroke-linecap="round"/>
-  <path d="M15 31H40" stroke="url(#fppLine)" stroke-width="7" stroke-linecap="round"/>
-  <path d="M15 14V50" stroke="#D95A4E" stroke-width="7" stroke-linecap="round"/>
-  <circle cx="49" cy="14" r="2.5" fill="#E9A099"/>
-  <circle cx="40" cy="31" r="2" fill="#E9A099"/>
-  <defs>
-    <linearGradient id="fppLine" x1="15" y1="14" x2="53" y2="14" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#D95A4E"/>
-      <stop offset="0.7" stop-color="#E9A099" stop-opacity="0.58"/>
-      <stop offset="1" stop-color="#F8CBC6" stop-opacity="0"/>
-    </linearGradient>
-  </defs>
+<svg width="88" height="88" viewBox="0 0 88 88" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="88" height="88" rx="20" fill="#FFFFFF"/>
+  <path d="M20 17H35V72H20V17Z" fill="#A8E96A"/>
+  <path d="M20 17H67V31H20V17Z" fill="#DDE2EA"/>
+  <path d="M20 39H59V53H20V39Z" fill="#1769FF"/>
+  <path d="M20 17H67V31H35V39H59V53H35V72H20V17Z" fill="none" stroke="#0F172A" stroke-opacity="0.18"/>
 </svg>
