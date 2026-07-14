@@ -4,6 +4,8 @@
 
 Project Atlas Day evolves the Fuzion Operating Platform into a calm, professional, light operating environment for daily work.
 
+Supersession note: the approved FOP identity now uses Midnight `#071223` as the primary platform background, the official Halo™ as the O in FOP, and the BUILD • ADVISE • PROTECT mapping documented in `docs/project-atlas-day-v2.md`. Treat this file as historical light-UI guidance only.
+
 The application UI should feel engineering-led, spacious, and durable. Darker brand treatment remains appropriate for login, front door, and marketing surfaces.
 
 ## Palette
@@ -17,6 +19,7 @@ The application UI should feel engineering-led, spacious, and durable. Darker br
 - Slate text: `#334155`
 - Muted text: `#64748B`
 - FOP coral: `#F15B4A`
+- FOP protect emerald: `#047857`
 - Coral soft background: `#FFF1EE`
 - Success: `#16A34A`
 - Warning: `#D97706`
@@ -59,3 +62,4 @@ Avoid using coral for large page backgrounds, decorative blobs, or repeated orna
 - Let cards and tables use consistent spacing, borders, and type hierarchy.
 - Avoid black-heavy surfaces inside the authenticated app.
 - Preserve FOP branding in user-facing UI without renaming backend modules, routes, schemas, or database objects.
+- BUILD • ADVISE • PROTECT is the external lifecycle framework. Colour names are implementation details only; do not replace these customer-facing words with internal colour names or substitute lifecycle names.

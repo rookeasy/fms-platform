@@ -17,7 +17,7 @@ export default function MembershipsPage() {
           <p className="fop-label">Member Buildings</p>
           <h2 className="mt-2 text-xl font-semibold text-white">{fppKpiTerms.progressIndex} for FPP Membership Conversion</h2>
           <p className="mt-2 text-sm leading-6 text-[#B6C1CF]">
-            Use BUILD to ADVISE to PROTECT as the common sales and operations language for member building readiness.
+            Use BUILD • ADVISE • PROTECT as the common sales and operations language for member building readiness.
           </p>
           <div className="mt-5">
             <ProgressIndex score={84} size="lg" showDescriptions variant="dashboard" />

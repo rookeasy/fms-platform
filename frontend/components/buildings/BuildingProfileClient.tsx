@@ -5,6 +5,7 @@ import { RefreshCcw } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 import { BuildingHealthIndex } from "@/components/BuildingHealthIndex";
+import { FopLifecycleMark } from "@/components/brand/FopLifecycleMark";
 import { DashboardCard } from "@/components/DashboardCard";
 import { EmptyState } from "@/components/EmptyState";
 import { ErrorState } from "@/components/ErrorState";
@@ -17,6 +18,7 @@ import { BuildingAssetsPanel } from "@/components/buildings/BuildingAssetsPanel"
 import { BuildingContactsPanel } from "@/components/buildings/BuildingContactsPanel";
 import { BuildingDocumentsPanel } from "@/components/buildings/BuildingDocumentsPanel";
 import { BuildingForm } from "@/components/buildings/BuildingForm";
+import { ProtectedStatePanel } from "@/components/buildings/ProtectedStatePanel";
 import { formatControlledValue } from "@/lib/controlled-values";
 import {
   type Building,
@@ -29,14 +31,18 @@ import {
   type Campus,
   type DocumentRecord,
   type FppScores,
+  type ProtectedStateEvaluation,
   type PropertyRecord,
   archiveDocument,
+  approveProtectedState,
   createAsset,
   createBuildingContact,
   deleteAsset,
   deleteBuildingContact,
+  evaluateProtectedState,
   getBuilding,
   getBuildingScores,
+  getProtectedState,
   getProperty,
   listAssetTypes,
   listBuildingAssets,
@@ -45,11 +51,14 @@ import {
   listCampuses,
   updateAsset,
   updateDocument,
+  revokeProtectedState,
+  suspendProtectedState,
   uploadDocument,
   uploadDocumentVersion,
   updateBuilding
 } from "@/lib/fms-api";
 import { getApiBuildingLifecycle, getLifecycleScore, getOccupancyStatus, lifecycleDescriptions, lifecycleLabels } from "@/lib/lifecycle";
+import { visualStateFromBuilding, visualStateWithProtectedState } from "@/lib/fop-lifecycle-visual";
 import { getMockBuildingScores } from "@/lib/progress-index";
 
 type BuildingProfileClientProps = {
@@ -70,6 +79,7 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fppScores, setFppScores] = useState<FppScores | null>(null);
+  const [protectedState, setProtectedState] = useState<ProtectedStateEvaluation | null>(null);
 
   const loadBuilding = useCallback(async () => {
     setIsLoading(true);
@@ -94,6 +104,7 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
       setAssets(loadedAssets);
       setDocuments(loadedDocuments);
       setFppScores(await getBuildingScores(buildingId).catch(() => null));
+      setProtectedState(await getProtectedState(buildingId).catch(() => null));
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : "Unable to load building profile.");
     } finally {
@@ -239,6 +250,27 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
     }
   }
 
+  async function handleProtectedStateAction(action: "evaluate" | "approve" | "suspend" | "revoke") {
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      const reason = action === "evaluate" ? undefined : `Protected State ${action}`;
+      const updated =
+        action === "approve"
+          ? await approveProtectedState(buildingId, reason)
+          : action === "suspend"
+            ? await suspendProtectedState(buildingId, reason)
+            : action === "revoke"
+              ? await revokeProtectedState(buildingId, reason)
+              : await evaluateProtectedState(buildingId);
+      setProtectedState(updated);
+    } catch (stateError) {
+      setError(stateError instanceof Error ? stateError.message : "Unable to update Protected State.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   if (isLoading) {
     return <LoadingState label="Loading building profile" />;
   }
@@ -258,6 +290,7 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
   });
   const lifecycleStage = getApiBuildingLifecycle(building);
   const lifecycleScore = getLifecycleScore(lifecycleStage);
+  const lifecycleVisual = visualStateWithProtectedState(visualStateFromBuilding(building, buildingScores.buildingHealthIndex), protectedState);
   const activeProjectLabel = building.code ? `Job ${building.code} - ${building.name}` : building.name;
   const commandTimeline = [
     {
@@ -296,6 +329,7 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
+            <FopLifecycleMark {...lifecycleVisual} compact className="h-12 w-12" />
             <StatusBadge status={lifecycleLabels[lifecycleStage]} />
             <button
               type="button"
@@ -328,6 +362,9 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
           <Link href={`/buildings/${building.id}/passport`} className="font-semibold text-[#0F172A] underline decoration-[#CBD5E1] underline-offset-4 hover:decoration-[#D95A4E]">
             View Passport
           </Link>
+          <Link href={`/buildings/${building.id}/library`} className="font-semibold text-[#0F172A] underline decoration-[#CBD5E1] underline-offset-4 hover:decoration-[#D95A4E]">
+            Open Building Library
+          </Link>
         </div>
       </section>
 
@@ -346,6 +383,15 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
         }
       />
 
+      <ProtectedStatePanel
+        state={protectedState}
+        isSubmitting={isSubmitting}
+        onEvaluate={() => void handleProtectedStateAction("evaluate")}
+        onApprove={() => void handleProtectedStateAction("approve")}
+        onSuspend={() => void handleProtectedStateAction("suspend")}
+        onRevoke={() => void handleProtectedStateAction("revoke")}
+      />
+
       <section className="fop-card p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
@@ -353,6 +399,7 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
             <h3 className="mt-2 text-xl font-semibold text-white">Lifecycle Stage: {lifecycleLabels[lifecycleStage]}</h3>
             <p className="mt-2 max-w-3xl text-sm leading-6 text-[#B6C1CF]">{lifecycleDescriptions[lifecycleStage]}</p>
           </div>
+          <FopLifecycleMark {...lifecycleVisual} showLabels className="h-24 w-24" />
           <StatusBadge status={getOccupancyStatus(building.status)} />
         </div>
         <div className="mt-5">
@@ -373,9 +420,9 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
             <p className="mt-1 text-xs text-[#B6C1CF]">Project event attached to {building.bpid}</p>
           </div>
         </PassportSection>
-        <PassportSection title="Documents / Drawings">
+        <PassportSection title="Building Library">
           <p className="text-3xl font-semibold text-white">{documents.length}</p>
-          <p className="mt-1 text-sm text-[#B6C1CF]">Records attached directly to the building Passport.</p>
+          <p className="mt-1 text-sm text-[#B6C1CF]">Evidence attached directly to the building Passport.</p>
         </PassportSection>
         <PassportSection title="Inspections">
           <p className="text-3xl font-semibold text-white">{building.status === "completed_occupied" ? "Historical" : "Pending"}</p>
@@ -413,7 +460,7 @@ export function BuildingProfileClient({ buildingId }: BuildingProfileClientProps
         {[
           ["overview", "Overview"],
           ["assets", "Assets"],
-          ["documents", "Documents"],
+          ["documents", "Building Library"],
           ["contacts", "Contacts"]
         ].map(([key, label]) => (
           <button

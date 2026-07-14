@@ -470,6 +470,56 @@ class BuildingRead(BuildingBase):
     model_config = ConfigDict(from_attributes=True)
 
 
+class ProtectedStateAction(BaseModel):
+    reason: str | None = None
+    notes: str | None = None
+
+
+class ProtectedStateCriterion(BaseModel):
+    key: str
+    label: str
+    status: str
+    message: str
+
+
+class ProtectedStateCertificationRead(BaseModel):
+    id: UUID
+    organization_id: UUID
+    building_id: UUID
+    property_id: UUID | None = None
+    status: str
+    evaluation_version: str
+    evaluated_at: datetime | None = None
+    evaluated_by: str | None = None
+    approved_at: datetime | None = None
+    approved_by: str | None = None
+    suspended_at: datetime | None = None
+    revoked_at: datetime | None = None
+    reason: str | None = None
+    notes: str | None = None
+    criteria_snapshot: dict | None = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ProtectedStateEvaluationRead(BaseModel):
+    building_id: UUID
+    protected_state_status: str
+    halo_eligible: bool
+    criteria_total: int
+    criteria_passed: int
+    criteria_failed: int
+    criteria_unknown: int
+    criteria: list[ProtectedStateCriterion] = Field(default_factory=list)
+    blocking_items: list[str] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)
+    evaluated_at: datetime
+    evaluation_version: str
+    certification_record_id: UUID | None = None
+    approved_at: datetime | None = None
+    approved_by: str | None = None
+
+
 class PassportOnboardingQueueItem(BaseModel):
     project: str
     property: str | None = None
@@ -486,9 +536,54 @@ class PassportOnboardingQueueItem(BaseModel):
     passport_issue_date: date | None = None
     passport_version: str | None = None
     client_handover_status: str | None = None
+    protected_state_status: str = "review_required"
+    halo_eligible: bool = False
     next_action: str
     closeout_url: str
     passport_url: str
+
+
+class EvidenceCategorySummary(BaseModel):
+    category: str
+    item_count: int = 0
+    complete: bool = False
+    status: str = "Missing"
+    latest_revision: str | None = None
+    latest_date: datetime | None = None
+    missing: bool = True
+
+
+class BuildingLibraryIndexItem(BaseModel):
+    building_id: UUID
+    building_name: str
+    property_id: UUID | None = None
+    property_name: str | None = None
+    job_no: str | None = None
+    passport_no: str | None = None
+    total_evidence_items: int = 0
+    passport_completion_percentage: int = 0
+    closeout_readiness_state: str
+    last_updated: datetime | None = None
+    missing_evidence_count: int = 0
+    lifecycle_stage: str
+    status: str
+    library_url: str
+    passport_url: str
+
+
+class BuildingLibraryRead(BaseModel):
+    building: BuildingRead
+    property: PropertyRead | None = None
+    total_evidence_items: int = 0
+    passport_completion_percentage: int = 0
+    closeout_readiness_state: str
+    last_updated: datetime | None = None
+    missing_evidence_count: int = 0
+    lifecycle_stage: str
+    categories: list[EvidenceCategorySummary] = Field(default_factory=list)
+    documents: list["DocumentRead"] = Field(default_factory=list)
+    missing_items: list[str] = Field(default_factory=list)
+    closeout_score: "CloseoutScore"
 
 
 class BuildingContactBase(BaseModel):

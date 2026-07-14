@@ -9,6 +9,7 @@ from app.api.deps import CurrentUser
 from app.models import Building
 from app.schemas.core import PassportOnboardingQueueItem
 from app.services.closeout_score_service import closeout_score_service
+from app.services.protected_state_service import protected_state_service
 from app.services.tenant import ensure_organization_access
 
 FUZION_SOURCE_MARKER = "source=fuzion_active_completed_projects"
@@ -46,6 +47,7 @@ class PassportOnboardingService:
     def _queue_item(self, db: Session, building: Building, current_user: CurrentUser) -> PassportOnboardingQueueItem:
         ensure_organization_access(current_user, building.organization_id)
         score = closeout_score_service.get_building_score(db, building.id, current_user)
+        protected_state = protected_state_service.get_state(db, building.id, current_user)
         classification = building.project_classification or self._classify_building(building)
         completion_status = self._completion_status(classification, building.status)
         passport_status = building.passport_status if building.passport_status in PASSPORT_LIFECYCLE_STATUSES else "Not Started"
@@ -65,7 +67,9 @@ class PassportOnboardingService:
             passport_issue_date=building.passport_issue_date,
             passport_version=building.passport_version,
             client_handover_status=building.client_handover_status,
-            next_action=self._next_action(building.passport_eligible, passport_status, score.missing_items),
+            protected_state_status=protected_state.protected_state_status,
+            halo_eligible=protected_state.halo_eligible,
+            next_action=self._next_action(building.passport_eligible, passport_status, score.missing_items, protected_state.protected_state_status),
             closeout_url=f"/buildings/{building.id}/closeout",
             passport_url=f"/buildings/{building.id}/passport",
         )
@@ -91,10 +95,18 @@ class PassportOnboardingService:
         return "Active"
 
     @staticmethod
-    def _next_action(passport_eligible: bool, passport_status: str, missing_items: list[str]) -> str:
+    def _next_action(passport_eligible: bool, passport_status: str, missing_items: list[str], protected_state_status: str) -> str:
         if not passport_eligible:
             return "Monitor project status"
+        if protected_state_status == "approved":
+            return "Maintain protected-state audit record"
+        if protected_state_status == "eligible":
+            return "Approve Protected State"
+        if protected_state_status in {"suspended", "revoked"}:
+            return "Review protected-state exception"
         if passport_status in {"Passport Issued", "Passport Delivered"}:
+            return "Evaluate and approve Protected State"
+        if protected_state_status == "review_required":
             return "Confirm handover record"
         if missing_items:
             return "Import closeout evidence"

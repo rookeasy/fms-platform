@@ -1,4 +1,4 @@
-import type { Building, BuildingLibrary, BuildingLibraryIndexItem, PassportOnboardingQueueItem } from "@/lib/fms-api";
+import type { Building, BuildingLibrary, BuildingLibraryIndexItem, PassportOnboardingQueueItem, ProtectedStateEvaluation } from "@/lib/fms-api";
 import type { LifecycleStage } from "@/lib/mock-data";
 
 export type FopLifecycleVisualStatus = "build" | "advise" | "protect" | "protected";
@@ -13,7 +13,6 @@ export type FopLifecycleVisualState = {
   label: string;
 };
 
-const PROTECTED_PASSPORT_STATUSES = new Set(["Passport Issued", "Passport Delivered"]);
 const PROTECT_PASSPORT_STATUSES = new Set(["Ready for Passport", "Assets Verified"]);
 const ADVISE_PASSPORT_STATUSES = new Set(["Documents Imported", "Closeout Incomplete", "Building Registered"]);
 
@@ -48,17 +47,6 @@ export function visualStateFromProgress(progress: number, protectedComplete = fa
 
 export function visualStateFromStatus(status?: string | null, progress = 0): FopLifecycleVisualState {
   const normalized = (status ?? "").trim();
-  if (PROTECTED_PASSPORT_STATUSES.has(normalized)) {
-    return {
-      status: "protected",
-      buildProgress: 100,
-      adviseProgress: 100,
-      protectProgress: 100,
-      overallProgress: 100,
-      halo: true,
-      label: "Lifecycle status: PROTECTED"
-    };
-  }
   if (PROTECT_PASSPORT_STATUSES.has(normalized)) {
     return {
       status: "protect",
@@ -82,6 +70,24 @@ export function visualStateFromStatus(status?: string | null, progress = 0): Fop
     };
   }
   return visualStateFromProgress(progress);
+}
+
+export function visualStateWithProtectedState(
+  base: FopLifecycleVisualState,
+  protectedState?: ProtectedStateEvaluation | null
+): FopLifecycleVisualState {
+  if (protectedState?.protected_state_status === "approved" && protectedState.halo_eligible) {
+    return {
+      status: "protected",
+      buildProgress: 100,
+      adviseProgress: 100,
+      protectProgress: 100,
+      overallProgress: 100,
+      halo: true,
+      label: "Lifecycle status: PROTECTED"
+    };
+  }
+  return { ...base, halo: false, status: base.status === "protected" ? "protect" : base.status };
 }
 
 export function visualStateFromLifecycleStage(stage: LifecycleStage): FopLifecycleVisualState {
@@ -113,5 +119,18 @@ export function visualStateFromLibraryIndex(item: BuildingLibraryIndexItem): Fop
 }
 
 export function visualStateFromPassportQueueItem(item: PassportOnboardingQueueItem): FopLifecycleVisualState {
-  return visualStateFromStatus(item.passport_status, item.closeout_score);
+  return visualStateWithProtectedState(visualStateFromStatus(item.passport_status, item.closeout_score), {
+    building_id: item.building_id,
+    protected_state_status: item.protected_state_status,
+    halo_eligible: item.halo_eligible,
+    criteria_total: 0,
+    criteria_passed: 0,
+    criteria_failed: 0,
+    criteria_unknown: 0,
+    criteria: [],
+    blocking_items: [],
+    warnings: [],
+    evaluated_at: "",
+    evaluation_version: ""
+  });
 }

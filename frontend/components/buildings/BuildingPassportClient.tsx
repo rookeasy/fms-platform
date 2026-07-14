@@ -5,14 +5,16 @@ import { useCallback, useEffect, useState } from "react";
 
 import { EmptyState } from "@/components/EmptyState";
 import { ErrorState } from "@/components/ErrorState";
+import { FopLifecycleMark } from "@/components/brand/FopLifecycleMark";
 import { ProgressIndex } from "@/components/ProgressIndex";
 import { LoadingState } from "@/components/LoadingState";
 import { PassportSection } from "@/components/PassportSection";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Timeline } from "@/components/Timeline";
 import { formatControlledValue } from "@/lib/controlled-values";
-import { getBuildingScores, getDocumentDownloadUrl, getPassport, type FppScores, type PassportSummary } from "@/lib/fms-api";
+import { getBuildingScores, getDocumentDownloadUrl, getPassport, getProtectedState, type FppScores, type PassportSummary, type ProtectedStateEvaluation } from "@/lib/fms-api";
 import { getApiBuildingLifecycle, lifecycleLabels } from "@/lib/lifecycle";
+import { visualStateFromBuilding, visualStateWithProtectedState } from "@/lib/fop-lifecycle-visual";
 import { fppKpiTerms, getMockBuildingScores } from "@/lib/progress-index";
 
 type BuildingPassportClientProps = {
@@ -24,6 +26,7 @@ export function BuildingPassportClient({ buildingId }: BuildingPassportClientPro
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [fppScores, setFppScores] = useState<FppScores | null>(null);
+  const [protectedState, setProtectedState] = useState<ProtectedStateEvaluation | null>(null);
 
   const loadPassport = useCallback(async () => {
     setIsLoading(true);
@@ -31,6 +34,7 @@ export function BuildingPassportClient({ buildingId }: BuildingPassportClientPro
     try {
       setPassport(await getPassport(buildingId));
       setFppScores(await getBuildingScores(buildingId).catch(() => null));
+      setProtectedState(await getProtectedState(buildingId).catch(() => null));
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : "Unable to load Building Protection Passport.");
     } finally {
@@ -67,11 +71,12 @@ export function BuildingPassportClient({ buildingId }: BuildingPassportClientPro
     intelligenceScore: Math.max(0, Math.min(100, healthScore - 7))
   });
   const lifecycleStage = getApiBuildingLifecycle(passport.building);
+  const lifecycleVisual = visualStateWithProtectedState(visualStateFromBuilding(passport.building, buildingScores.buildingHealthIndex), protectedState);
 
   return (
     <div className="space-y-6">
       <section className="fop-card p-6">
-        <div className="grid gap-6 xl:grid-cols-[1fr_520px]">
+        <div className="grid gap-6 xl:grid-cols-[1fr_620px]">
           <div>
             <div className="flex flex-wrap gap-3 text-sm font-medium text-[#7D8CA3]">
               <span>Passport No. {passport.building.bpid}</span>
@@ -89,18 +94,21 @@ export function BuildingPassportClient({ buildingId }: BuildingPassportClientPro
                 .join(", ")}
             </p>
           </div>
-          <div className="grid gap-3 sm:grid-cols-3">
-            <div className="rounded-xl border border-white/10 bg-white/[0.035] p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#7D8CA3]">Lifecycle Stage</p>
-              <p className="mt-2 text-xl font-semibold text-white">{lifecycleLabels[lifecycleStage]}</p>
-            </div>
-            <div className="rounded-xl border border-white/10 bg-white/[0.035] p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#7D8CA3]">{fppKpiTerms.protectionScore}</p>
-              <p className="mt-2 text-xl font-semibold text-white">{buildingScores.protectionScore}%</p>
-            </div>
-            <div className="rounded-xl border border-white/10 bg-white/[0.035] p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#7D8CA3]">{fppKpiTerms.buildingHealthIndex}</p>
-              <p className="mt-2 text-xl font-semibold text-white">{buildingScores.buildingHealthIndex}%</p>
+          <div className="grid gap-4 sm:grid-cols-[96px_1fr]">
+            <FopLifecycleMark {...lifecycleVisual} showLabels className="h-24 w-24" />
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div className="rounded-xl border border-white/10 bg-white/[0.035] p-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#7D8CA3]">Lifecycle Stage</p>
+                <p className="mt-2 text-xl font-semibold text-white">{lifecycleLabels[lifecycleStage]}</p>
+              </div>
+              <div className="rounded-xl border border-white/10 bg-white/[0.035] p-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#7D8CA3]">{fppKpiTerms.protectionScore}</p>
+                <p className="mt-2 text-xl font-semibold text-white">{buildingScores.protectionScore}%</p>
+              </div>
+              <div className="rounded-xl border border-white/10 bg-white/[0.035] p-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#7D8CA3]">{fppKpiTerms.buildingHealthIndex}</p>
+                <p className="mt-2 text-xl font-semibold text-white">{buildingScores.buildingHealthIndex}%</p>
+              </div>
             </div>
           </div>
         </div>
@@ -179,6 +187,16 @@ export function BuildingPassportClient({ buildingId }: BuildingPassportClientPro
           <PassportSection title="Membership">
             <div className="text-lg font-semibold text-white">{passport.membership.plan ?? "No active plan"}</div>
             <p className="mt-1 text-sm text-[#B6C1CF]">{formatControlledValue(passport.membership.status)}</p>
+          </PassportSection>
+          <PassportSection title="Protected State">
+            <div className="flex flex-wrap items-center gap-2">
+              <StatusBadge status={protectedState?.protected_state_status ?? "Unavailable"} />
+              <StatusBadge status={protectedState?.halo_eligible ? "Halo Eligible" : "No Halo"} />
+            </div>
+            <p className="mt-3 text-sm text-[#B6C1CF]">
+              {protectedState?.approved_at ? `Approved ${new Date(protectedState.approved_at).toLocaleString()}` : "Protected State approval has not been recorded."}
+            </p>
+            <p className="mt-1 text-xs text-[#7D8CA3]">{protectedState?.approved_by || "Reviewer not recorded"}</p>
           </PassportSection>
         </div>
       </div>

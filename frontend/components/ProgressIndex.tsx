@@ -65,13 +65,13 @@ export function ProgressIndex({
       <div className="relative py-4">
         <div className={`relative ${styles.track} overflow-hidden rounded-full bg-[#CBD5E1]`}>
           <div
-            className={`${styles.track} rounded-full bg-[linear-gradient(90deg,#0F172A_0%,#2563EB_52%,#D95A4E_100%)] transition-[width] duration-700 ease-out`}
+            className={`${styles.track} rounded-full bg-[linear-gradient(90deg,var(--fop-build)_0%,var(--fop-advise)_52%,var(--fop-protect)_100%)] transition-[width] duration-700 ease-out`}
             style={{ width: `${displayScore}%` }}
           />
         </div>
         <div
-          className={`absolute top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#D95A4E]/30 bg-white shadow-[0_0_0_4px_rgba(217,90,78,0.12)] transition-[left] duration-700 ease-out motion-safe:animate-[fpp-score-pulse_700ms_ease-out_1] ${styles.dot}`}
-          style={{ left: `${displayScore}%` }}
+          className={`absolute top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border bg-white shadow-[0_0_0_4px_rgba(23,105,255,0.12)] transition-[left] duration-700 ease-out motion-safe:animate-[fpp-score-pulse_700ms_ease-out_1] ${styles.dot}`}
+          style={{ left: `${displayScore}%`, borderColor: "var(--fop-build)" }}
         >
           <span className="sr-only">{normalizedScore}%</span>
         </div>

@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import CurrentUser, get_current_user, get_db, require_roles
 from app.schemas.core import DocumentAssetSuggestionRead, DocumentAssetSuggestionUpdate, DocumentCreate, DocumentRead, DocumentUpdate
+from app.services.building_library_service import building_library_service
 from app.services.document_extraction_service import document_extraction_service
 from app.services.document_service import document_service
 
@@ -34,6 +35,17 @@ def list_documents(
         is_passport_record=is_passport_record,
     )
     return {"data": [DocumentRead.model_validate(document) for document in documents]}
+
+
+@router.get("/documents/library")
+def list_building_library_index(
+    organization_id: UUID | None = Query(default=None),
+    db: Session = Depends(get_db),
+    current_user: CurrentUser = Depends(get_current_user),
+    _: object = Depends(require_roles("platform_admin", "organization_admin", "property_manager", "building_owner", "technician", "engineer", "readonly_viewer")),
+) -> dict:
+    library = building_library_service.list_library(db, current_user, organization_id)
+    return {"data": library}
 
 
 @router.get("/buildings/{building_id}/documents")

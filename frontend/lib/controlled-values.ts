@@ -88,17 +88,20 @@ export const documentTypes = [
 
 export const evidenceCategories = [
   "Building Protection Passport",
-  "Drawing Register",
+  "Drawings",
   "As-Built Drawings",
-  "P.Eng. Compliance Package",
-  "NFPA Contractor Compliance Package",
+  "P.Eng. Compliance",
+  "NFPA Contractor Compliance",
   "Material & Test Certificates",
   "Asset Register",
-  "Warranty Package",
-  "Product Data / O&M Manuals",
-  "Owner / Property Manager Handover",
-  "Fuzion Fire Service ITM Transition",
-  "FMS Membership Invitation"
+  "Warranty",
+  "Product Data",
+  "O&M Manuals",
+  "Photos",
+  "Handover",
+  "ITM Transition",
+  "Membership",
+  "Other"
 ];
 
 export const documentStatuses = [

@@ -24,6 +24,8 @@ type BuildingDocumentsPanelProps = {
   assets: Asset[];
   documents: DocumentRecord[];
   isSubmitting: boolean;
+  presetEvidenceCategory?: string | null;
+  libraryMode?: boolean;
   onUpload: (formData: FormData) => Promise<void>;
   onUploadVersion: (documentId: string, formData: FormData) => Promise<void>;
   onUpdate: (documentId: string, payload: Partial<DocumentMetadataPayload>) => Promise<DocumentRecord | void>;
@@ -31,13 +33,15 @@ type BuildingDocumentsPanelProps = {
   onAssetsChanged?: () => Promise<void>;
 };
 
-type FilterValue = "all" | "passport" | "client";
+type FilterValue = "all" | "passport" | "client" | "internal" | "drawings" | "certificates" | "compliance" | "warranty" | "om" | "photos" | "archived";
 
 export function BuildingDocumentsPanel({
   buildingId,
   assets,
   documents,
   isSubmitting,
+  presetEvidenceCategory,
+  libraryMode = false,
   onUpload,
   onUploadVersion,
   onUpdate,
@@ -48,6 +52,8 @@ export function BuildingDocumentsPanel({
   const [editingDocument, setEditingDocument] = useState<DocumentRecord | null>(null);
   const [filter, setFilter] = useState<FilterValue>("all");
   const [documentType, setDocumentType] = useState(documentTypes[0]?.key ?? "other");
+  const [uploadCategory, setUploadCategory] = useState("");
+  const [uploadProgress, setUploadProgress] = useState<string | null>(null);
   const [replacementFile, setReplacementFile] = useState<File | null>(null);
   const [actionDocumentId, setActionDocumentId] = useState<string | null>(null);
   const [reviewingDocument, setReviewingDocument] = useState<DocumentRecord | null>(null);
@@ -55,11 +61,36 @@ export function BuildingDocumentsPanel({
   const [isReviewLoading, setIsReviewLoading] = useState(false);
 
   const filteredDocuments = documents.filter((document) => {
+    const searchable = `${document.document_type} ${document.evidence_category ?? ""}`.toLowerCase();
     if (filter === "passport") {
       return document.is_passport_record;
     }
     if (filter === "client") {
       return document.is_public_to_client;
+    }
+    if (filter === "internal") {
+      return !document.is_public_to_client && !document.is_passport_record;
+    }
+    if (filter === "drawings") {
+      return searchable.includes("drawing");
+    }
+    if (filter === "certificates") {
+      return searchable.includes("certificate");
+    }
+    if (filter === "compliance") {
+      return searchable.includes("compliance") || searchable.includes("p.eng") || searchable.includes("nfpa");
+    }
+    if (filter === "warranty") {
+      return searchable.includes("warranty");
+    }
+    if (filter === "om") {
+      return searchable.includes("o&m") || searchable.includes("manual") || searchable.includes("product data");
+    }
+    if (filter === "photos") {
+      return searchable.includes("photo");
+    }
+    if (filter === "archived") {
+      return document.status === "archived" || Boolean(document.archived_at);
     }
     return true;
   });
@@ -83,19 +114,25 @@ export function BuildingDocumentsPanel({
     }
   }, [documents, editingDocument, selectedDocument]);
 
+  useEffect(() => {
+    if (presetEvidenceCategory) {
+      setUploadCategory(presetEvidenceCategory);
+    }
+  }, [presetEvidenceCategory]);
+
   const columns = useMemo<Array<DataTableColumn<DocumentRecord>>>(
     () => [
       {
         key: "title",
-        header: "Document",
+        header: "Evidence Item",
         render: (document) => (
           <button type="button" onClick={() => setSelectedDocument(document)} className="text-left font-semibold text-[#0F172A] underline decoration-[#CBD5E1] underline-offset-4 hover:decoration-[#D95A4E]">
             {document.title}
           </button>
         )
       },
-      { key: "type", header: "Type", render: (document) => formatControlledValue(document.document_type) },
-      { key: "evidence", header: "Evidence", render: (document) => document.evidence_category || "-" },
+      { key: "type", header: "Document Type", render: (document) => formatControlledValue(document.document_type) },
+      { key: "evidence", header: "Evidence Category", render: (document) => document.evidence_category || "-" },
       { key: "status", header: "Status", render: (document) => <StatusBadge status={formatControlledValue(document.status)} /> },
       { key: "extraction", header: "Extraction", render: (document) => <StatusBadge status={formatControlledValue(document.extraction_status)} /> },
       { key: "version", header: "Version", render: (document) => `v${document.version_number}` },
@@ -144,7 +181,15 @@ export function BuildingDocumentsPanel({
               className="inline-flex h-9 items-center gap-2 rounded-md border border-[#E2E8F0] bg-white px-3 text-xs font-semibold text-[#475569] transition hover:border-[#D95A4E]/35 hover:text-[#0F172A] disabled:cursor-not-allowed disabled:opacity-60"
             >
               <Brain size={14} />
-              Review
+              Review AI
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectedDocument(document)}
+              className="inline-flex h-9 items-center gap-2 rounded-md border border-[#E2E8F0] bg-white px-3 text-xs font-semibold text-[#475569] transition hover:border-[#D95A4E]/35 hover:text-[#0F172A]"
+            >
+              <FileUp size={14} />
+              Supersede
             </button>
             <button
               type="button"
@@ -312,10 +357,27 @@ export function BuildingDocumentsPanel({
     event.preventDefault();
     const form = event.currentTarget;
     const formData = new FormData(form);
-    formData.set("building_id", buildingId);
-    await onUpload(formData);
+    const fileInput = form.elements.namedItem("file") as HTMLInputElement | null;
+    const files = Array.from(fileInput?.files ?? []);
+    for (const [index, file] of files.entries()) {
+      const nextFormData = new FormData();
+      formData.forEach((value, key) => {
+        if (key !== "file") {
+          nextFormData.append(key, value);
+        }
+      });
+      nextFormData.set("file", file);
+      nextFormData.set("building_id", buildingId);
+      if (files.length > 1) {
+        nextFormData.set("title", file.name);
+      }
+      setUploadProgress(`Adding evidence ${index + 1} of ${files.length}`);
+      await onUpload(nextFormData);
+    }
     form.reset();
     setDocumentType(documentTypes[0]?.key ?? "other");
+    setUploadCategory("");
+    setUploadProgress(null);
   }
 
   async function handleVersionUpload(event: React.FormEvent<HTMLFormElement>) {
@@ -346,8 +408,8 @@ export function BuildingDocumentsPanel({
   return (
     <section className="space-y-5">
       <div>
-        <h3 className="text-lg font-semibold tracking-normal text-[#0F172A]">Documents</h3>
-        <p className="text-sm text-[#64748B]">Secure building document metadata and local MVP storage.</p>
+        <h3 className="text-lg font-semibold tracking-normal text-[#0F172A]">{libraryMode ? "Evidence Workspace" : "Building Library"}</h3>
+        <p className="text-sm text-[#64748B]">Add evidence that strengthens the Building Protection Passport.</p>
       </div>
 
       <form onSubmit={handleUpload} className="fop-card p-5">
@@ -384,7 +446,12 @@ export function BuildingDocumentsPanel({
           </label>
           <label className="text-sm font-medium text-[#475569]">
             Evidence Category
-            <select name="evidence_category" className="mt-1 h-10 w-full rounded-md border border-white/15 px-3 text-sm">
+            <select
+              name="evidence_category"
+              value={uploadCategory}
+              onChange={(event) => setUploadCategory(event.target.value)}
+              className="mt-1 h-10 w-full rounded-md border border-white/15 px-3 text-sm"
+            >
               <option value="">Auto classify</option>
               {evidenceCategories.map((category) => (
                 <option key={category} value={category}>
@@ -412,8 +479,8 @@ export function BuildingDocumentsPanel({
             <input name="issue_date" type="date" className="mt-1 h-10 w-full rounded-md border border-white/15 px-3 text-sm" />
           </label>
           <label className="text-sm font-medium text-[#475569] md:col-span-2">
-            File
-            <input name="file" type="file" required className="mt-1 block w-full text-sm text-[#475569]" />
+            Evidence File(s)
+            <input name="file" type="file" multiple required className="mt-1 block w-full text-sm text-[#475569]" />
           </label>
           <div className="flex flex-wrap items-end gap-4">
             <label className="flex items-center gap-2 text-sm font-medium text-[#475569]">
@@ -437,7 +504,7 @@ export function BuildingDocumentsPanel({
             className="fop-button-primary disabled:cursor-not-allowed disabled:bg-slate-300"
           >
             <Upload size={16} />
-            {isSubmitting ? "Uploading" : "Upload Document"}
+            {uploadProgress ?? (isSubmitting ? "Adding Evidence" : "Add Evidence")}
           </button>
         </div>
       </form>
@@ -446,7 +513,15 @@ export function BuildingDocumentsPanel({
         {[
           ["all", "All"],
           ["passport", "Passport Records"],
-          ["client", "Client Visible"]
+          ["client", "Client Visible"],
+          ["internal", "Internal"],
+          ["drawings", "Drawings"],
+          ["certificates", "Certificates"],
+          ["compliance", "Compliance"],
+          ["warranty", "Warranty"],
+          ["om", "O&M"],
+          ["photos", "Photos"],
+          ["archived", "Archived"]
         ].map(([key, label]) => (
           <button
             key={key}
@@ -464,7 +539,7 @@ export function BuildingDocumentsPanel({
       {filteredDocuments.length ? (
         <DataTable columns={columns} rows={filteredDocuments} />
       ) : (
-        <EmptyState title="No documents yet." message="Upload the first building document." />
+        <EmptyState title="No evidence has been added to this section." message="Add evidence or start the Build Passport workflow." />
       )}
 
       {selectedDocument ? (

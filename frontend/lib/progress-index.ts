@@ -21,9 +21,9 @@ export const fppKpiTerms = {
 } as const;
 
 export const lifecycleStages = [
-  { key: "build", label: fopLifecycleTokens.build.label, description: "Create systems.", color: fopLifecycleTokens.build.value },
-  { key: "advise", label: fopLifecycleTokens.advise.label, description: "Deliver intelligence.", color: fopLifecycleTokens.advise.value },
-  { key: "protect", label: fopLifecycleTokens.protect.label, description: "Sustain operations.", color: fopLifecycleTokens.protect.value }
+  { key: "build", label: fopLifecycleTokens.build.label, description: "Create systems.", color: fopLifecycleTokens.build.textValue },
+  { key: "advise", label: fopLifecycleTokens.advise.label, description: "Deliver intelligence.", color: fopLifecycleTokens.advise.textValue },
+  { key: "protect", label: fopLifecycleTokens.protect.label, description: "Sustain operations.", color: fopLifecycleTokens.protect.textValue }
 ] as const;
 
 export function clampScore(score: number) {

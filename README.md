@@ -1,5 +1,9 @@
 # FOP Developer Toolkit
 
+## Constitution
+
+Read [CONSTITUTION.md](CONSTITUTION.md) first. It defines why FOP exists and how future product, design, engineering, and business decisions should be evaluated.
+
 ## Install
 
 Copy `fop-dev.ps1` to:

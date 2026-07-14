@@ -4,8 +4,9 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from app.api.deps import CurrentUser, get_current_user, get_db, require_roles
-from app.schemas.core import BuildingContactCreate, BuildingContactRead, BuildingCreate, BuildingRead, BuildingUpdate, CloseoutScore
+from app.schemas.core import BuildingContactCreate, BuildingContactRead, BuildingCreate, BuildingLibraryRead, BuildingRead, BuildingUpdate, CloseoutScore
 from app.services.building_service import building_service
+from app.services.building_library_service import building_library_service
 from app.services.closeout_score_service import closeout_score_service
 
 router = APIRouter(prefix="/buildings", tags=["buildings"])
@@ -53,6 +54,17 @@ def get_building_closeout_score(
 ) -> dict:
     score = closeout_score_service.get_building_score(db, building_id, current_user)
     return {"data": CloseoutScore.model_validate(score)}
+
+
+@router.get("/{building_id}/library")
+def get_building_library(
+    building_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: CurrentUser = Depends(get_current_user),
+    _: object = Depends(require_roles("platform_admin", "organization_admin", "property_manager", "building_owner", "technician", "engineer", "readonly_viewer")),
+) -> dict:
+    library = building_library_service.get_building_library(db, building_id, current_user)
+    return {"data": BuildingLibraryRead.model_validate(library)}
 
 
 @router.patch("/{building_id}")

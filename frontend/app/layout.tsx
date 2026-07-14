@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+
 import { fuzionBrand } from "@/lib/brand";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "FOP | Fuzion Operating Platform",
+    default: "FOP™ | Mission Control™",
     template: `%s | ${fuzionBrand.shortName}`
   },
-  description: `${fuzionBrand.product} - ${fuzionBrand.tagline}`,
+  description: `${fuzionBrand.product} - ${fuzionBrand.missionControlSubtitle} - ${fuzionBrand.tagline}`,
   icons: {
     icon: "/icon.svg"
   }
@@ -25,4 +26,3 @@ export default function RootLayout({
     </html>
   );
 }
-

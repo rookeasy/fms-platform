@@ -4,6 +4,8 @@
 
 Base44 is the FOP mobile companion for technicians and field users. Fuzion Operating Platform remains the central system of record for customers, sites, work orders, inspections, deficiencies, documents, and closeout evidence.
 
+Brand note: Base44 should follow the approved FOP identity documented in `docs/project-atlas-day-v2.md`: Midnight `#071223`, BUILD Electric Blue `#1F7BFF`, ADVISE Titanium Silver `#BFC5CF`, PROTECT Electric Lime `#8CFF1A`, Halo Electrified Blue `#26B6FF`, and white typography.
+
 The mobile app should collect field evidence quickly, cache work during poor signal, and sync every submission back to the FOP backend.
 
 ## Architecture
@@ -38,7 +40,7 @@ Use the Fuzion Tech Inc. identity throughout:
 
 - Product: Fuzion Operating Platform
 - Short name: FOP
-- Tagline: BUILD - ADVISE - PROTECT
+- Tagline: BUILD • ADVISE • PROTECT
 - Background: `#050A18`
 - Surface: `#0B1224`
 - Elevated surface: `#111827`

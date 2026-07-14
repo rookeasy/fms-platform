@@ -276,6 +276,31 @@ export type PassportSummary = {
   };
 };
 
+export type ProtectedStateCriterion = {
+  key: string;
+  label: string;
+  status: "passed" | "failed" | "unknown" | string;
+  message: string;
+};
+
+export type ProtectedStateEvaluation = {
+  building_id: string;
+  protected_state_status: "not_eligible" | "review_required" | "eligible" | "approved" | "suspended" | "revoked" | string;
+  halo_eligible: boolean;
+  criteria_total: number;
+  criteria_passed: number;
+  criteria_failed: number;
+  criteria_unknown: number;
+  criteria: ProtectedStateCriterion[];
+  blocking_items: string[];
+  warnings: string[];
+  evaluated_at: string;
+  evaluation_version: string;
+  certification_record_id?: string | null;
+  approved_at?: string | null;
+  approved_by?: string | null;
+};
+
 export type PassportOnboardingQueueItem = {
   project: string;
   property?: string | null;
@@ -292,9 +317,54 @@ export type PassportOnboardingQueueItem = {
   passport_issue_date?: string | null;
   passport_version?: string | null;
   client_handover_status?: string | null;
+  protected_state_status: string;
+  halo_eligible: boolean;
   next_action: string;
   closeout_url: string;
   passport_url: string;
+};
+
+export type EvidenceCategorySummary = {
+  category: string;
+  item_count: number;
+  complete: boolean;
+  status: string;
+  latest_revision?: string | null;
+  latest_date?: string | null;
+  missing: boolean;
+};
+
+export type BuildingLibraryIndexItem = {
+  building_id: string;
+  building_name: string;
+  property_id?: string | null;
+  property_name?: string | null;
+  job_no?: string | null;
+  passport_no?: string | null;
+  total_evidence_items: number;
+  passport_completion_percentage: number;
+  closeout_readiness_state: string;
+  last_updated?: string | null;
+  missing_evidence_count: number;
+  lifecycle_stage: "BUILD" | "ADVISE" | "PROTECT" | string;
+  status: string;
+  library_url: string;
+  passport_url: string;
+};
+
+export type BuildingLibrary = {
+  building: Building;
+  property?: PropertyRecord | null;
+  total_evidence_items: number;
+  passport_completion_percentage: number;
+  closeout_readiness_state: string;
+  last_updated?: string | null;
+  missing_evidence_count: number;
+  lifecycle_stage: "BUILD" | "ADVISE" | "PROTECT" | string;
+  categories: EvidenceCategorySummary[];
+  documents: DocumentRecord[];
+  missing_items: string[];
+  closeout_score: CloseoutScore;
 };
 
 export type CloseoutSectionStatus = {
@@ -731,6 +801,17 @@ export async function listBuildingDocuments(buildingId: string): Promise<Documen
   return response.data;
 }
 
+export async function listBuildingLibraryIndex(organizationId?: string): Promise<BuildingLibraryIndexItem[]> {
+  const suffix = organizationId ? `?organization_id=${organizationId}` : "";
+  const response = await request<ApiEnvelope<BuildingLibraryIndexItem[]>>(`/documents/library${suffix}`);
+  return response.data;
+}
+
+export async function getBuildingLibrary(buildingId: string): Promise<BuildingLibrary> {
+  const response = await request<ApiEnvelope<BuildingLibrary>>(`/buildings/${buildingId}/library`);
+  return response.data;
+}
+
 export async function uploadDocument(formData: FormData): Promise<DocumentRecord> {
   const response = await request<ApiEnvelope<DocumentRecord>>("/documents/upload", {
     method: "POST",
@@ -799,6 +880,42 @@ export function getDocumentDownloadUrl(documentId: string): string {
 
 export async function getPassport(buildingId: string): Promise<PassportSummary> {
   const response = await request<ApiEnvelope<PassportSummary>>(`/buildings/${buildingId}/passport`);
+  return response.data;
+}
+
+export async function getProtectedState(buildingId: string): Promise<ProtectedStateEvaluation> {
+  const response = await request<ApiEnvelope<ProtectedStateEvaluation>>(`/buildings/${buildingId}/protected-state`);
+  return response.data;
+}
+
+export async function evaluateProtectedState(buildingId: string): Promise<ProtectedStateEvaluation> {
+  const response = await request<ApiEnvelope<ProtectedStateEvaluation>>(`/buildings/${buildingId}/protected-state/evaluate`, {
+    method: "POST"
+  });
+  return response.data;
+}
+
+export async function approveProtectedState(buildingId: string, reason?: string): Promise<ProtectedStateEvaluation> {
+  const response = await request<ApiEnvelope<ProtectedStateEvaluation>>(`/buildings/${buildingId}/protected-state/approve`, {
+    method: "POST",
+    body: JSON.stringify({ reason })
+  });
+  return response.data;
+}
+
+export async function suspendProtectedState(buildingId: string, reason?: string): Promise<ProtectedStateEvaluation> {
+  const response = await request<ApiEnvelope<ProtectedStateEvaluation>>(`/buildings/${buildingId}/protected-state/suspend`, {
+    method: "POST",
+    body: JSON.stringify({ reason })
+  });
+  return response.data;
+}
+
+export async function revokeProtectedState(buildingId: string, reason?: string): Promise<ProtectedStateEvaluation> {
+  const response = await request<ApiEnvelope<ProtectedStateEvaluation>>(`/buildings/${buildingId}/protected-state/revoke`, {
+    method: "POST",
+    body: JSON.stringify({ reason })
+  });
   return response.data;
 }
 

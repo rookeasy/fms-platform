@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -22,8 +21,9 @@ import {
   Wrench
 } from "lucide-react";
 
-import { cn } from "@/lib/utils";
+import { FopLifecycleMark } from "@/components/brand/FopLifecycleMark";
 import { fuzionBrand } from "@/lib/brand";
+import { cn } from "@/lib/utils";
 
 export const navigation = [
   { href: "/dashboard", label: "Mission Control", icon: LayoutDashboard },
@@ -35,7 +35,7 @@ export const navigation = [
   { href: "/closeout", label: "Construction", icon: Building2 },
   { href: "/work-orders", label: "Service", icon: Wrench },
   { href: "/inspections", label: "Inspections", icon: ClipboardCheck },
-  { href: "/documents", label: "Documents", icon: FileText },
+  { href: "/documents", label: "Building Library", icon: FileText },
   { href: "/certificates", label: "Finance", icon: BadgeCheck },
   { href: "/advisor", label: "Mission Briefing", icon: Cpu },
   { href: "/passports", label: "Building Passports", icon: ShieldCheck },
@@ -56,24 +56,22 @@ const navigationGroups = [
 
 function ProductIdentity() {
   return (
-    <div className="flex items-start gap-3">
-      <Image src="/brand/fpp-mark.svg" alt="" width={34} height={34} />
+    <div className="space-y-4">
+      <FopLifecycleMark compact status="protect" className="h-[54px] w-[54px] shrink-0" title="FOP Living F mark" />
       <div>
-        <p className="text-lg font-semibold text-white">{fuzionBrand.shortName}</p>
-        <p className="text-xs text-slate-300">{fuzionBrand.productName}</p>
-        <div className="mt-4 space-y-1 text-[10px] font-semibold uppercase tracking-[0.2em]">
-          <p className="text-slate-300">BUILD</p>
-          <ArrowDown size={12} className="text-slate-500" />
-          <p className="text-[#93B7F8]">ADVISE</p>
-          <ArrowDown size={12} className="text-slate-500" />
-          <p className="text-[#E9A099]">PROTECT</p>
-        </div>
-        <p className="mt-5 max-w-36 text-left text-[11px] font-medium leading-5 text-slate-400">
-          Projects end.
-          <br />
-          Buildings remain.
-        </p>
+        <p className="text-lg font-semibold text-[color:var(--text-primary)]">{fuzionBrand.product}</p>
+        <p className="text-xs text-[color:var(--text-muted)]">{fuzionBrand.missionControlName}</p>
       </div>
+      <div className="flex flex-wrap items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em]">
+        <p style={{ color: "var(--fop-build)" }}>BUILD</p>
+        <ArrowDown size={11} className="-rotate-90 text-[color:var(--text-muted)]" />
+        <p style={{ color: "var(--fop-advise-text)" }}>ADVISE</p>
+        <ArrowDown size={11} className="-rotate-90 text-[color:var(--text-muted)]" />
+        <p style={{ color: "var(--fop-protect-text)" }}>PROTECT</p>
+      </div>
+      <p className="max-w-40 text-left text-[11px] font-medium leading-5 text-[color:var(--text-muted)]">
+        {fuzionBrand.protectedMetric}
+      </p>
     </div>
   );
 }
@@ -82,14 +80,14 @@ export function SidebarNavigation() {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden w-[17rem] shrink-0 border-r border-[#1E293B] bg-[#0F172A] text-white shadow-[10px_0_28px_rgba(15,23,42,0.16)] lg:block">
-      <div className="border-b border-white/10 px-5 py-6">
+    <aside className="hidden w-[17rem] shrink-0 border-r border-[color:var(--border)] bg-white text-[color:var(--text-primary)] lg:block">
+      <div className="border-b border-[color:var(--border)] px-5 py-6">
         <ProductIdentity />
       </div>
       <nav className="flex flex-col gap-5 p-3">
         {navigationGroups.map((group) => (
           <div key={group.label}>
-            <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">{group.label}</p>
+            <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[color:var(--text-muted)]">{group.label}</p>
             <div className="space-y-1">
               {group.items.map((item) => {
                 const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
@@ -97,12 +95,12 @@ export function SidebarNavigation() {
 
                 return (
                   <Link
-                    key={item.href}
+                    key={`${item.href}-${item.label}`}
                     href={item.href}
                     className={cn(
-                      "flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium text-slate-300 transition duration-200",
-                      isActive && "bg-[#D95A4E] text-white shadow-[0_10px_24px_rgba(217,90,78,0.20)]",
-                      !isActive && "hover:bg-white/10 hover:text-white"
+                      "flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium text-[color:var(--text-secondary)] transition duration-200",
+                      isActive && "bg-[color:var(--fop-build-soft)] text-[color:var(--fop-build-text)] ring-1 ring-[color:var(--fop-build)]/25",
+                      !isActive && "hover:bg-[color:var(--surface-elevated)] hover:text-[color:var(--text-primary)]"
                     )}
                   >
                     <Icon size={18} />
@@ -122,7 +120,7 @@ export function MobileNavigation() {
   const pathname = usePathname();
 
   return (
-    <nav className="border-b border-[#E2E8F0] bg-white/92 px-4 py-3 shadow-lg backdrop-blur-xl lg:hidden" aria-label="Mobile navigation">
+    <nav className="border-b border-[color:var(--border)] bg-white px-4 py-3 lg:hidden" aria-label="Mobile navigation">
       <div className="flex gap-2 overflow-x-auto pb-1">
         {navigation.slice(0, 6).map((item) => {
           const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
@@ -134,8 +132,8 @@ export function MobileNavigation() {
               className={cn(
                 "flex min-h-10 shrink-0 items-center gap-2 rounded-xl border px-3 text-sm font-semibold transition duration-200",
                 isActive
-                  ? "border-[#D95A4E] bg-[#D95A4E] text-white"
-                  : "border-[#E2E8F0] bg-white text-[#475569] hover:border-[#D95A4E]/35 hover:text-[#0F172A]"
+                  ? "border-[color:var(--fop-build)] bg-[color:var(--fop-build-soft)] text-[color:var(--fop-build-text)]"
+                  : "border-[color:var(--border)] bg-[color:var(--surface)] text-[color:var(--text-secondary)] hover:border-[color:var(--fop-build)] hover:text-[color:var(--text-primary)]"
               )}
             >
               <Icon size={16} />

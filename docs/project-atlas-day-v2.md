@@ -2,109 +2,88 @@
 
 ## Purpose
 
-Project Atlas Day v2 refines the Fuzion Operating Platform into a light, durable enterprise operating environment. The daily application UI should feel calm, professional, engineering-led, and built for long-term operational use while preserving a stronger branded treatment on login and public entry surfaces.
+Project Atlas Day v2 adopts the approved FOP visual identity throughout the platform.
 
-This is a presentation layer refresh only. Routes, API calls, authentication behavior, data structures, and backend behavior remain unchanged.
+The application should feel calm, professional, engineering-led, high contrast, and built for long-term operational use. Every major surface should reinforce BUILD • ADVISE • PROTECT, Buildings Under Protection™, Mission Control™, and The Halo™.
 
-## Palette
+This is a presentation layer refresh. Routes, API calls, authentication behavior, data structures, and backend behavior remain unchanged.
 
-- Primary navy: `#0F172A`
-- Secondary navy: `#1E293B`
-- Warm white: `#FAFAF8`
-- Surface white: `#FFFFFF`
-- Soft grey: `#F8FAFC`
-- Border: `#E2E8F0`
-- Slate text: `#475569`
-- Muted text: `#64748B`
-- Soft coral: `#D95A4E`
-- BUILD electric royal blue: `#1769FF`
-- ADVISE platinum: `#DDE2EA`
-- PROTECT highlighter green: `#A8E96A`
-- Protected halo coral: `#E97872`
-- Deep emerald: `#047857`
-- Success: `#16A34A`
-- Warning: `#D97706`
-- Critical: `#DC2626`
+## Approved Palette
 
-## Typography Guidance
+- Primary Background: Midnight `#071223`
+- BUILD: Electric Blue `#1F7BFF`
+- ADVISE: Titanium Silver `#BFC5CF`
+- PROTECT: Electric Lime `#8CFF1A`
+- Halo: Electrified Blue `#26B6FF`
+- White: `#FFFFFF`
 
-Typography should be restrained and legible. Page titles use confident weight without oversized startup-style scale. Body copy should favor short operational language, generous line-height, and strong contrast against warm white or white surfaces.
+Use centralized design tokens and global theme variables. Do not hardcode lifecycle colours in feature logic.
 
-## Spacing Guidance
+## Mission Control Branding
 
-Atlas Day v2 favors generous spacing, clear groupings, and fewer competing panels. Cards, tables, forms, and dashboards should use consistent padding, subtle borders, and minimal shadows. Layouts should avoid dense visual stacking unless the page is explicitly a work queue or data table.
+Mission Control should display:
 
-## Coral Usage Rule
+- `FOP™`
+- `The Operating Platform for Building Protection`
+- `BUILD • ADVISE • PROTECT`
+- `Buildings Under Protection™`
 
-Coral is reserved for:
+Customer-facing UI should not display FMS as the product name.
 
-- primary action
-- current application state where already established
-- the completed protected-state halo in the living F mark
+## Living F And Halo
 
-Coral should not be used as random decoration. In the living F mark system, coral is not a lifecycle segment colour. It is the protected-state halo and must not appear on incomplete buildings.
+The Living F represents BUILD • ADVISE • PROTECT:
 
-## BUILD / ADVISE / PROTECT Colour System
+- Vertical element: PROTECT™ in Electric Lime
+- Upper horizontal: ADVISE™ in Titanium Silver
+- Lower horizontal: BUILD™ in Electric Blue
 
-- BUILD: electric royal blue `#1769FF`
-- ADVISE: soft platinum silver `#DDE2EA`
-- PROTECT: pastel highlighter green `#A8E96A`
-- HALO: soft Fuzion coral `#E97872`
+The O is the official Halo™.
 
-The same mapping should be used for lifecycle badges, progress indicators, dashboard charts, passport sections, property views, building views, and closeout readiness visuals.
+The Halo™ represents:
 
-BUILD • ADVISE • PROTECT is the external lifecycle framework. Colour names are implementation details only and must not replace those words in customer-facing UI. Do not use replacement lifecycle names such as Foundation, Insight, or Protection for the external stages.
+- Continuous Protection
+- Building Lifecycle
+- Buildings Under Protection™
+- Stewardship
+- Executive Intelligence
 
-## Logo / Mark Guidance
+The Halo should be rendered as an electrified blue circular ring with subtle energy effects. It is the primary visual element of the platform.
 
-The F Mark represents BUILD • ADVISE • PROTECT. The F is the expressive and structural lifecycle element: top arm ADVISE platinum, middle arm BUILD electric royal blue, and vertical stem PROTECT pastel highlighter green. The O and P remain clean, neutral, static, and timeless.
+The P remains white, minimal, and undecorated.
 
-The mark should remain simple and disciplined. The coral halo is reserved for completed protected states only. It must not appear as decoration, on buttons, on warnings, or on incomplete buildings. Avoid rainbow gradients, harsh glow effects, bright orange, or noisy technical decoration. If motion or progress treatment is used, it should be minimal, smooth, and structurally consistent.
+## Usage Rules
 
-## Atlas Day vs Atlas Night
+- Use Midnight as the platform background.
+- Use white typography for high contrast.
+- Use modern geometric sans-serif typography.
+- Use BUILD, ADVISE, and PROTECT as customer-facing lifecycle language.
+- Use colour names only as implementation details.
+- Avoid rainbow gradients.
+- Avoid BMW-like blue/red styling.
+- Avoid overdecorating the mark.
+- Keep motion and energy effects subtle, wide, smooth, and structurally consistent.
 
-Atlas Day is the default daily working environment:
+## Application Surfaces
 
-- warm white page background
-- white cards
-- soft grey panels
-- subtle borders
-- minimal shadows
-- restrained motion
+Apply the approved identity to:
 
-Atlas Night remains suitable for login, public front door, branded demos, or future command-center displays, but should use deep navy rather than pure black.
+- Login screen
+- Sidebar
+- Mission Control
+- Favicon
+- Browser title
+- Splash screen
+- Loading screen
+- Empty states
+- Dashboard
+- Documentation
+- Marketing screenshots
 
-## Application UI Rules
+## Documentation Rule
 
-- Sidebar may use deep navy, but main content should remain light.
-- Top bar should stay minimal and should not compete with page content.
-- Tables should use clean rows, subtle dividers, and readable spacing.
-- Forms should use strong labels, accessible focus states, and white fields.
-- KPI cards should be quiet and data-first.
-- Motion should be limited to short, purposeful transitions.
+BUILD • ADVISE • PROTECT is the external lifecycle framework.
 
-## Login / Marketing Rules
+The Halo™ is the official O in FOP.
 
-Login and public entry pages may be more branded than the application shell. They should still avoid harsh black, excessive glow, and overly animated treatment. Use FOP / Fuzion Operating Platform, BUILD • ADVISE • PROTECT, and Buildings Under Protection™.
-
-## Port 3000 Development Note
-
-The FOP frontend is intended to run at:
-
-```powershell
-http://localhost:3000
-```
-
-If Next.js starts on `3001`, another process is likely occupying `3000`. On Windows, identify the stale process with:
-
-```powershell
-netstat -ano | findstr :3000
-```
-
-Then terminate the specific stale process only after confirming the PID:
-
-```powershell
-taskkill /PID <PID> /F
-```
-
-Do not add automatic process killing to app startup unless it becomes an explicit development tooling decision.
+Colour names are implementation details only.

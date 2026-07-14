@@ -10,11 +10,14 @@ export function StatusBadge({ status }: StatusBadgeProps) {
     normalized.includes("protect") ||
     normalized.includes("protected") ||
     normalized.includes("current") ||
-    normalized.includes("operational") ||
-    normalized.includes("active")
-      ? "bg-[#FFF1EE] text-[#9F342A] ring-[#F1C8C2]"
+    normalized.includes("operational")
+      ? "bg-[color:var(--fop-protect-soft)] text-[color:var(--fop-protect-text)] ring-emerald-200"
+      : normalized.includes("advise") || normalized.includes("review") || normalized.includes("advisory")
+        ? "bg-[color:var(--fop-advise-soft)] text-[#334155] ring-[#DDE2EA]"
+      : normalized.includes("build") || normalized.includes("active") || normalized.includes("draft") || normalized.includes("in progress")
+        ? "bg-[#F8FAFC] text-[color:var(--fop-build-text)] ring-[#CBD5E1]"
       : normalized.includes("ready") || normalized.includes("complete")
-        ? "bg-emerald-50 text-emerald-700 ring-emerald-200"
+        ? "bg-[color:var(--fop-protect-soft)] text-[color:var(--fop-protect-text)] ring-emerald-200"
       : normalized.includes("risk") ||
           normalized.includes("high") ||
           normalized.includes("expired") ||

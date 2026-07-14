@@ -22,7 +22,7 @@ export function BuildingHealthIndex({ scores, missionBriefing }: BuildingHealthI
           <p className="fop-label">{fppKpiTerms.progressIndex}</p>
           <h3 className="mt-2 text-xl font-semibold tracking-normal text-[#0F172A]">{fppKpiTerms.buildingHealthIndex}</h3>
           <p className="mt-1 max-w-2xl text-sm leading-6 text-[#64748B]">
-            A unified BUILD to ADVISE to PROTECT view of building readiness, compliance, and operational resilience.
+            A unified BUILD • ADVISE • PROTECT view of building readiness, compliance, and operational resilience.
           </p>
         </div>
         <div className="text-right">
@@ -40,7 +40,7 @@ export function BuildingHealthIndex({ scores, missionBriefing }: BuildingHealthI
       </div>
       {missionBriefing ? (
         <div className="mt-5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#2563EB]">Mission Briefing</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--fop-advise-text)]">Mission Briefing</p>
           <p className="mt-2 text-sm leading-6 text-[#334155]">{missionBriefing}</p>
         </div>
       ) : null}

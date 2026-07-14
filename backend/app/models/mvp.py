@@ -245,6 +245,34 @@ class Building(Base, TimestampMixin, SoftDeleteMixin):
     )
 
 
+class ProtectedStateCertification(Base, TimestampMixin):
+    __tablename__ = "protected_state_certifications"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    organization_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("organizations.id"), nullable=False)
+    building_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("buildings.id"), nullable=False)
+    property_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("properties.id"), nullable=True)
+    status: Mapped[str] = mapped_column(String(50), nullable=False, default="review_required")
+    evaluation_version: Mapped[str] = mapped_column(String(40), nullable=False, default="protected-state-mvp-001")
+    evaluated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    evaluated_by: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    approved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    approved_by: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    suspended_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    reason: Mapped[str | None] = mapped_column(Text, nullable=True)
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+    criteria_snapshot: Mapped[dict[str, Any] | None] = mapped_column(JSONB, nullable=True)
+
+    __table_args__ = (
+        UniqueConstraint("building_id", name="uq_protected_state_certifications_building"),
+        Index("ix_protected_state_certifications_organization_id", "organization_id"),
+        Index("ix_protected_state_certifications_building_id", "building_id"),
+        Index("ix_protected_state_certifications_property_id", "property_id"),
+        Index("ix_protected_state_certifications_status", "status"),
+    )
+
+
 class BuildingContact(Base, TimestampMixin, SoftDeleteMixin):
     __tablename__ = "building_contacts"
 

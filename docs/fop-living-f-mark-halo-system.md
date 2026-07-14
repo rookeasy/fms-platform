@@ -2,28 +2,50 @@
 
 ## Concept
 
-The F mark is a live visual status indicator for the building lifecycle.
+The approved FOP identity is the Living F plus the official Halo™ O and a minimal white P.
 
-It represents BUILD • ADVISE • PROTECT without replacing those words in customer-facing language.
+The mark reinforces BUILD • ADVISE • PROTECT without replacing those customer-facing words.
 
-The OP wordmark remains neutral, static, and timeless.
+## Living F Anatomy
 
-## F Anatomy
+- Vertical element: PROTECT™ in Electric Lime `#8CFF1A`
+- Upper horizontal: ADVISE™ in Titanium Silver `#BFC5CF`
+- Lower horizontal: BUILD™ in Electric Blue `#1F7BFF`
 
-- Top arm: ADVISE
-- Middle arm: BUILD
-- Vertical stem: PROTECT
+The F is the expressive and structural lifecycle element.
 
-The F is the expressive lifecycle element. The OP wordmark is not recoloured by building status.
+## Halo Anatomy
 
-## Colour Palette
+The O is the official Halo™.
 
-- BUILD: electric royal blue `#1769FF`
-- ADVISE: soft platinum silver `#DDE2EA`
-- PROTECT: pastel highlighter green `#A8E96A`
-- HALO: soft Fuzion coral `#E97872`
+The Halo™ represents:
 
-Coral is a protected-state halo signal. It is not a lifecycle segment colour.
+- Continuous Protection
+- Building Lifecycle
+- Buildings Under Protection™
+- Stewardship
+- Executive Intelligence
+
+The Halo should render as an electrified blue circular ring using `#26B6FF` with subtle energy effects.
+
+The Halo is the primary visual element of the platform.
+
+## P Anatomy
+
+The P is white.
+
+It is minimal.
+
+It has no additional decoration.
+
+## Approved Palette
+
+- Primary Background: Midnight `#071223`
+- BUILD: Electric Blue `#1F7BFF`
+- ADVISE: Titanium Silver `#BFC5CF`
+- PROTECT: Electric Lime `#8CFF1A`
+- Halo: Electrified Blue `#26B6FF`
+- White: `#FFFFFF`
 
 ## Progress Behaviour
 
@@ -32,42 +54,23 @@ When only one completion percentage is available, the frontend maps it conservat
 - 0-33%: BUILD fills
 - 34-66%: BUILD remains active and ADVISE fills
 - 67-99%: BUILD and ADVISE remain active and PROTECT fills
-- 100% with an explicit protected state: full F with coral halo
+- Backend-approved protected state: full FOP mark with authoritative Halo treatment
 
 Incomplete segments remain low-opacity neutral forms.
 
-## Halo Eligibility Rule
+## Protected-State Halo Rule
 
-The halo may appear only when the mapped status is `protected`.
+Operational halo eligibility remains backend-authoritative:
 
-Current protected mappings:
+- certification status must be `approved`
+- `halo_eligible` must be true
+- certification must not be suspended or revoked
 
-- Passport Issued
-- Passport Delivered
-- Explicit completed/protected frontend use
-
-The halo must not appear:
-
-- on incomplete buildings
-- on warning states
-- on general cards
-- on buttons
-- as decoration
-- before the building or Passport has reached a completed protected state
-
-## Accessibility
-
-The reusable mark includes an accessible label such as `Lifecycle status: BUILD` or `Lifecycle status: PROTECTED`.
-
-Status text should appear beside the mark where the mark communicates building state.
-
-The mark uses restrained transitions and respects reduced-motion through CSS transition controls.
-
-Colour is never the only status signal; text labels and badges remain present.
+Passport Issued, Passport Delivered, Ready for Passport, closeout progress, and frontend-only progress do not activate protected-state status.
 
 ## Usage Examples
 
-Use the living mark in:
+Use the mark in:
 
 - Mission Control health and lifecycle summaries
 - Building profile lifecycle status
@@ -75,44 +78,36 @@ Use the living mark in:
 - Building Library and Build Passport workflow
 - Passport onboarding queue rows
 - Closeout readiness views
-
-Use the static complete mark in:
-
-- login
-- front door
-- favicon
-- exported brand files
-- print or document contexts
+- Login, sidebar, favicon, loading, and empty states
 
 ## Misuse Examples
 
-Do not use the halo as a decorative glow.
-
-Do not put the halo on incomplete lifecycle states.
-
-Do not recolour the OP wordmark by building status.
+Do not use replacement lifecycle names.
 
 Do not replace BUILD • ADVISE • PROTECT with colour names.
 
-Do not imply formal certification when the underlying business state is not known.
+Do not use rainbow gradients.
 
-## Current Frontend Status Mapping
+Do not use BMW-like blue/red styling.
 
-The helper lives in:
+Do not overdecorate the mark.
+
+Do not imply formal certification when the backend Protected State record is not approved.
+
+## Implementation
+
+The reusable mark lives in:
+
+`frontend/components/brand/FopLifecycleMark.tsx`
+
+Lifecycle visual mapping lives in:
 
 `frontend/lib/fop-lifecycle-visual.ts`
 
-Current mappings:
+Design tokens live in:
 
-- `Building Registered`, active construction, or low progress: BUILD
-- `Documents Imported`, `Closeout Incomplete`, review states, or mid progress: ADVISE
-- `Ready for Passport`, `Assets Verified`, or high incomplete progress: PROTECT
-- `Passport Issued` or `Passport Delivered`: PROTECTED with halo
+`frontend/lib/design-tokens.ts`
 
-When data is insufficient, the UI uses conservative visual progress and does not show the halo.
+Global CSS variables live in:
 
-## Future Certification Plaque and QR Mark Use
-
-Future phases may create a protected-state plaque or QR-linked mark for buildings with completed Passport and protection criteria.
-
-That future mark should use the same halo rule and must be backed by explicit certification logic before being presented as an authoritative protected state.
+`frontend/app/globals.css`

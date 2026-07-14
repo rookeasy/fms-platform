@@ -87,7 +87,7 @@ export function GlobalSearch() {
 
   return (
     <div ref={containerRef} className="relative w-full max-w-xl">
-      <div className="flex h-10 items-center gap-2 rounded-xl border border-[#E2E8F0] bg-white px-3 text-[#64748B] shadow-sm transition focus-within:border-[#D95A4E]/70 focus-within:shadow-md">
+      <div className="flex h-10 items-center gap-2 rounded-xl border border-[#E2E8F0] bg-white px-3 text-[#64748B] shadow-sm transition focus-within:border-[color:var(--fop-build)]/70 focus-within:shadow-md">
         <Search size={18} />
         <input
           ref={inputRef}
@@ -110,7 +110,7 @@ export function GlobalSearch() {
               setResults([]);
               setIsOpen(false);
             }}
-            className="flex h-6 w-6 items-center justify-center rounded-lg text-[#64748B] hover:bg-[#FFF1EE] hover:text-[#0F172A]"
+            className="flex h-6 w-6 items-center justify-center rounded-lg text-[#64748B] hover:bg-[color:var(--fop-build-soft)] hover:text-[#0F172A]"
             aria-label="Clear search"
             title="Clear search"
           >
@@ -135,7 +135,7 @@ export function GlobalSearch() {
                         key={`${result.type}-${result.id}-${result.url}`}
                         type="button"
                         onClick={() => openResult(result)}
-                        className="flex w-full items-start justify-between gap-3 px-3 py-2 text-left transition hover:bg-[#FFF1EE]"
+                        className="flex w-full items-start justify-between gap-3 px-3 py-2 text-left transition hover:bg-[color:var(--fop-build-soft)]"
                       >
                         <span className="min-w-0">
                           <span className="block truncate text-sm font-semibold text-[#0F172A]">{result.title}</span>

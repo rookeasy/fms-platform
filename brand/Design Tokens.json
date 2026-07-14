@@ -1,0 +1,80 @@
+{
+  "brand": {
+    "name": "FOP",
+    "fullName": "Fuzion Operating Platform",
+    "missionControl": "Mission Control",
+    "tagline": "The Operating Platform for Building Protection",
+    "lifecycle": "BUILD • ADVISE • PROTECT",
+    "promise": "Buildings Under Protection™",
+    "visualSystem": "Approved white enterprise application"
+  },
+  "color": {
+    "background": {
+      "white": {
+        "value": "#FFFFFF",
+        "usage": "Primary application surface"
+      },
+      "appBackground": {
+        "value": "#F8FAFC",
+        "usage": "Light architectural workspace"
+      }
+    },
+    "text": {
+      "primaryNavy": {
+        "value": "#071223",
+        "usage": "Primary typography"
+      },
+      "secondarySlate": {
+        "value": "#334155",
+        "usage": "Secondary typography"
+      }
+    },
+    "lifecycle": {
+      "build": {
+        "value": "#126BFF",
+        "name": "Electric Royal Blue",
+        "usage": "BUILD™ lifecycle signal and middle/lower F arm"
+      },
+      "advise": {
+        "value": "#BFC5CE",
+        "name": "Platinum Silver",
+        "usage": "ADVISE™ lifecycle signal and top F arm"
+      },
+      "protect": {
+        "value": "#86EE62",
+        "name": "Vivid Pastel Highlighter Green",
+        "usage": "PROTECT™ lifecycle signal and vertical F stem"
+      }
+    },
+    "halo": {
+      "value": "#26B6FF",
+      "name": "Energized Blue",
+      "usage": "Full marketing wordmark and approved protected-state certification only"
+    },
+    "border": {
+      "value": "#E2E8F0",
+      "usage": "Subtle cool grey borders"
+    }
+  },
+  "mark": {
+    "livingF": {
+      "primaryUse": "Operational application mark",
+      "topArm": "ADVISE™ Platinum Silver",
+      "middleArm": "BUILD™ Electric Royal Blue",
+      "verticalStem": "PROTECT™ Vivid Pastel Highlighter Green"
+    },
+    "fullFopMarketingMark": {
+      "primaryUse": "Public landing page, login, marketing, presentations, splash screens, and major Passport covers",
+      "halo": "The O may use an energized blue Halo™ in approved marketing contexts."
+    }
+  },
+  "cssVariables": {
+    "background": "--background",
+    "appBackground": "--app-background",
+    "build": "--fop-build",
+    "advise": "--fop-advise",
+    "protect": "--fop-protect",
+    "halo": "--fop-halo",
+    "textPrimary": "--text-primary"
+  }
+}

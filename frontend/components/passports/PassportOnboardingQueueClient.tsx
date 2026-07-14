@@ -7,9 +7,11 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { DataTable } from "@/components/DataTable";
 import { EmptyState } from "@/components/EmptyState";
 import { ErrorState } from "@/components/ErrorState";
+import { FopLifecycleMark } from "@/components/brand/FopLifecycleMark";
 import { LoadingState } from "@/components/LoadingState";
 import { StatusBadge } from "@/components/StatusBadge";
 import { listPassportOnboardingQueue, type PassportOnboardingQueueItem } from "@/lib/fms-api";
+import { visualStateFromPassportQueueItem } from "@/lib/fop-lifecycle-visual";
 
 function scoreTone(score: number) {
   if (score >= 85) {
@@ -60,8 +62,9 @@ export function PassportOnboardingQueueClient() {
     const completed = rows.filter((row) => row.project_classification === "completed").length;
     const eligible = rows.filter((row) => row.passport_eligible).length;
     const ready = rows.filter((row) => row.passport_status === "Ready for Passport").length;
+    const protectedApproved = rows.filter((row) => row.protected_state_status === "approved" && row.halo_eligible).length;
     const averageScore = rows.length ? Math.round(rows.reduce((total, row) => total + row.closeout_score, 0) / rows.length) : 0;
-    return { completed, eligible, ready, averageScore };
+    return { completed, eligible, ready, protectedApproved, averageScore };
   }, [rows]);
 
   if (isLoading) {
@@ -78,11 +81,12 @@ export function PassportOnboardingQueueClient() {
 
   return (
     <div className="space-y-6">
-      <section className="grid gap-4 md:grid-cols-4">
+      <section className="grid gap-4 md:grid-cols-5">
         {[
           ["Completed Prime Contracts", summary.completed],
           ["Passport Eligible", summary.eligible],
           ["Ready for Passport", summary.ready],
+          ["Protected Approved", summary.protectedApproved],
           ["Average Closeout", `${summary.averageScore}%`]
         ].map(([label, value]) => (
           <div key={label} className="fop-card p-5">
@@ -99,11 +103,14 @@ export function PassportOnboardingQueueClient() {
             key: "project",
             header: "Project",
             render: (row) => (
-              <div className="min-w-56">
-                <Link href={`/buildings/${row.building_id}`} className="font-semibold text-[#0F172A] underline decoration-[#CBD5E1] underline-offset-4 hover:decoration-[#D95A4E]">
-                  {row.project}
-                </Link>
-                <div className="mt-1 text-xs text-[#64748B]">Job No. {row.job_no || "-"}</div>
+              <div className="flex min-w-56 items-center gap-3">
+                <FopLifecycleMark {...visualStateFromPassportQueueItem(row)} compact className="h-10 w-10" />
+                <div>
+                  <Link href={`/buildings/${row.building_id}`} className="font-semibold text-[#0F172A] underline decoration-[#CBD5E1] underline-offset-4 hover:decoration-[#D95A4E]">
+                    {row.project}
+                  </Link>
+                  <div className="mt-1 text-xs text-[#64748B]">Job No. {row.job_no || "-"}</div>
+                </div>
               </div>
             )
           },
@@ -121,6 +128,7 @@ export function PassportOnboardingQueueClient() {
           },
           { key: "missing_items", header: "Missing Items", render: (row) => <MissingItems items={row.missing_items} /> },
           { key: "passport_status", header: "Passport Status", render: (row) => <StatusBadge status={row.passport_status} /> },
+          { key: "protected_state_status", header: "Protected State", render: (row) => <StatusBadge status={row.protected_state_status} /> },
           { key: "next_action", header: "Next Action", render: (row) => row.next_action },
           {
             key: "actions",
