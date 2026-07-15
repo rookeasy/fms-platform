@@ -16,13 +16,13 @@ export const fuzionBrand = {
   contractorSubtitle: "Mission Control™ for Buildings Under Protection™.",
   version: "Version 1.0",
   fMarkGuidance: {
-    meaning: "The Living F represents BUILD • ADVISE • PROTECT.",
-    buildArm: "Middle/lower horizontal: BUILD electric royal blue.",
-    adviseArm: "Top horizontal: ADVISE platinum silver.",
-    protectArm: "Vertical element: PROTECT highlighter green.",
+    meaning: "The F Mark is the primary application icon. The Living F is a lifecycle and certification mark.",
+    buildArm: "Living F middle arm: BUILD electric royal blue.",
+    adviseArm: "Living F top arm: ADVISE platinum silver.",
+    protectArm: "Living F vertical stem: PROTECT highlighter green.",
     haloRule:
-      "The Halo™ is reserved for the full marketing wordmark and approved protected-state certification. Do not use halo decoration on routine operational screens.",
-    letterformRule: "The P remains minimal in the full marketing mark.",
-    restraintRule: "Use the approved white visual system: white workspace, navy typography, restrained lifecycle colour, and generous whitespace."
+      "The coral halo appears only on the Living F after backend Protected-State Certification is approved.",
+    letterformRule: "The FOP Wordmark is the corporate identity: F Mark plus FUZION OPERATING PLATFORM™ and supporting lifecycle copy.",
+    restraintRule: "Operational screens use restrained branding. Information leads; brand supports."
   }
 } as const;

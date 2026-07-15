@@ -1,8 +1,5 @@
-<svg width="70" height="88" viewBox="0 0 70 88" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
-  <title id="title">FOP Living F mark</title>
-  <desc id="desc">Living F with ADVISE platinum silver, BUILD electric royal blue, and PROTECT highlighter green.</desc>
-  <path d="M18 16H34V74H18V16Z" fill="#86EE62"/>
-  <path d="M18 16H66V31H18V16Z" fill="#BFC5CE"/>
-  <path d="M18 40H58V55H18V40Z" fill="#126BFF"/>
-  <path d="M18 16H66V31H34V40H58V55H34V74H18V16Z" fill="none" stroke="rgba(7,18,35,0.16)"/>
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">FOP F Mark</title>
+  <desc id="desc">Simple one-colour F mark for FOP application identity.</desc>
+  <path d="M14 10H52V22H28V30H47V42H28V54H14V10Z" fill="currentColor"/>
 </svg>

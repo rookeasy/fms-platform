@@ -1,10 +1,12 @@
 # Project Atlas Day Light UI
 
+> Supersession note: the current brand architecture is defined in `docs/fop-brand-architecture.md`. The F Mark is the application icon, the FOP Wordmark is the corporate identity, and the Living F is reserved for lifecycle and certification states.
+
 ## Purpose
 
 Project Atlas Day evolves the Fuzion Operating Platform into a calm, professional, light operating environment for daily work.
 
-Supersession note: the approved FOP identity now uses Midnight `#071223` as the primary platform background, the official Halo™ as the O in FOP, and the BUILD • ADVISE • PROTECT mapping documented in `docs/project-atlas-day-v2.md`. Treat this file as historical light-UI guidance only.
+Supersession note: the current FOP identity uses the F Mark for application identity, the FOP Wordmark for corporate surfaces, and the Living F for lifecycle and certification. Treat this file as historical light-UI guidance only.
 
 The application UI should feel engineering-led, spacious, and durable. Darker brand treatment remains appropriate for login, front door, and marketing surfaces.
 

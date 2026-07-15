@@ -6,7 +6,7 @@
     "tagline": "The Operating Platform for Building Protection",
     "lifecycle": "BUILD • ADVISE • PROTECT",
     "promise": "Buildings Under Protection™",
-    "visualSystem": "Approved white enterprise application"
+    "architecture": "F Mark, FOP Wordmark, Living F"
   },
   "color": {
     "background": {
@@ -22,7 +22,7 @@
     "text": {
       "primaryNavy": {
         "value": "#071223",
-        "usage": "Primary typography"
+        "usage": "Primary typography and default F Mark colour"
       },
       "secondarySlate": {
         "value": "#334155",
@@ -33,39 +33,41 @@
       "build": {
         "value": "#126BFF",
         "name": "Electric Royal Blue",
-        "usage": "BUILD™ lifecycle signal and middle/lower F arm"
+        "usage": "BUILD lifecycle signal and Living F middle arm"
       },
       "advise": {
         "value": "#BFC5CE",
         "name": "Platinum Silver",
-        "usage": "ADVISE™ lifecycle signal and top F arm"
+        "usage": "ADVISE lifecycle signal and Living F top arm"
       },
       "protect": {
         "value": "#86EE62",
-        "name": "Vivid Pastel Highlighter Green",
-        "usage": "PROTECT™ lifecycle signal and vertical F stem"
+        "name": "Pastel Highlighter Green",
+        "usage": "PROTECT lifecycle signal and Living F vertical stem"
       }
     },
     "halo": {
-      "value": "#26B6FF",
-      "name": "Energized Blue",
-      "usage": "Full marketing wordmark and approved protected-state certification only"
+      "value": "#FF7A66",
+      "name": "Coral Halo",
+      "usage": "Living F certification halo only after backend Protected-State approval"
     },
     "border": {
       "value": "#E2E8F0",
       "usage": "Subtle cool grey borders"
     }
   },
-  "mark": {
-    "livingF": {
-      "primaryUse": "Operational application mark",
-      "topArm": "ADVISE™ Platinum Silver",
-      "middleArm": "BUILD™ Electric Royal Blue",
-      "verticalStem": "PROTECT™ Vivid Pastel Highlighter Green"
+  "assets": {
+    "fMark": {
+      "purpose": "Primary application icon",
+      "rules": "Flat, one-colour, no glow, no halo, no text, no embedded lifecycle labels"
     },
-    "fullFopMarketingMark": {
-      "primaryUse": "Public landing page, login, marketing, presentations, splash screens, and major Passport covers",
-      "halo": "The O may use an energized blue Halo™ in approved marketing contexts."
+    "fopWordmark": {
+      "purpose": "Corporate identity",
+      "structure": "F Mark plus FUZION, OPERATING PLATFORM™, BUILD • ADVISE • PROTECT, Buildings Under Protection™"
+    },
+    "livingF": {
+      "purpose": "Lifecycle and certification mark",
+      "rules": "Never use as the permanent application logo. Coral halo appears only after backend Protected-State approval."
     }
   },
   "cssVariables": {

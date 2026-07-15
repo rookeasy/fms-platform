@@ -78,7 +78,7 @@ Do not place the full illustrated FOP logo repeatedly throughout operational scr
 | BUILD | `build` | `#126BFF` | Electric royal blue lifecycle signal |
 | ADVISE | `advise` | `#BFC5CE` | Platinum silver lifecycle signal |
 | PROTECT | `protect` | `#86EE62` | Vivid pastel highlighter green lifecycle signal |
-| Halo | `halo` | `#26B6FF` | Approved Halo™ treatment only |
+| Halo | `halo` | `#FF7A66` | Approved coral certification halo only |
 | Border | `border` | `#E2E8F0` | Subtle cool grey borders |
 
 BUILD • ADVISE • PROTECT is the customer-facing lifecycle framework.
@@ -105,7 +105,7 @@ Mission Control™ should begin with a concise operational header and KPI cards.
 
 ## Marketing Usage
 
-The full FOP marketing mark may use an energized blue Halo™ around the O.
+The full FOP marketing mark does not use an oversized O or decorative halo.
 
 Official copy:
 
@@ -121,7 +121,7 @@ Marketing presentation should remain white, crisp, and professional.
 
 The Halo™ represents continuous protection, building lifecycle, Buildings Under Protection™, stewardship, and executive intelligence.
 
-In operational product screens, the Halo appears only when protected-state certification has been approved by the authoritative rules.
+In operational product screens, the coral Halo appears only when protected-state certification has been approved by the authoritative rules.
 
 Do not use halo decoration elsewhere.
 

@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  ArrowDown,
   BadgeCheck,
   BarChart3,
   Building2,
@@ -21,7 +20,7 @@ import {
   Wrench
 } from "lucide-react";
 
-import { FopLifecycleMark } from "@/components/brand/FopLifecycleMark";
+import { FopMark } from "@/components/brand/FopMark";
 import { fuzionBrand } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 
@@ -56,22 +55,12 @@ const navigationGroups = [
 
 function ProductIdentity() {
   return (
-    <div className="space-y-4">
-      <FopLifecycleMark compact status="protect" className="h-[54px] w-[54px] shrink-0" title="FOP Living F mark" />
+    <div className="flex items-center gap-3">
+      <FopMark className="h-9 w-9 shrink-0 text-[color:var(--text-primary)]" title="FOP F Mark" />
       <div>
         <p className="text-lg font-semibold text-[color:var(--text-primary)]">{fuzionBrand.product}</p>
         <p className="text-xs text-[color:var(--text-muted)]">{fuzionBrand.missionControlName}</p>
       </div>
-      <div className="flex flex-wrap items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em]">
-        <p style={{ color: "var(--fop-build)" }}>BUILD</p>
-        <ArrowDown size={11} className="-rotate-90 text-[color:var(--text-muted)]" />
-        <p style={{ color: "var(--fop-advise-text)" }}>ADVISE</p>
-        <ArrowDown size={11} className="-rotate-90 text-[color:var(--text-muted)]" />
-        <p style={{ color: "var(--fop-protect-text)" }}>PROTECT</p>
-      </div>
-      <p className="max-w-40 text-left text-[11px] font-medium leading-5 text-[color:var(--text-muted)]">
-        {fuzionBrand.protectedMetric}
-      </p>
     </div>
   );
 }

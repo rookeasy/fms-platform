@@ -1,5 +1,7 @@
 # Project Atlas Day v2
 
+> Supersession note: the current brand architecture is defined in `docs/fop-brand-architecture.md`. The F Mark is the application icon, the FOP Wordmark is the corporate identity, and the Living F is reserved for lifecycle and certification states.
+
 ## Purpose
 
 Project Atlas Day v2 adopts the approved FOP visual identity throughout the platform.
@@ -14,7 +16,7 @@ This is a presentation layer refresh. Routes, API calls, authentication behavior
 - BUILD: Electric Blue `#1F7BFF`
 - ADVISE: Titanium Silver `#BFC5CF`
 - PROTECT: Electric Lime `#8CFF1A`
-- Halo: Electrified Blue `#26B6FF`
+- Halo: Coral certification signal `#FF7A66`
 - White: `#FFFFFF`
 
 Use centralized design tokens and global theme variables. Do not hardcode lifecycle colours in feature logic.
@@ -38,7 +40,7 @@ The Living F represents BUILD • ADVISE • PROTECT:
 - Upper horizontal: ADVISE™ in Titanium Silver
 - Lower horizontal: BUILD™ in Electric Blue
 
-The O is the official Halo™.
+The current FOP Wordmark does not use an oversized O or decorative Halo.
 
 The Halo™ represents:
 
@@ -48,7 +50,7 @@ The Halo™ represents:
 - Stewardship
 - Executive Intelligence
 
-The Halo should be rendered as an electrified blue circular ring with subtle energy effects. It is the primary visual element of the platform.
+The coral Halo belongs only to approved Living F certification states and is not the primary visual element of the platform.
 
 The P remains white, minimal, and undecorated.
 

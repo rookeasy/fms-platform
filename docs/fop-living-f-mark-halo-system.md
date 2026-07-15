@@ -1,8 +1,10 @@
 # FOP Living F Mark and Halo System
 
+> Supersession note: the current brand architecture is defined in `docs/fop-brand-architecture.md`. The Living F is now a lifecycle and certification mark, not the permanent application logo or corporate wordmark. The halo is coral and appears only after backend Protected-State approval.
+
 ## Concept
 
-The approved FOP identity is the Living F plus the official Halo™ O and a minimal white P.
+The current FOP identity separates the F Mark, FOP Wordmark, and Living F certification mark.
 
 The mark reinforces BUILD • ADVISE • PROTECT without replacing those customer-facing words.
 
@@ -16,7 +18,7 @@ The F is the expressive and structural lifecycle element.
 
 ## Halo Anatomy
 
-The O is the official Halo™.
+The Halo is no longer part of the permanent application logo or wordmark.
 
 The Halo™ represents:
 
@@ -26,7 +28,7 @@ The Halo™ represents:
 - Stewardship
 - Executive Intelligence
 
-The Halo should render as an electrified blue circular ring using `#26B6FF` with subtle energy effects.
+The Halo should render as a subtle coral certification signal using `#FF7A66`.
 
 The Halo is the primary visual element of the platform.
 
@@ -44,7 +46,7 @@ It has no additional decoration.
 - BUILD: Electric Blue `#1F7BFF`
 - ADVISE: Titanium Silver `#BFC5CF`
 - PROTECT: Electric Lime `#8CFF1A`
-- Halo: Electrified Blue `#26B6FF`
+- Halo: Coral certification signal `#FF7A66`
 - White: `#FFFFFF`
 
 ## Progress Behaviour

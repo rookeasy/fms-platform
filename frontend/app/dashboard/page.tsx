@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { AppShell } from "@/components/AppShell";
+import { FopMark } from "@/components/brand/FopMark";
 import { FopLifecycleMark } from "@/components/brand/FopLifecycleMark";
 import { DataTable } from "@/components/DataTable";
 import { ProgressIndex } from "@/components/ProgressIndex";
@@ -103,7 +104,7 @@ export default async function MissionControlPage() {
         <section className="rounded-xl border border-[color:var(--border)] bg-white p-6 shadow-sm">
           <div className="flex flex-wrap items-start justify-between gap-6">
             <div className="flex items-start gap-4">
-              <FopLifecycleMark compact status="protect" className="h-16 w-14 shrink-0" title="FOP Living F mark" />
+              <FopMark className="h-12 w-12 shrink-0 text-[color:var(--text-primary)]" title="FOP F Mark" />
               <div>
                 <p className="fop-label">{fuzionBrand.missionControlName}</p>
                 <h1 className="mt-2 text-3xl font-semibold tracking-normal text-[color:var(--text-primary)]">Mission Control</h1>
