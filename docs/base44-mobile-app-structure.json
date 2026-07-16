@@ -25,7 +25,7 @@
       "name": "Technician Login",
       "route": "login",
       "purpose": "Authenticate the field technician through the FOP identity flow or placeholder demo flow.",
-      "primaryAction": "Sign in to FOP"
+      "primaryAction": "Sign in to Fuzion"
     },
     {
       "name": "Today's Assigned Work",

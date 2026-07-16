@@ -1,5 +1,5 @@
 <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
-  <title id="title">FOP F Mark</title>
-  <desc id="desc">Simple one-colour F mark for FOP application identity.</desc>
+  <title id="title">Fuzion Static F Mark</title>
+  <desc id="desc">Flat one-colour navy F mark for Fuzion platform identity.</desc>
   <path d="M14 10H52V22H28V30H47V42H28V54H14V10Z" fill="currentColor"/>
 </svg>

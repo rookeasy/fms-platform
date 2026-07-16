@@ -1,8 +1,10 @@
 export const fuzionBrand = {
   companyName: "Fuzion Tech Inc.",
+  brandName: "Fuzion",
   productName: "Fuzion Operating Platform",
   shortName: "FOP",
-  product: "FOP™",
+  product: "Fuzion Operating Platform™",
+  productStacked: "FUZION\nOPERATING PLATFORM™",
   missionControlName: "Mission Control™",
   missionControlSubtitle: "The Operating Platform for Building Protection",
   tagline: "BUILD • ADVISE • PROTECT",
@@ -15,14 +17,14 @@ export const fuzionBrand = {
   subtitle: "Fuzion Operating Platform™",
   contractorSubtitle: "Mission Control™ for Buildings Under Protection™.",
   version: "Version 1.0",
+  pageTitle: "Mission Control™ | Fuzion Operating Platform",
   fMarkGuidance: {
-    meaning: "The F Mark is the primary application icon. The Living F is a lifecycle and certification mark.",
-    buildArm: "Living F middle arm: BUILD electric royal blue.",
-    adviseArm: "Living F top arm: ADVISE platinum silver.",
-    protectArm: "Living F vertical stem: PROTECT highlighter green.",
-    haloRule:
-      "The coral halo appears only on the Living F after backend Protected-State Certification is approved.",
-    letterformRule: "The FOP Wordmark is the corporate identity: F Mark plus FUZION OPERATING PLATFORM™ and supporting lifecycle copy.",
+    meaning: "The static F Mark is the platform icon. The dynamic whole-F mark represents one building lifecycle state.",
+    buildArm: "BUILD: the entire dynamic F is electric royal blue.",
+    adviseArm: "ADVISE: the entire dynamic F is platinum silver.",
+    protectArm: "PROTECT: the entire dynamic F is highlighter green.",
+    haloRule: "The coral halo appears only on the dynamic whole-F after backend Protected-State Certification is approved and halo eligible.",
+    letterformRule: "Fuzion is the primary brand. The product wordmark is FUZION OPERATING PLATFORM™ with supporting lifecycle copy.",
     restraintRule: "Operational screens use restrained branding. Information leads; brand supports."
   }
 } as const;

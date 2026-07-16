@@ -1,5 +1,7 @@
 # FOP Living F Mark and Halo System
 
+> Supersession note: the current lifecycle mark is defined in `docs/fuzion-whole-f-lifecycle-system.md`. The dynamic building F is a whole-F mark with one lifecycle colour at a time. The coral halo appears only after backend-approved Protected State with halo eligibility.
+
 > Supersession note: the current brand architecture is defined in `docs/fop-brand-architecture.md`. The Living F is now a lifecycle and certification mark, not the permanent application logo or corporate wordmark. The halo is coral and appears only after backend Protected-State approval.
 
 ## Concept

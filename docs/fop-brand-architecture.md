@@ -1,5 +1,7 @@
 # FOP Brand Architecture
 
+> Supersession note: the current customer-facing brand architecture is defined in `docs/fuzion-whole-f-lifecycle-system.md`. Fuzion is the primary brand. The platform uses a static navy F, and building lifecycle uses one whole-F colour at a time. Do not reintroduce segmented multi-colour F treatments.
+
 ## Purpose
 
 FOP uses a restrained enterprise identity system.

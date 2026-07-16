@@ -6,8 +6,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "FOP™ | Mission Control™",
-    template: `%s | ${fuzionBrand.shortName}`
+    default: fuzionBrand.pageTitle,
+    template: `%s | ${fuzionBrand.productName}`
   },
   description: `${fuzionBrand.product} - ${fuzionBrand.missionControlSubtitle} - ${fuzionBrand.tagline}`,
   icons: {

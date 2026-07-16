@@ -3,7 +3,7 @@ type FopMarkProps = {
   title?: string;
 };
 
-export function FopMark({ className = "", title = "FOP F Mark" }: FopMarkProps) {
+export function FopMark({ className = "", title = "Fuzion platform F mark" }: FopMarkProps) {
   return (
     <svg className={className} viewBox="0 0 64 64" role="img" aria-label={title} xmlns="http://www.w3.org/2000/svg">
       <title>{title}</title>

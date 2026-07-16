@@ -1,12 +1,13 @@
 {
   "brand": {
-    "name": "FOP",
-    "fullName": "Fuzion Operating Platform",
+    "company": "Fuzion Tech Inc.",
+    "primaryBrand": "Fuzion",
+    "productName": "Fuzion Operating Platform",
     "missionControl": "Mission Control",
-    "tagline": "The Operating Platform for Building Protection",
+    "browserTitle": "Mission Control™ | Fuzion Operating Platform",
     "lifecycle": "BUILD • ADVISE • PROTECT",
     "promise": "Buildings Under Protection™",
-    "architecture": "F Mark, FOP Wordmark, Living F"
+    "architecture": "Static platform F, Fuzion Operating Platform wordmark, dynamic whole-F building lifecycle mark"
   },
   "color": {
     "background": {
@@ -22,34 +23,39 @@
     "text": {
       "primaryNavy": {
         "value": "#071223",
-        "usage": "Primary typography and default F Mark colour"
+        "usage": "Primary typography"
       },
       "secondarySlate": {
         "value": "#334155",
         "usage": "Secondary typography"
       }
     },
+    "platform": {
+      "value": "#0B1F3A",
+      "name": "Fuzion Platform Navy",
+      "usage": "Static platform F, app icon, favicon, product shell"
+    },
     "lifecycle": {
       "build": {
         "value": "#126BFF",
         "name": "Electric Royal Blue",
-        "usage": "BUILD lifecycle signal and Living F middle arm"
+        "usage": "Whole dynamic F for BUILD"
       },
       "advise": {
         "value": "#BFC5CE",
         "name": "Platinum Silver",
-        "usage": "ADVISE lifecycle signal and Living F top arm"
+        "usage": "Whole dynamic F for ADVISE"
       },
       "protect": {
         "value": "#86EE62",
-        "name": "Pastel Highlighter Green",
-        "usage": "PROTECT lifecycle signal and Living F vertical stem"
+        "name": "Pastel Vibrant Green",
+        "usage": "Whole dynamic F for PROTECT and PROTECTED"
       }
     },
     "halo": {
       "value": "#FF7A66",
-      "name": "Coral Halo",
-      "usage": "Living F certification halo only after backend Protected-State approval"
+      "name": "Restrained Coral Halo",
+      "usage": "Dynamic F halo only after backend approved Protected-State Certification with halo eligibility"
     },
     "border": {
       "value": "#E2E8F0",
@@ -57,26 +63,33 @@
     }
   },
   "assets": {
-    "fMark": {
-      "purpose": "Primary application icon",
-      "rules": "Flat, one-colour, no glow, no halo, no text, no embedded lifecycle labels"
+    "staticF": {
+      "purpose": "Primary platform icon",
+      "rules": "Flat, one-colour navy, no glow, no halo, no embedded labels, no segmented lifecycle colours"
     },
-    "fopWordmark": {
-      "purpose": "Corporate identity",
-      "structure": "F Mark plus FUZION, OPERATING PLATFORM™, BUILD • ADVISE • PROTECT, Buildings Under Protection™"
+    "wordmark": {
+      "purpose": "Corporate and product identity",
+      "structure": "Static F Mark plus FUZION, OPERATING PLATFORM™, BUILD • ADVISE • PROTECT, Buildings Under Protection™"
     },
-    "livingF": {
-      "purpose": "Lifecycle and certification mark",
-      "rules": "Never use as the permanent application logo. Coral halo appears only after backend Protected-State approval."
+    "dynamicWholeF": {
+      "purpose": "Building lifecycle and certification mark",
+      "rules": "One whole-F colour at a time. Coral halo appears only after backend Protected-State approval and halo eligibility."
     }
   },
   "cssVariables": {
     "background": "--background",
     "appBackground": "--app-background",
+    "platform": "--fuzion-platform",
+    "build": "--fuzion-build",
+    "advise": "--fuzion-advise",
+    "protect": "--fuzion-protect",
+    "halo": "--fuzion-halo",
+    "textPrimary": "--text-primary"
+  },
+  "legacyAliases": {
     "build": "--fop-build",
     "advise": "--fop-advise",
     "protect": "--fop-protect",
-    "halo": "--fop-halo",
-    "textPrimary": "--text-primary"
+    "halo": "--fop-halo"
   }
 }

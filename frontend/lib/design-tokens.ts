@@ -9,7 +9,8 @@ export const fuzionTokens = {
     textMuted: "#64748B",
     accent: "#126BFF",
     accentSoft: "#EAF2FF",
-    primaryNavy: "#071223",
+    platform: "#0B1F3A",
+    primaryNavy: "#0B1F3A",
     secondaryNavy: "#0B1D36",
     build: "#126BFF",
     advise: "#BFC5CE",
@@ -76,19 +77,19 @@ export const fuzionTokens = {
 
 export const fopLifecycleTokens = {
   build: {
-    cssVariable: "--fop-build",
+    cssVariable: "--fuzion-build",
     value: fuzionTokens.colors.build,
     textValue: fuzionTokens.colors.buildText,
     label: "BUILD"
   },
   advise: {
-    cssVariable: "--fop-advise",
+    cssVariable: "--fuzion-advise",
     value: fuzionTokens.colors.advise,
     textValue: fuzionTokens.colors.adviseText,
     label: "ADVISE"
   },
   protect: {
-    cssVariable: "--fop-protect",
+    cssVariable: "--fuzion-protect",
     value: fuzionTokens.colors.protect,
     textValue: fuzionTokens.colors.protectText,
     label: "PROTECT"

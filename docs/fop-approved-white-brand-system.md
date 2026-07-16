@@ -1,5 +1,7 @@
 # FOP Approved White Brand System
 
+> Supersession note: the current brand reset is defined in `docs/fuzion-whole-f-lifecycle-system.md`. Fuzion is the primary brand, and the Fuzion Operating Platform uses the static navy F for platform identity plus a dynamic whole-F lifecycle mark for individual buildings.
+
 ## Purpose
 
 This document defines the approved white visual system for the Fuzion Operating Platform.

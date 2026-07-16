@@ -1,73 +1,78 @@
 import type { Building, BuildingLibrary, BuildingLibraryIndexItem, PassportOnboardingQueueItem, ProtectedStateEvaluation } from "@/lib/fms-api";
 import type { LifecycleStage } from "@/lib/mock-data";
 
-export type FopLifecycleVisualStatus = "build" | "advise" | "protect" | "protected";
+export type FopLifecycleVisualStatus = "build" | "advise" | "protect" | "protected" | "neutral";
 
 export type FopLifecycleVisualState = {
   status: FopLifecycleVisualStatus;
-  buildProgress: number;
-  adviseProgress: number;
-  protectProgress: number;
   overallProgress: number;
+  saturation: number;
+  color: string;
+  textColor: string;
   halo: boolean;
   label: string;
+  accessibleLabel: string;
 };
 
-const PROTECT_PASSPORT_STATUSES = new Set(["Ready for Passport", "Assets Verified"]);
-const ADVISE_PASSPORT_STATUSES = new Set(["Documents Imported", "Closeout Incomplete", "Building Registered"]);
+const BUILD_STATUSES = new Set(["Building Registered", "Not Started"]);
+const ADVISE_STATUSES = new Set(["Documents Imported", "Assets Verified", "Closeout Incomplete", "Ready for Passport"]);
+const PROTECT_STATUSES = new Set(["Ready for Protected-State Review", "Passport Issued", "Passport Delivered"]);
+
+export const wholeFLifecycleTokens: Record<FopLifecycleVisualStatus, { color: string; textColor: string; label: string }> = {
+  build: { color: "var(--fuzion-build)", textColor: "var(--fuzion-build-text)", label: "BUILD" },
+  advise: { color: "var(--fuzion-advise)", textColor: "var(--fuzion-advise-text)", label: "ADVISE" },
+  protect: { color: "var(--fuzion-protect)", textColor: "var(--fuzion-protect-text)", label: "PROTECT" },
+  protected: { color: "var(--fuzion-protect)", textColor: "var(--fuzion-protect-text)", label: "PROTECTED" },
+  neutral: { color: "var(--fuzion-platform)", textColor: "var(--text-secondary)", label: "Lifecycle pending" }
+};
 
 function clampProgress(value: number) {
   return Math.max(0, Math.min(100, Math.round(value)));
 }
 
-export function visualStateFromProgress(progress: number, protectedComplete = false): FopLifecycleVisualState {
+function state(status: FopLifecycleVisualStatus, progress: number, halo = false): FopLifecycleVisualState {
+  const token = wholeFLifecycleTokens[status];
   const overallProgress = clampProgress(progress);
-  const buildProgress = clampProgress(Math.min(overallProgress, 33) / 33 * 100);
-  const adviseProgress = clampProgress(Math.max(0, Math.min(overallProgress - 33, 33)) / 33 * 100);
-  const protectProgress = clampProgress(Math.max(0, overallProgress - 66) / 34 * 100);
-  const status: FopLifecycleVisualStatus =
-    protectedComplete && overallProgress >= 100
-      ? "protected"
-      : overallProgress >= 67
-        ? "protect"
-        : overallProgress >= 34
-          ? "advise"
-          : "build";
-
+  const saturation = status === "neutral" ? 36 : Math.max(42, overallProgress);
   return {
     status,
-    buildProgress,
-    adviseProgress,
-    protectProgress,
     overallProgress,
-    halo: status === "protected",
-    label: `Lifecycle status: ${status.toUpperCase()}`
+    saturation,
+    color: token.color,
+    textColor: token.textColor,
+    halo,
+    label: token.label,
+    accessibleLabel: `Building lifecycle status: ${token.label}`
   };
+}
+
+export function visualStateFromProgress(progress: number, protectedComplete = false): FopLifecycleVisualState {
+  const overallProgress = clampProgress(progress);
+  if (protectedComplete && overallProgress >= 100) {
+    return state("protected", 100, true);
+  }
+  if (overallProgress >= 78) {
+    return state("protect", overallProgress);
+  }
+  if (overallProgress >= 40) {
+    return state("advise", overallProgress);
+  }
+  if (overallProgress > 0) {
+    return state("build", overallProgress);
+  }
+  return state("neutral", 0);
 }
 
 export function visualStateFromStatus(status?: string | null, progress = 0): FopLifecycleVisualState {
   const normalized = (status ?? "").trim();
-  if (PROTECT_PASSPORT_STATUSES.has(normalized)) {
-    return {
-      status: "protect",
-      buildProgress: 100,
-      adviseProgress: 100,
-      protectProgress: Math.max(68, clampProgress(progress)),
-      overallProgress: Math.max(68, clampProgress(progress)),
-      halo: false,
-      label: "Lifecycle status: PROTECT"
-    };
+  if (PROTECT_STATUSES.has(normalized)) {
+    return state("protect", Math.max(78, clampProgress(progress)));
   }
-  if (ADVISE_PASSPORT_STATUSES.has(normalized)) {
-    return {
-      status: "advise",
-      buildProgress: 100,
-      adviseProgress: Math.max(55, clampProgress(progress)),
-      protectProgress: 0,
-      overallProgress: Math.max(34, clampProgress(progress)),
-      halo: false,
-      label: "Lifecycle status: ADVISE"
-    };
+  if (ADVISE_STATUSES.has(normalized)) {
+    return state("advise", Math.max(45, clampProgress(progress)));
+  }
+  if (BUILD_STATUSES.has(normalized)) {
+    return state("build", Math.max(18, clampProgress(progress)));
   }
   return visualStateFromProgress(progress);
 }
@@ -77,37 +82,32 @@ export function visualStateWithProtectedState(
   protectedState?: ProtectedStateEvaluation | null
 ): FopLifecycleVisualState {
   if (protectedState?.protected_state_status === "approved" && protectedState.halo_eligible) {
-    return {
-      status: "protected",
-      buildProgress: 100,
-      adviseProgress: 100,
-      protectProgress: 100,
-      overallProgress: 100,
-      halo: true,
-      label: "Lifecycle status: PROTECTED"
-    };
+    return state("protected", 100, true);
   }
-  return { ...base, halo: false, status: base.status === "protected" ? "protect" : base.status };
+  return { ...base, status: base.status === "protected" ? "protect" : base.status, halo: false };
 }
 
 export function visualStateFromLifecycleStage(stage: LifecycleStage): FopLifecycleVisualState {
   if (stage === "protect") {
-    return visualStateFromProgress(88);
+    return state("protect", 88);
   }
   if (stage === "advise") {
-    return visualStateFromProgress(56);
+    return state("advise", 56);
   }
-  return visualStateFromProgress(28);
+  return state("build", 28);
 }
 
 export function visualStateFromBuilding(building: Building, progress = 0): FopLifecycleVisualState {
   if (building.passport_status) {
     return visualStateFromStatus(building.passport_status, progress);
   }
-  if (building.status === "completed_occupied") {
-    return visualStateFromProgress(Math.max(progress, 82));
+  if (building.status === "completed_occupied" || building.status === "completed") {
+    return state("protect", Math.max(progress, 82));
   }
-  return visualStateFromProgress(progress || 28);
+  if (building.status === "active") {
+    return state("build", Math.max(progress, 28));
+  }
+  return visualStateFromProgress(progress);
 }
 
 export function visualStateFromLibrary(library: BuildingLibrary): FopLifecycleVisualState {
