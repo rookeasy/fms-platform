@@ -208,7 +208,7 @@ export function BuildingCloseoutClient({ buildingId }: BuildingCloseoutClientPro
           </div>
         </div>
         <div className="mt-4 h-3 overflow-hidden rounded-full bg-slate-100">
-          <div className="h-full rounded-full bg-[linear-gradient(90deg,var(--fop-build),var(--fop-advise),var(--fop-protect))]" style={{ width: `${completionPercentage}%` }} />
+          <div className="h-full rounded-full bg-[color:var(--fuzion-build)]" style={{ width: `${completionPercentage}%` }} />
         </div>
         <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-sm text-[#B6C1CF]">
           <span>{completedSections} completed</span>

@@ -56,10 +56,10 @@ const navigationGroups = [
 function ProductIdentity() {
   return (
     <div className="flex items-center gap-3">
-      <FopMark className="h-9 w-9 shrink-0 text-[color:var(--text-primary)]" title="FOP F Mark" />
+      <FopMark className="h-9 w-9 shrink-0 text-[color:var(--fuzion-platform)]" title="Fuzion platform F mark" />
       <div>
-        <p className="text-lg font-semibold text-[color:var(--text-primary)]">{fuzionBrand.product}</p>
-        <p className="text-xs text-[color:var(--text-muted)]">{fuzionBrand.missionControlName}</p>
+        <p className="text-lg font-semibold text-[color:var(--text-primary)]">{fuzionBrand.brandName}</p>
+        <p className="text-xs text-[color:var(--text-muted)]">Operating Platform™</p>
       </div>
     </div>
   );

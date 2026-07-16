@@ -21,7 +21,7 @@ export default function MinimalLoginPage() {
       <section className="w-full max-w-md rounded-2xl border border-[color:var(--border)] bg-white p-6 shadow-[0_18px_44px_rgba(15,23,42,0.08)] sm:p-8">
         <div className="text-center">
           <Image src="/brand/fpp-logo.svg" alt={`${fuzionBrand.productName} logo`} width={250} height={74} priority className="mx-auto h-auto w-[230px]" />
-          <h1 className="mt-6 text-2xl font-semibold text-[color:var(--text-primary)]">Sign in to FOP</h1>
+          <h1 className="mt-6 text-2xl font-semibold text-[color:var(--text-primary)]">Sign in to Fuzion</h1>
           <p className="mt-2 text-sm leading-6 text-[color:var(--text-secondary)]">{fuzionBrand.contractorSubtitle}</p>
           <p className="mt-2 text-xs font-semibold tracking-[0.18em] text-[color:var(--fop-build-text)]">{fuzionBrand.protectedMetric}</p>
         </div>

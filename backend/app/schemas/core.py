@@ -543,6 +543,73 @@ class PassportOnboardingQueueItem(BaseModel):
     passport_url: str
 
 
+class SohoReadinessCategory(BaseModel):
+    key: str
+    label: str
+    status: str
+    evidence_count: int = 0
+    missing_reason: str | None = None
+
+
+class SohoReadinessHandover(BaseModel):
+    owner_property_manager_recipient: str | None = None
+    delivery_status: str | None = None
+    delivery_date: date | None = None
+    portal_access_status: str = "Not Configured"
+    notes: str | None = None
+    next_itm_action: str
+    client_visible_evidence_count: int = 0
+    passport_version: str | None = None
+
+
+class SohoReadinessRecord(BaseModel):
+    role: str
+    label: str
+    building: BuildingRead | None = None
+    expected: bool = True
+    present: bool = False
+    duplicate_count: int = 0
+    completion_status: str
+    closeout_score: int = 0
+    documents_count: int = 0
+    passport_record_count: int = 0
+    client_visible_evidence_count: int = 0
+    assets_count: int = 0
+    asset_suggestions_pending: int = 0
+    asset_suggestions_approved: int = 0
+    contacts_count: int = 0
+    missing_items: list[str] = Field(default_factory=list)
+    evidence_categories: list[SohoReadinessCategory] = Field(default_factory=list)
+    passport_status: str = "Not Started"
+    passport_eligible: bool = False
+    protected_state_status: str = "review_required"
+    halo_eligible: bool = False
+    readiness_state: str = "Not Ready"
+    next_action: str
+    library_url: str | None = None
+    passport_url: str | None = None
+    protected_state_url: str | None = None
+    handover: SohoReadinessHandover | None = None
+
+
+class SohoPassportReadinessRead(BaseModel):
+    property: PropertyRead
+    readiness_state: str
+    closeout_score: int = 0
+    expected_records: int = 0
+    records_present: int = 0
+    duplicate_records: int = 0
+    evidence_categories_complete: int = 0
+    evidence_categories_missing: int = 0
+    client_visible_evidence_count: int = 0
+    passport_status: str = "Not Started"
+    protected_state_status: str = "review_required"
+    blocking_items: list[str] = Field(default_factory=list)
+    missing_items: list[str] = Field(default_factory=list)
+    next_action: str
+    records: list[SohoReadinessRecord] = Field(default_factory=list)
+
+
 class EvidenceCategorySummary(BaseModel):
     category: str
     item_count: int = 0

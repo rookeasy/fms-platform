@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Building2, FileText, ShieldCheck, Wrench } from "lucide-react";
+import { Building2, ClipboardCheck, FileText, ShieldCheck, Wrench } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { EmptyState } from "@/components/EmptyState";
@@ -129,6 +129,15 @@ export function PropertyDetailClient({ propertyId }: PropertyDetailClientProps) 
           <div className="flex flex-wrap items-center gap-2">
             <StatusBadge status={formatControlledValue(property.status)} />
             <StatusBadge status={closeoutReady ? "Ready for Handover" : "Missing Items"} />
+            {property.name.toLowerCase().includes("soho") ? (
+              <Link
+                href={`/properties/${property.id}/passport-readiness`}
+                className="inline-flex items-center gap-2 rounded-md border border-white/10 px-3 py-2 text-sm font-medium text-white hover:border-white/30"
+              >
+                <ClipboardCheck size={15} />
+                Passport Readiness
+              </Link>
+            ) : null}
           </div>
         </div>
         <div className="mt-5 grid gap-4 md:grid-cols-4">

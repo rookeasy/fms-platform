@@ -104,10 +104,10 @@ export default async function MissionControlPage() {
         <section className="rounded-xl border border-[color:var(--border)] bg-white p-6 shadow-sm">
           <div className="flex flex-wrap items-start justify-between gap-6">
             <div className="flex items-start gap-4">
-              <FopMark className="h-12 w-12 shrink-0 text-[color:var(--text-primary)]" title="FOP F Mark" />
+              <FopMark className="h-12 w-12 shrink-0 text-[color:var(--fuzion-platform)]" title="Fuzion platform F mark" />
               <div>
                 <p className="fop-label">{fuzionBrand.missionControlName}</p>
-                <h1 className="mt-2 text-3xl font-semibold tracking-normal text-[color:var(--text-primary)]">Mission Control</h1>
+                <h1 className="mt-2 text-3xl font-semibold tracking-normal text-[color:var(--text-primary)]">Mission Control™</h1>
                 <p className="mt-2 max-w-2xl text-sm leading-6 text-[color:var(--text-secondary)]">
                   Portfolio intelligence for BUILD • ADVISE • PROTECT, focused on what has changed and what should happen next.
                 </p>

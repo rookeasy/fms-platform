@@ -324,6 +324,73 @@ export type PassportOnboardingQueueItem = {
   passport_url: string;
 };
 
+export type SohoReadinessCategory = {
+  key: string;
+  label: string;
+  status: string;
+  evidence_count: number;
+  missing_reason?: string | null;
+};
+
+export type SohoReadinessHandover = {
+  owner_property_manager_recipient?: string | null;
+  delivery_status?: string | null;
+  delivery_date?: string | null;
+  portal_access_status: string;
+  notes?: string | null;
+  next_itm_action: string;
+  client_visible_evidence_count: number;
+  passport_version?: string | null;
+};
+
+export type SohoReadinessRecord = {
+  role: string;
+  label: string;
+  building?: Building | null;
+  expected: boolean;
+  present: boolean;
+  duplicate_count: number;
+  completion_status: string;
+  closeout_score: number;
+  documents_count: number;
+  passport_record_count: number;
+  client_visible_evidence_count: number;
+  assets_count: number;
+  asset_suggestions_pending: number;
+  asset_suggestions_approved: number;
+  contacts_count: number;
+  missing_items: string[];
+  evidence_categories: SohoReadinessCategory[];
+  passport_status: string;
+  passport_eligible: boolean;
+  protected_state_status: string;
+  halo_eligible: boolean;
+  readiness_state: string;
+  next_action: string;
+  library_url?: string | null;
+  passport_url?: string | null;
+  protected_state_url?: string | null;
+  handover?: SohoReadinessHandover | null;
+};
+
+export type SohoPassportReadiness = {
+  property: PropertyRecord;
+  readiness_state: string;
+  closeout_score: number;
+  expected_records: number;
+  records_present: number;
+  duplicate_records: number;
+  evidence_categories_complete: number;
+  evidence_categories_missing: number;
+  client_visible_evidence_count: number;
+  passport_status: string;
+  protected_state_status: string;
+  blocking_items: string[];
+  missing_items: string[];
+  next_action: string;
+  records: SohoReadinessRecord[];
+};
+
 export type EvidenceCategorySummary = {
   category: string;
   item_count: number;
@@ -667,6 +734,11 @@ export async function getProperty(propertyId: string): Promise<PropertyRecord> {
 
 export async function getPropertyIntelligence(propertyId: string): Promise<PropertyIntelligence> {
   const response = await request<ApiEnvelope<PropertyIntelligence>>(`/properties/${propertyId}/intelligence`);
+  return response.data;
+}
+
+export async function getPropertyPassportReadiness(propertyId: string): Promise<SohoPassportReadiness> {
+  const response = await request<ApiEnvelope<SohoPassportReadiness>>(`/properties/${propertyId}/passport-readiness`);
   return response.data;
 }
 

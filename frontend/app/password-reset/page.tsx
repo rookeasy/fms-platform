@@ -13,7 +13,7 @@ export default function PasswordResetPage() {
       <section className="w-full max-w-lg rounded-2xl border border-[color:var(--border)] bg-white p-6 shadow-[0_18px_44px_rgba(15,23,42,0.08)] sm:p-8">
         <Image src="/brand/fpp-logo.svg" alt={`${fuzionBrand.productName} logo`} width={250} height={74} priority className="h-auto w-[236px]" />
         <p className="mt-6 fop-label">Mission Control™ Access</p>
-        <h1 className="mt-3 text-2xl font-semibold text-[color:var(--text-primary)]">Reset your FOP password</h1>
+        <h1 className="mt-3 text-2xl font-semibold text-[color:var(--text-primary)]">Reset your Fuzion password</h1>
         <p className="mt-2 text-sm leading-6 text-[color:var(--text-secondary)]">
           Enter your email and the placeholder authentication flow will preserve the current MVP behavior.
         </p>
